@@ -28,15 +28,14 @@ int GreenOutputFileName(const struct BindStruct *X, GreenOutputKind kind, char *
 int GreenOutputWriteIndexPrefix(FILE *fp, const struct BindStruct *X);
 int GreenOutputInitializeAggregateFiles(struct BindStruct *X);
 
-/* Sector outputs open on rank 0 and /dev/null elsewhere, then enter a
- * collective expectation. AgreeSectorError returns 0/-1 identically on
- * every rank for a sector basis (rank-local for raw bases), so a rank-0
- * open/write/close failure stops every rank before the next collective.
+/* Outputs open on root and /dev/null elsewhere, before numerical reductions.
+ * AgreeError returns the same 0/-1 on every rank, except within ExpecLocal
+ * sessions where it remains local; their outer driver aggregates afterwards.
  * CloseChecked reports ferror() or fclose() failure; NULL is a failure.
- * ReportSectorFailure prints the file (the aggregate name when used). */
-int GreenOutputAgreeSectorError(const struct BindStruct *X, int failed);
+ * ReportFailure prints the file (the aggregate name when used). */
+int GreenOutputAgreeError(const struct BindStruct *X, int failed);
 int GreenOutputCloseChecked(FILE *fp);
-int GreenOutputReportSectorFailure(const struct BindStruct *X, GreenOutputKind kind,
+int GreenOutputReportFailure(const struct BindStruct *X, GreenOutputKind kind,
                                    const char *name, const char *operation);
 
 /**
@@ -108,7 +107,7 @@ int GreenOutputOpenAggregate(struct BindStruct *X, GreenOutputKind kind, FILE **
 /**
  * @brief Close a FILE* previously returned by GreenOutputOpenAggregate().
  *
- * Outside a partial-output session: plain fclose().
+ * Outside a partial-output session: checked ferror() and fclose().
  *
  * Inside a session: records bytes = ftell(fp) taken immediately before
  * fclose() (the running total for this rank/kind, since the file is opened

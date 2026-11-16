@@ -6,6 +6,8 @@ AnomalousG.dat
 ~~~~~~~~~~~~~~
 
 ``AnomalousG`` キーワードで指定された異常ペアグリーン関数の計算結果を出力します。
+HubbardGC・SpinlessFermionGCの対称性セクター（:ref:`Subsec:TransSym`）も同じ
+ファイル名と形式で出力します。
 typeが ``0`` の行は :math:`c_{i\sigma_1}c_{j\sigma_2}` の期待値、typeが
 ``1`` の行は :math:`c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}` の期待値を
 表します。以下にファイル例を記載します。

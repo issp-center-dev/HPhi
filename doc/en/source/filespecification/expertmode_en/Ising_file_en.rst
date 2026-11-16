@@ -4,18 +4,21 @@ Ising file
 ----------
 
 This file determines the values of Ising interactions :math:`J_{ij}^{z}`
-(for :math:`S=1/2` system). For the fermion electronic system, the Ising
-terms are given as
-
-.. math::
-
-   {\mathcal H}+=\sum_{i,j}J_{ij}^{z} (n_{i\uparrow}-n_{i\downarrow})(n_{j\uparrow}-n_{j\downarrow} ).
-
-For the spin system, they are given as
+(for :math:`S=1/2` system),
 
 .. math::
 
    {\mathcal H}+=\sum_{i,j}J_{ij}^{z} S_ {i}^{z}S_{j}^z.
+
+For the fermion electronic system, :math:`S_{i}^{z}` is given as
+
+.. math::
+
+   S_{i}^{z} = \frac{1}{2}(n_{i\uparrow}-n_{i\downarrow}),
+
+namely, an Ising term is equivalent to the combination of
+the Hund coupling :math:`J_{ij}^{\rm Hund}=-J_{ij}^{z}/2` and
+the off-site interaction :math:`V_{ij}=-J_{ij}^{z}/4`.
 
 An example of the file format is as follows.
 

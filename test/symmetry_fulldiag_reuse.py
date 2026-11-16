@@ -278,22 +278,25 @@ def check_external(case, hphi, solver, launcher, ranks, label):
 
 
 def negatives(cases, case, store, hphi, launcher, ranks, label):
-    """Mismatched state imports are rejected before any evolution."""
+    """Layout/rank changes load; sector and state mismatches are rejected."""
     header_error = 'checkpoint header / sector / layout validation failed'
     path = consumer(case, f'{case.name}_{label}_default_layout')
     copy_state(store, 0, path, 'seed', ranks)
     set_te_inputs(path)
-    common.run_consumer(path, hphi, 'te_default_layout', launcher, environment(None), header_error)
+    common.run_consumer(path, hphi, 'te_default_layout', launcher, environment(None))
+    assert (path/'output/zvo_Norm.dat').exists()
     path = consumer(case, f'{case.name}_{label}_cg_default_layout')
     copy_state(store, 0, path, 'zvo_eigenvec_0', ranks)
     common.set_calc_file(path, {'CalcType': CG, 'InputEigenVec': 1, 'OutputEigenVec': 0})
     common.set_mod_file(path, {'exct': 1})
-    common.run_consumer(path, hphi, 'cg_default_layout', launcher, environment(None), header_error)
+    common.run_consumer(path, hphi, 'cg_default_layout', launcher, environment(None))
+    assert (path/'output/zvo_energy.dat').exists()
     if ranks > 1:
         path = consumer(case, f'{case.name}_{label}_rank_count')
         copy_state(store, 0, path, 'seed', ranks)
         set_te_inputs(path)
-        common.run_consumer(path, hphi, 'te_rank_count', [], environment(), header_error)
+        common.run_consumer(path, hphi, 'te_rank_count', [], environment())
+        assert (path/'output/zvo_Norm.dat').exists()
     same = next(other for other in cases if other.model == case.model and other is not case
                 and len(other.hq) == len(case.hq))
     path = consumer(same, f'{same.name}_{label}_other_sector')
@@ -308,7 +311,7 @@ def negatives(cases, case, store, hphi, launcher, ranks, label):
         common.set_mod_file(path, {'exct': 1})
         common.run_consumer(path, hphi, 'cg_state_number', launcher, environment(),
                         'symmetry checkpoint state index or step is invalid for CG input')
-    print(f'{case.name} {label}: layout/rank/sector/state rejections PASS', flush=True)
+    print(f'{case.name} {label}: layout/rank import and sector/state rejection PASS', flush=True)
 
 
 def kondo_layout_negative(root, case, store, hphi, launcher, ranks, label):

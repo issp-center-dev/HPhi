@@ -65,7 +65,6 @@ extern char *cWarnSolverConflict;
 extern char *cErrScaLAPACK;
 extern char *cErrSpectrumFullDiagSolver;
 extern char *cErrExpecMode;
-extern char *cErrSpinlessFullDiag;
 
 extern char *cErrKW;
 extern char *cErrKW_ShowList;
@@ -88,6 +87,7 @@ extern char *cErrNonHermiteTransForAll;
 extern char *cErrNonHermiteInterAll;
 extern char *cErrNonConservedInterAll;
 extern char *cErrNonHermiteInterAllForAll;
+extern char *cErrNonHermiteInterAllDiagonal;
 extern char *cErrIncorrectFormatForKondoInt;
 extern char *cErrIncorrectFormatForKondoTrans;
 extern char *cErrIncorrectFormatInter;

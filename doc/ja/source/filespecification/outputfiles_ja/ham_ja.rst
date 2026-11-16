@@ -115,12 +115,17 @@ sector FullDiagのハミルトニアン
    整数は10進、maskとdigestは16桁の16進です。
    ``format=sector-hamiltonian-v1``、 ``scalar=complex-binary64``、
    ``model`` （ ``Spin``、 ``SpinGC``、 ``SpinlessFermion``、 ``Hubbard``、
-   ``tJ``、 ``Kondo``、 ``KondoNConserved``、 ``KondoGC`` ）、
+   ``tJ``、 ``Kondo``、 ``KondoNConserved``、 ``KondoGC``、 ``HubbardNConserved``、
+   ``tJNConserved``、 ``HubbardGC``、 ``SpinlessFermionGC`` ）、
    ``nsite``、 ``nup``、 ``ndown``、 ``ne``、 ``local_site_mask``、
    ``fixed_flags``、 ``phase``、 ``full_dim``、 ``sector_dim``、
    ``group_digest``、 ``sector_count``、 ``sector_xor``、 ``sector_sum``、
    ``basis_order`` 。値はsector checkpointの基底識別と同じです。群とsectorの
    digestなど一部は :ref:`Subsec:TransSym` のmanifestにも記録されます。
+   ``SpinFlipParity`` を指定したsectorでは、 ``scalar`` 行の後にコメント行
+   ``% spin_flip_operator=product_sigma_x spin_flip_parity=+1`` （または ``-1`` ）も
+   書きます。読込ではこの行を読み飛ばし、 :math:`P_x` と :math:`p` は ``group_digest``
+   で識別します。
 
 -  次元行は ``D D nnz`` 、データ行は ``row column real imag`` です。
    1始まりの下三角（ :math:`{\rm row}\ge{\rm column}` ）だけを書きます。

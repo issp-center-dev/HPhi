@@ -5,7 +5,8 @@
 AnomalousG指定ファイル
 ~~~~~~~~~~~~~~~~~~~~~~
 
-HubbardGC計算で出力する異常ペアグリーン関数を指定します。typeが ``0`` の
+HubbardGC計算と、HubbardGC・SpinlessFermionGCの対称性セクター
+（:ref:`Subsec:TransSym`）で出力する異常ペアグリーン関数を指定します。typeが ``0`` の
 行は :math:`\langle c_{i\sigma_1}c_{j\sigma_2}\rangle`、typeが ``1`` の行は
 :math:`\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\rangle` を表します。
 以下にファイル例を記載します。
@@ -78,10 +79,13 @@ HubbardGC計算で出力する異常ペアグリーン関数を指定します�
 
 -  行数固定で読み込みを行う為、ヘッダの省略はできません。
 
--  現在はHubbardGC計算でのみ使用できます。
+-  ``TransSym`` なしではHubbardGC計算でのみ使用できます。Lanczos法、CG法、
+   TPQ法、cTPQ法、実時間発展法のMPI実行で使用でき、FullDiag法のMPI実行では
+   使用できません。
 
--  ``AnomalousG`` はLanczos法、CG法、TPQ法、cTPQ法、実時間発展法のMPI実行で使用できます。
-   FullDiag法のMPI実行では使用できません。
+-  ``TransSym`` を指定したHubbardGC・SpinlessFermionGCのセクターでは、FullDiag法の
+   各固有状態を含むすべての計算手法で計算します。ハミルトニアンにpair項がなくても
+   計算します（:ref:`Subsec:TransSym`）。SpinlessFermionGCのスピン添字は0です。
 
 -  ``AnomalousG`` は ``CalcSpec`` 計算では使用できません。
 

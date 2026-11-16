@@ -190,6 +190,8 @@ int Lanczos_EigenValue(struct BindStruct *X) {
         fprintf(stdoutMPI, "  Error: Restarted Lanczos tridiagonal components are not finite.\n");
         return -2;
       }
+      /* A restart has no previous Ritz value from this process. */
+      ebefor = INFINITY;
     }/*X->Def.iReStart == RESTART_INOUT || X->Def.iReStart == RESTART_IN*/
     else {
       SetInitialVector(X, v0, v1);
@@ -837,11 +839,47 @@ int ReadTMComponents(
   }
   fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp);
   sscanf(ctmp,"%lf \n", &dnorm);
-  while(fgetsMPI(ctmp, sizeof(ctmp)/sizeof(char), fp) != NULL){
-    sscanf(ctmp,"%lf %lf \n", &alpha[idx], &beta[idx]);
+  unsigned long int rows = 0;
+  int meta_nproc = -1, meta_nthreads = -1;
+  while(fgetsMPIAllowComments(ctmp, sizeof(ctmp)/sizeof(char), fp) != NULL){
+    const char *p = ctmp;
+    while (*p == ' ' || *p == '\t') ++p;
+    if (*p == '#') {
+      sscanf(p, "# nproc %d nthreads %d", &meta_nproc, &meta_nthreads);
+      continue;
+    }
+    if (*p == '\0' || *p == '\n') continue;
+    if (idx > i_max) {
+      fclose(fp);
+      fprintf(stdoutMPI, "  Error: TMComponents has more rows than its step count.\n");
+      return FALSE;
+    }
+    if (sscanf(ctmp, "%lf %lf \n", &alpha[idx], &beta[idx]) != 2) {
+      fclose(fp);
+      fprintf(stdoutMPI, "  Error: TMComponents row %lu is not two numbers.\n", idx);
+      return FALSE;
+    }
     idx++;
+    rows++;
   }
   fclose(fp);
+  if (rows != i_max) {
+    fprintf(stdoutMPI, "  Error: TMComponents has %lu rows for step %lu.\n", rows, i_max);
+    return FALSE;
+  }
+  if (iFlg == 0 && X->Def.iCalcType == Lanczos &&
+      X->Def.iFlgCalcSpec == CALCSPEC_NOT) {
+    if (meta_nproc < 0) {
+      fprintf(stdoutMPI,
+              "  Warning: TMComponents has no environment line; the restarted eigenvector assumes the same nproc/nthreads.\n");
+    }
+    else if (meta_nproc != nproc || meta_nthreads != nthreads) {
+      fprintf(stdoutMPI,
+              "  Error: TMComponents were written with nthreads=%d nproc=%d; this run has nthreads=%d nproc=%d.\n",
+              meta_nthreads, meta_nproc, nthreads, nproc);
+      return FALSE;
+    }
+  }
   *_dnorm=dnorm;
   *_i_max=i_max;
   return TRUE;
@@ -880,6 +918,8 @@ int OutputTMComponents(
   for( i = 1 ; i <= liLanczosStp; i++){
     fprintf(fp,"%.10lf %.10lf \n", _alpha[i], _beta[i]);
   }
+  if (X->Def.iFlgCalcSpec == CALCSPEC_NOT)
+    fprintf(fp, "# nproc %d nthreads %d\n", nproc, nthreads);
   fclose(fp);
   return TRUE;
 }

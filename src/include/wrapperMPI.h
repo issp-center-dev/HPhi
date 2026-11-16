@@ -27,6 +27,7 @@ void FinalizeMPI();
 void exitMPI(int errorcode);
 FILE* fopenMPI(const char* FileName, const char* mode);
 char* fgetsMPI(char* InputString, int maxcount,FILE* fp);
+char* fgetsMPIAllowComments(char* InputString, int maxcount, FILE* fp);
 void BarrierMPI();
 unsigned long int MaxMPI_li(unsigned long int idim);
 double MaxMPI_d(double dvalue);
@@ -64,5 +65,7 @@ void ExpecLocalSetError(void);
 /** @brief @return non-zero iff ExpecLocalSetError() was called since the
     last ExpecLocalEnter(). Always defined. */
 int  ExpecLocalError(void);
+
+unsigned long int ExscanMPI_li(unsigned long int value);
 
 #endif

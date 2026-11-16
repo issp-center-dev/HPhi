@@ -173,6 +173,8 @@ extern const char* cFileNameAnomalousG_TE_Aggregate;/**> Name of the aggregate f
 extern const char* cFileNameOutputVector;/**> Name of the file to output TPQ vector.*/
 extern const char* cFileNameTPQVector;/**> Name of the file to output cTPQ vector.*/
 extern const char* cFileNameInputVector;/**> Name of the file to input TPQ vector.*/
+extern const char* cFileNameRestartVector;/**> Name of a v3 restart vector file.*/
+extern const char* cFileNameRestartManifest;/**> Name of the v3 restart manifest file.*/
 
 //For Time evolution
 extern const char* cFileNameTEStep; /**> Name of the Time_TE_Step file.*/

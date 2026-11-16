@@ -101,6 +101,30 @@ Common parameters
    "**xxx_Lanczos_cisajs.dat**" (xxx are the characters set by
    ``CDataFileHead``).
 
+*  ``CheckpointInterval``
+
+   **Type :** Int (non-negative, less than ``INT_MAX``; default value: 0)
+
+   **Description :** Period between v3 continuation checkpoints for CG,
+   mTPQ and cTPQ. Zero writes only the terminal checkpoint. A positive value
+   requires ``ReStart=1`` or 2. TimeEvolution does not use this parameter;
+   it uses ``OutputInterval``.
+
+*  ``RestartSourceRanks``
+
+   **Type :** Int (non-negative, less than ``INT_MAX``; default value: 0)
+
+   **Description :** Expected MPI process count in restart/import files.
+   Zero means the current process count for a legacy raw file. When a legacy
+   raw file set is read with a different process count, this parameter is
+   mandatory and gives the number of saved rank files; all files, including
+   files for empty ranks, must be present. v3 and sector v1/v2 files describe
+   their saved count themselves and are redistributed automatically. v3
+   continuation ignores this parameter and uses the count in each manifest
+   row; this permits a partially migrated TPQ/cTPQ run to combine v3 and
+   legacy samples. For v3 and sector v1/v2 state import, the parameter is
+   optional, but a positive value must match the count in the header.
+
 *  ``Nsite``
 
    **Type :** Int (positive integer)
@@ -126,6 +150,26 @@ Common parameters
    while leaving :math:`S_z` free; this is the sector used by the
    single-excitation off-diagonal (bra-ket) dynamical Green's function for
    2Sz-nonconserving (cross-spin) systems.
+
+*  ``ParticleParity``
+
+   **Type :** Int (0, 1 or -1)
+
+   **Description :** For a HubbardGC or SpinlessFermionGC symmetry sector
+   (``TransSym``), selects all particle numbers (0, default), even :math:`N`
+   (1) or odd :math:`N` (-1). Other values, and a nonzero value without
+   ``TransSym`` or with another model, are rejected.
+
+*  ``SpinFlipParity``
+
+   **Type :** Int (0, 1 or -1)
+
+   **Description :** For a spin-one-half SpinGC sector, or a Spin sector with
+   ``2Sz=0`` (``TransSym``), selects the eigenvalue :math:`p=+1` (1) or
+   :math:`p=-1` (-1) of the global spin flip
+   :math:`P_x=\prod_i\sigma^x_i`; 0 (default) does not use :math:`P_x`.
+   Other values, and a nonzero value without ``TransSym``, with another model
+   or with :math:`S_z\neq 0`, are rejected. See :ref:`Subsec:TransSymSpinFlip`.
 
 *  ``initial_iv``
 
@@ -186,8 +230,9 @@ Lanczos method
    **Description :** The maximum number of Lanczos steps in the
    calculation. When the convergence within the specified accuracy is
    satisfied, the calculation is completed before a step reaches
-   ``Lanczos_max``. In the case of restart calculation, ``Lanczos_max``
-   must be larger than that of the previous calculation.
+   ``Lanczos_max``. For a legacy Lanczos restart, ``Lanczos_max`` is the
+   number of **additional** steps after the saved step, not an absolute
+   final step.
 
 *  ``exct``
 
@@ -233,8 +278,11 @@ CG method
    **Description :** The maximum number of iteration steps in the
    calculation. When the convergence within the specified accuracy is
    satisfied, the calculation is completed before a step reaches
-   ``Lanczos_max``. In the case of restart calculation, ``Lanczos_max``
-   must be larger than that of the previous calculation.
+   ``Lanczos_max``. For a legacy LOBPCG restart, ``Lanczos_max`` is the
+   number of **additional** iterations after the saved point. For a v3 CG
+   continuation it is the absolute final iteration label. If it is below the
+   saved next label, HPhi evaluates the restored vectors without iteration;
+   this upper-limit no-op does not assert current convergence.
 
 *  ``LanczosEps``
 
@@ -254,8 +302,10 @@ TPQ (mTPQ/cTPQ) method
    **Type :** Int (positive integer)
 
    **Description :** The total number of TPQ steps is specified with
-   this parameter. In the case of restart calculation, ``Lanczos_max``
-   must be larger than that of the previous calculation.
+   this parameter. This remains an absolute total step count during a
+   TPQ/cTPQ restart. A value at or below the saved next step is a valid no-op:
+   HPhi evaluates the restored state without appending time-series rows or
+   rewriting the checkpoint.
 
 *  ``LargeValue``
 
@@ -417,8 +467,9 @@ Real time evolution method
    **Type :** Int (positive integer)
 
    **Description :** The total number of real time evolution steps is
-   specified with this parameter. In the case of restart calculation,
-   ``Lanczos_max`` must be larger than that of the previous calculation.
+   specified with this parameter. This remains an absolute total step
+   count during v3 restart. A value at or below the saved next step is a
+   valid no-op after the time-grid boundary has been validated.
 
 *  ``ExpandCoef``
 
@@ -452,9 +503,19 @@ Real time evolution method
    | **Description :** An integer giving the interval steps of output
      the wave function.
    | The wave vector is output when ``OutputEigenVec=1`` in ``CalcMod``
-     file. A positive ``OutputInterval`` is then required. Explicit interval
+     file, and the v3 TimeEvolution continuation checkpoint is written when
+     ``ReStart=1`` or 2. A positive ``OutputInterval`` is required in either
+     case. The time table must contain the saved next step. Explicit interval
      and iteration-count values must be finite integers less than ``INT_MAX``.
 
+
+HubbardGC and SpinlessFermionGC with TransSym
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Omit ``2Sz``, ``Nup``, ``Ndown`` and ``Ncond``; explicit values, including
+zero, are rejected. ``ParticleParity`` optionally restricts the sector to even
+or odd particle numbers. See :ref:`Subsec:TransSym` for the dimensions, pair
+terms and file identity.
 
 SpinGC with TransSym
 ~~~~~~~~~~~~~~~~~~~~
@@ -469,6 +530,8 @@ sector; ``InvTemp`` cannot request eigenvector output in sector cTPQ.
 TE uses positive ``ExpandCoef``, a finite nondecreasing time grid, and
 ``ExpecInterval``/``OutputInterval`` for observables/checkpoints. See
 :ref:`Subsec:TransSym` for magnetization moments, import semantics and examples.
+``SpinFlipParity`` adds the global spin flip to the sector, also for ``Spin``
+with ``2Sz=0`` (:ref:`Subsec:TransSymSpinFlip`).
 
 .. raw:: latex
 

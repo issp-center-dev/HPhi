@@ -95,6 +95,30 @@ int D_iKWNumDef = sizeof(cKWListOfFileNameList)/sizeof(cKWListOfFileNameList[0])
  **/
 static char (*cFileNameListFile)[D_CharTmpReadDef];
 
+/* Aggregate in the input convention H_1 = -sum(t_ij c_i^dagger c_j).
+ * The caller reserves declared transfers + one row per InterAll row. */
+static int AppendTransfer(unsigned int *count, unsigned int capacity,
+                          int **indices, double complex *values,
+                          int i, int s, int j, int t, double complex value)
+{
+  for (unsigned int p = 0; p < *count; ++p) {
+    if (indices[p][0] == i && indices[p][1] == s &&
+        indices[p][2] == j && indices[p][3] == t) {
+      values[p] += value;
+      return 0;
+    }
+  }
+  if (*count >= capacity) {
+    fprintf(stdoutMPI, "Error: insufficient transfer capacity during InterAll normalization.\n");
+    return -1;
+  }
+  unsigned int p = (*count)++;
+  indices[p][0] = i; indices[p][1] = s;
+  indices[p][2] = j; indices[p][3] = t;
+  values[p] = value;
+  return 0;
+}
+
 int CheckTETransferHermite(struct DefineList *X,
                            const int NTETrans,
                            const int idx);
@@ -112,6 +136,16 @@ int CheckInterAllCondition(
         int isite4, int isigma4
 );
 
+/* Hash table from the eight indices of an InterAll row to the row number,
+ * so that InputInterAllInfo finds a repeated row without scanning all rows. */
+struct InterAllRowIndex {
+  unsigned int *slot; /* row number + 1; 0 marks an empty slot */
+  unsigned long mask;
+};
+
+static int InterAllRowIndexInit(struct InterAllRowIndex *index, int capacity);
+static void InterAllRowIndexFree(struct InterAllRowIndex *index);
+
 int InputInterAllInfo(
         int *icnt_interall,
         int **iInterAllInfo,
@@ -120,7 +154,8 @@ int InputInterAllInfo(
         int isite2, int isigma2,
         int isite3, int isigma3,
         int isite4, int isigma4,
-        double re_value, double im_value
+        double re_value, double im_value,
+        struct InterAllRowIndex *index
 );
 
 
@@ -734,6 +769,62 @@ static char *ReadNBodyLineMPI(FILE *fp, size_t *len)
   return line;
 }
 
+/* Restart identity words are normalized here, after every definition file was interpreted and
+   before CheckMPI reduces the quantum numbers or sz() rewrites NConserved models. */
+void SetRestartIdentity(struct DefineList *X)
+{
+  int model = X->iCalcModel, flags = 0;
+  int ne_fixed = model == Hubbard || model == HubbardNConserved || model == Kondo || model == KondoNConserved ||
+                 model == tJ || model == tJNConserved || model == SpinlessFermion;
+  int nconserved = model == HubbardNConserved || model == KondoNConserved || model == tJNConserved;
+  if (ne_fixed) flags |= 1;
+  if (model == Spin || (ne_fixed && !nconserved && model != SpinlessFermion)) flags |= 2;   /* Spin covers general spin (iFlgGeneralSpin) */
+  X->iCalcModelInput = model;
+  X->iRestartFixedFlags = flags;
+}
+
+int ValidateRestartKeys(const struct DefineList *X)
+{
+  if (X->Param.CheckpointInterval > 0 && X->iCalcType == TimeEvolution) {
+    fprintf(stdoutMPI, "Error: CheckpointInterval is not used by TimeEvolution; use OutputInterval.\n");
+    return -1;
+  }
+  if (X->Param.CheckpointInterval > 0 &&
+      X->iReStart != RESTART_OUT && X->iReStart != RESTART_INOUT) {
+    fprintf(stdoutMPI, "Error: CheckpointInterval requires ReStart=1 or 2.\n");
+    return -1;
+  }
+  return 0;
+}
+
+/* TransSym Hubbard/tJ with Ncond and no 2Sz. Consistent Nup/Ndown (given
+ * together, checked earlier) keep the fixed-Sz canonical model; Ncond alone
+ * fixes only N. Raw input is unchanged. */
+static int normalize_symmetry_fixed_n(struct DefineList *X, int has_spin_numbers)
+{
+  const char *model = X->iCalcModel == tJ ? "tJ" : "Hubbard";
+  unsigned int maximum = X->iCalcModel == tJ ? X->Nsite : 2U * X->Nsite;
+  if (has_spin_numbers) {
+    if (X->Nup + X->Ndown != X->NCond) {
+      fprintf(stdoutMPI, "Error: TransSym %s Ncond=%u conflicts with Nup+Ndown=%u.\n",
+              model, X->NCond, X->Nup + X->Ndown);
+      return -1;
+    }
+    X->Ne = X->NCond;
+    return 0;
+  }
+  /* Nsite<=0 is diagnosed after all ModPara keys. */
+  if (X->NCond < 1U || (X->Nsite > 0U && X->NCond > maximum)) {
+    fprintf(stdoutMPI, "Error: TransSym %sNConserved requires 1 <= Ncond <= %u.\n",
+            model, maximum);
+    return -1;
+  }
+  X->Ne = X->NCond;
+  X->Nup = X->Ndown = 0U;
+  X->iCalcModel = X->iCalcModel == tJ ? tJNConserved : HubbardNConserved;
+  return 0;
+}
+
 /** 
  * @brief  Function of reading information about "ModPara" file and total number of parameters from other def files.
  *
@@ -773,7 +864,11 @@ int ReadDefFileNInt(
   X->iFlgSzConserved=FALSE;
   X->iFlgSymmetryBasis=FALSE;
   X->NSymTrans=0;
+  X->NSymTransInput=0;
+  X->NSymTransCapacity=0;
   X->iSymMomentumIndex=-1;
+  X->iParticleParity=0;
+  X->iSpinFlipParity=0;
   X->dcOmegaOrg=0;
   int iReadNCond=FALSE;
   int iReadNup=FALSE;
@@ -782,6 +877,8 @@ int ReadDefFileNInt(
   InitializeInteractionNum(X);
   NumAve=1;
   X->Param.ExpecInterval=1;
+  X->Param.CheckpointInterval=0;
+  X->RestartSourceRanks=0;
   cFileNameListFile = malloc(sizeof(char)*D_CharTmpReadDef*D_iKWNumDef);
   X->PreCG = 0;
 
@@ -896,6 +993,22 @@ int ReadDefFileNInt(
                 X->NCond = (int) dtmp;
                 iReadNCond = TRUE;
               }
+              else if (CheckWords(ctmp, "ParticleParity") == 0) {
+                if (dtmp != 0.0 && dtmp != 1.0 && dtmp != -1.0) {
+                  fprintf(stdoutMPI, "Error: ParticleParity must be 0 (all N), 1 (even N) or -1 (odd N).\n");
+                  fclose(fp);
+                  return -1;
+                }
+                X->iParticleParity = (int) dtmp;
+              }
+              else if (CheckWords(ctmp, "SpinFlipParity") == 0) {
+                if (dtmp != 0.0 && dtmp != 1.0 && dtmp != -1.0) {
+                  fprintf(stdoutMPI, "Error: SpinFlipParity must be 0 (no Px sector), 1 (Px=+1) or -1 (Px=-1).\n");
+                  fclose(fp);
+                  return -1;
+                }
+                X->iSpinFlipParity = (int) dtmp;
+              }
               else if (CheckWords(ctmp, "Lanczos_max") == 0) {
                 if (!isfinite(dtmp) || dtmp < 1 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
                   fprintf(stdoutMPI, "Error: Lanczos_max must be a positive integer less than INT_MAX.\n");
@@ -943,6 +1056,22 @@ int ReadDefFileNInt(
                   return -1;
                 }
                 X->Param.OutputInterval=(int)dtmp;
+              }
+              else if(strcmp(ctmp, "CheckpointInterval")==0){
+                if (!isfinite(dtmp) || dtmp < 0 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: CheckpointInterval must be a non-negative integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
+                X->Param.CheckpointInterval=(int)dtmp;
+              }
+              else if(strcmp(ctmp, "RestartSourceRanks")==0){
+                if (!isfinite(dtmp) || dtmp < 0 || dtmp >= INT_MAX || floor(dtmp) != dtmp) {
+                  fprintf(stdoutMPI, "Error: RestartSourceRanks must be a non-negative integer less than INT_MAX.\n");
+                  fclose(fp);
+                  return -1;
+                }
+                X->RestartSourceRanks=(int)dtmp;
               }
               else if (CheckWords(ctmp, "ExpecInterval") == 0) {
                 X->Param.ExpecInterval = (int) dtmp;
@@ -1302,15 +1431,6 @@ int ReadDefFileNInt(
     fclose(fp);
   }
 
-  /* TransSym is read after CalcMod. Only the sector-specific dense builder
-     supports canonical spinless FullDiag; the raw makeHam path still does not. */
-  if (X->iCalcType == FullDiag &&
-      (X->iCalcModel == SpinlessFermionGC ||
-       (X->iCalcModel == SpinlessFermion && X->iFlgSymmetryBasis == FALSE))) {
-    fprintf(stdoutMPI, cErrSpinlessFullDiag, cFileNameListFile[KWCalcMod]);
-    return -1;
-  }
-
   /* Solver 3 (ELPA) with more than one MPI process generates the Hamiltonian
      as a distributed column panel rather than the full replicated matrix.
      The raw OutputHam/InputHam need the full replicated matrix, so that
@@ -1381,7 +1501,11 @@ int ReadDefFileNInt(
           X->Nup/=2;
           X->Ndown/=2;
         }else{
-          if(X->iCalcModel == Hubbard ){
+          if (X->iFlgSymmetryBasis == TRUE &&
+              (X->iCalcModel == Hubbard || X->iCalcModel == tJ)) {
+            if (normalize_symmetry_fixed_n(X, iReadNup && iReadNdown) != 0)
+              return -1;
+          }else if(X->iCalcModel == Hubbard ){
             X->Ne=X->NCond;
             if(X->Ne <1){
               fprintf(stdoutMPI, "Ncond is incorrect.\n");
@@ -1461,16 +1585,18 @@ int ReadDefFileNInt(
     /* Preserve the raw GC warning below. */
     /* fall through */
   case SpinGC:
+  case HubbardGC:
+  case SpinlessFermionGC:
     if (X->iFlgSymmetryBasis &&
         (iReadNup || iReadNdown || iReadNCond || X->iFlgSzConserved)) {
-      fprintf(stdoutMPI, "Error: SpinGC TransSym does not accept explicit 2Sz/Nup/Ndown/Ncond.\n");
+      fprintf(stdoutMPI, "Error: %s TransSym does not accept explicit 2Sz/Nup/Ndown/Ncond.\n",
+              X->iCalcModel == SpinGC ? "SpinGC" :
+              X->iCalcModel == HubbardGC ? "HubbardGC" : "SpinlessFermionGC");
       return -1;
     }
     /* Preserve the raw GC warning below. */
     /* fall through */
-  case HubbardGC:
   case tJGC:
-  case SpinlessFermionGC:  
     if(iReadNCond == TRUE || X->iFlgSzConserved ==TRUE){
       fprintf(stdoutMPI, "\n  Warning: For GC, both Ncond and 2Sz should not be defined.\n");
       //return(-1);
@@ -1478,6 +1604,31 @@ int ReadDefFileNInt(
     break;
   default:
     break;
+  }
+
+  /* Raw and other models keep their Hilbert space; 0 is the full GC space. */
+  if (X->iParticleParity != 0 &&
+      (X->iFlgSymmetryBasis != TRUE ||
+       (X->iCalcModel != HubbardGC && X->iCalcModel != SpinlessFermionGC))) {
+    fprintf(stdoutMPI, "Error: ParticleParity requires TransSym with HubbardGC or SpinlessFermionGC.\n");
+    return -1;
+  }
+  /* Px = prod_i sigma^x_i maps Sz to -Sz, so a fixed-Sz Spin sector is
+   * invariant only at Sz=0. Pass an identity TransSym for Px alone. */
+  if (X->iSpinFlipParity != 0) {
+    if (X->iFlgSymmetryBasis != TRUE ||
+        (X->iCalcModel != Spin && X->iCalcModel != SpinGC)) {
+      fprintf(stdoutMPI, "Error: SpinFlipParity requires TransSym with Spin or SpinGC.\n");
+      return -1;
+    }
+    if (X->iCalcModel == Spin && X->Nup != X->Ndown) {
+      fprintf(stdoutMPI, "Error: SpinFlipParity with Spin requires 2Sz=0.\n");
+      return -1;
+    }
+    if (X->NSymTrans > UINT_MAX / 2U) {
+      fprintf(stdoutMPI, "Error: TransSym NQPTrans is too large for SpinFlipParity.\n");
+      return -1;
+    }
   }
 
     /* Check values (Positive)*/
@@ -1532,6 +1683,8 @@ int ReadDefFileNInt(
   X->NdownMPI=X->Ndown;
   X->NupOrg=X->Nup;
   X->NdownOrg=X->Ndown;
+  SetRestartIdentity(X);
+  if (ValidateRestartKeys(X) != 0) return -1;
   return 0;
 }
 
@@ -1571,8 +1724,7 @@ int ReadDefFileIdxPara(
   int ilineIn=0;
   int ilineIn2=0;
   int itmp=0;
-  int icnt_trans=0;
-  int iflg_trans=0;
+  unsigned int icnt_trans=0;
   int icnt_interall=0;
   char *nbody_line=NULL;
   int *nbody_factors=NULL;
@@ -1678,24 +1830,12 @@ int ReadDefFileIdxPara(
               }
             }
             
-            iflg_trans=0;
-            for( i=0; i < icnt_trans; i++){
-              if(isite1 ==X->GeneralTransfer[i][0] && isite2 == X->GeneralTransfer[i][2]
-                 && isigma1 == X->GeneralTransfer[i][1] && isigma2 == X->GeneralTransfer[i][3])
-                {
-                  X->ParaGeneralTransfer[i] += dvalue_re+dvalue_im*I;
-                  iflg_trans=1;
-                  continue;
-                }
-            }
-            
-            if(iflg_trans == 0){
-              X->GeneralTransfer[icnt_trans][0]=isite1;
-              X->GeneralTransfer[icnt_trans][1]=isigma1;
-              X->GeneralTransfer[icnt_trans][2]=isite2;
-              X->GeneralTransfer[icnt_trans][3]=isigma2;
-              X->ParaGeneralTransfer[icnt_trans] = dvalue_re+dvalue_im*I;
-              icnt_trans++;
+            if (AppendTransfer(&icnt_trans, X->NTransferCapacity,
+                               X->GeneralTransfer, X->ParaGeneralTransfer,
+                               isite1, isigma1, isite2, isigma2,
+                               dvalue_re + dvalue_im*I) != 0) {
+              fclose(fp);
+              return -1;
             }
             idx++;
           }
@@ -1708,16 +1848,7 @@ int ReadDefFileIdxPara(
       
       X->NTransfer = icnt_trans;
       
-      if(CheckSpinIndexForTrans(X)==FALSE){
-        fclose(fp);
-        return(-1);
-      }
-      
-      if(CheckTransferHermite(X) !=0){
-        fprintf(stdoutMPI, "%s", cErrNonHermiteTransForAll);
-        fclose(fp);
-        return(-1);
-      }
+      /* Finalize after InterAll has contributed its one-body contractions. */
       break;
       
     case KWCoulombIntra:
@@ -1937,10 +2068,16 @@ int ReadDefFileIdxPara(
       X->NInterAll_Diagonal=0;
       X->NInterAll_OffDiagonal=0;
       if(X->NInterAll>0) {
+        struct InterAllRowIndex interall_index;
         icnt_interall =0;
         icnt_diagonal=0;
+        if (InterAllRowIndexInit(&interall_index, X->NInterAll) != 0) {
+          fclose(fp);
+          return ReadDefFileError(defname);
+        }
         while (fgetsMPI(ctmp2, 256, fp) != NULL) {
           if (idx == X->NInterAll) {
+            InterAllRowIndexFree(&interall_index);
             fclose(fp);
             return ReadDefFileError(defname);
           }
@@ -1961,6 +2098,7 @@ int ReadDefFileIdxPara(
                                      X->iFlgSymmetryBasis, X->LocSpn,
                                      isite1, isigma1, isite2, isigma2,
                                      isite3, isigma3, isite4, isigma4) != 0) {
+            InterAllRowIndexFree(&interall_index);
             fclose(fp);
             return ReadDefFileError(defname);
           }
@@ -1972,12 +2110,14 @@ int ReadDefFileIdxPara(
                                 isite2, isigma2,
                                 isite3, isigma3,
                                 isite4, isigma4,
-                                dvalue_re, dvalue_im
+                                dvalue_re, dvalue_im,
+                                &interall_index
           ) != 0) {
             icnt_diagonal += 1;
           }
           idx++;
         }
+        InterAllRowIndexFree(&interall_index);
       }
 
       X->NInterAll = icnt_interall;
@@ -2035,11 +2175,13 @@ int ReadDefFileIdxPara(
             /* The symmetry term iterator applies spinless products directly.
              * The legacy raw spinless matvec has no InterAll off-diagonal
              * path, so retain its existing rejection outside TransSym. */
-            if (!(X->iCalcModel == SpinlessFermion && X->iFlgSymmetryBasis) &&
+            if (!((X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC) &&
+                  X->iFlgSymmetryBasis) &&
                 ArrangeInterAllOffDiagonal(
                     X->NInterAll_OffDiagonal,
                     X->InterAll_OffDiagonal, X->ParaInterAll_OffDiagonal,
-                    X->iCalcModel
+                    X->iCalcModel, &X->NTransfer, X->NTransferCapacity,
+                    X->GeneralTransfer, X->ParaGeneralTransfer
             )!=0){
                 fclose(fp);
                 return(-1);
@@ -2555,6 +2697,7 @@ int ReadDefFileIdxPara(
           idx=0;
           while(fgetsMPI(ctmp2, 256, fp) != NULL){
             sscanf(ctmp2, "%lf %d\n", &(X->TETime[idx]), &(X->NTETransfer[idx]));
+            icnt_trans = 0;
             for(i=0; i<X->NTETransfer[idx]; ++i ){
               fgetsMPI(ctmp2, 256, fp);
               sscanf(ctmp2, "%d %d %d %d %lf %lf\n",
@@ -2565,17 +2708,15 @@ int ReadDefFileIdxPara(
                      &dvalue_re,
                      &dvalue_im
                     );
-              X->TETransfer[idx][i][0]= isite1;
-              X->TETransfer[idx][i][1]= isigma1;
-              X->TETransfer[idx][i][2]= isite2;
-              X->TETransfer[idx][i][3] = isigma2;
-              X->ParaTETransfer[idx][i]=dvalue_re+dvalue_im*I;
+              if (AppendTransfer(&icnt_trans, X->NTETransferCapacity,
+                                 X->TETransfer[idx], X->ParaTETransfer[idx],
+                                 isite1, isigma1, isite2, isigma2,
+                                 dvalue_re + dvalue_im*I) != 0) {
+                fclose(fp);
+                return -1;
+              }
             }
-            //check Transfer Hermite
-            if(CheckTETransferHermite(X, X->NTETransfer[idx], idx)!=0){
-              fclose(fp);
-              return ReadDefFileError(defname);
-            }
+            X->NTETransfer[idx] = icnt_trans;
             idx++;
           }
           if(idx!=X->NTETimeSteps){
@@ -2590,8 +2731,13 @@ int ReadDefFileIdxPara(
           idx=0;
           while(fgetsMPI(ctmp2, 256, fp) != NULL) {
             sscanf(ctmp2, "%lf %d\n", &(X->TETime[idx]), &(X->NTEInterAll[idx]));
+            struct InterAllRowIndex te_interall_index;
             icnt_interall =0;
             icnt_diagonal=0;
+            if (InterAllRowIndexInit(&te_interall_index, X->NTEInterAll[idx]) != 0) {
+              fclose(fp);
+              return ReadDefFileError(defname);
+            }
             for (i = 0; i < X->NTEInterAll[idx]; ++i) {
               fgetsMPI(ctmp2, 256, fp);
               sscanf(ctmp2, "%d %d %d %d %d %d %d %d %lf %lf\n",
@@ -2610,6 +2756,7 @@ int ReadDefFileIdxPara(
                                      X->iFlgSymmetryBasis, X->LocSpn,
                                          isite1, isigma1, isite2, isigma2,
                                          isite3, isigma3, isite4, isigma4) != 0) {
+                InterAllRowIndexFree(&te_interall_index);
                 fclose(fp);
                 return ReadDefFileError(defname);
               }
@@ -2620,11 +2767,13 @@ int ReadDefFileIdxPara(
                                     isite2, isigma2,
                                     isite3, isigma3,
                                     isite4, isigma4,
-                                    dvalue_re, dvalue_im
+                                    dvalue_re, dvalue_im,
+                                    &te_interall_index
               ) != 0) {
                 icnt_diagonal += 1;
               }
             }
+            InterAllRowIndexFree(&te_interall_index);
 
             X->NTEInterAll[idx] = icnt_interall;
             X->NTEInterAllDiagonal[idx] = icnt_diagonal;
@@ -2667,11 +2816,13 @@ int ReadDefFileIdxPara(
                   return (-1);
               }
 
-                if (!(X->iFlgSymmetryBasis && X->iCalcModel == SpinlessFermion) &&
+                if (!(X->iFlgSymmetryBasis &&
+                      (X->iCalcModel == SpinlessFermion || X->iCalcModel == SpinlessFermionGC)) &&
                    ArrangeInterAllOffDiagonal(
                         X->NTEInterAllOffDiagonal[idx],
                         X->TEInterAllOffDiagonal[idx], X->ParaTEInterAllOffDiagonal[idx],
-                        X->iCalcModel
+                        X->iCalcModel, &X->NTETransfer[idx], X->NTETransferCapacity,
+                        X->TETransfer[idx], X->ParaTETransfer[idx]
                 )!=0){
                     fclose(fp);
                     return(-1);
@@ -2953,6 +3104,16 @@ int ReadDefFileIdxPara(
     }
   }
 
+  if (CheckSpinIndexForTrans(X) == FALSE) return -1;
+  if (CheckTransferHermite(X) != 0) {
+    fprintf(stdoutMPI, "%s", cErrNonHermiteTransForAll);
+    return -1;
+  }
+  if (X->iCalcType == TimeEvolution) {
+    for (i = 0; i < X->NTETimeSteps; ++i) {
+      if (CheckTETransferHermite(X, X->NTETransfer[i], i) != 0) return -1;
+    }
+  }
   ResetInteractionNum(X);
   /*=======================================================================*/
   return 0;
@@ -3064,6 +3225,17 @@ int CheckTransferHermite
   unsigned int itmpIdx, icntHermite, icntchemi;
   icntHermite=0;
   icntchemi=0;
+  /* Keep the historical order: explicit transfer diagonals, then InterAll
+   * contractions. The latter were extracted before this final check, so park
+   * them beyond the transfer entries while building the diagonal prefix.
+   * Each InterAll row supplies either a diagonal or an off-site contraction;
+   * NTransfer + interall_chemi therefore fits the reserved input bound. */
+  unsigned int interall_chemi = X->EDNChemi;
+  if (interall_chemi) {
+    memmove(X->EDChemi + X->NTransfer, X->EDChemi, interall_chemi * sizeof(*X->EDChemi));
+    memmove(X->EDSpinChemi + X->NTransfer, X->EDSpinChemi, interall_chemi * sizeof(*X->EDSpinChemi));
+    memmove(X->EDParaChemi + X->NTransfer, X->EDParaChemi, interall_chemi * sizeof(*X->EDParaChemi));
+  }
   
   for(i=0; i<X->NTransfer; i++){
     isite1=X->GeneralTransfer[i][0];
@@ -3132,7 +3304,12 @@ int CheckTransferHermite
     return -1;
   }
   X->EDNTransfer=2*icntHermite;
-  X->EDNChemi=icntchemi;
+  if (interall_chemi) {
+    memmove(X->EDChemi + icntchemi, X->EDChemi + X->NTransfer, interall_chemi * sizeof(*X->EDChemi));
+    memmove(X->EDSpinChemi + icntchemi, X->EDSpinChemi + X->NTransfer, interall_chemi * sizeof(*X->EDSpinChemi));
+    memmove(X->EDParaChemi + icntchemi, X->EDParaChemi + X->NTransfer, interall_chemi * sizeof(*X->EDParaChemi));
+  }
+  X->EDNChemi=icntchemi + interall_chemi;
 
   //To realize ido-san's result
     for(i=0; i<X->EDNTransfer; i++){
@@ -3305,6 +3482,33 @@ int CheckInterAllHermite
   return 0;
 }
 
+/* Rows of InterAllOffDiagonal, ordered by CompareInterAllRowOrder for the
+ * Hermitian-partner lookup in CheckInterAllHermite_simple (qsort has no
+ * context argument). */
+static int **sInterAllRowsForSort = NULL;
+
+/* Lexicographic order of the eight indices of a row; ties by row number, so
+ * rows with equal indices stay in input order. */
+static int CompareInterAllRowOrder(const void *pa, const void *pb) {
+    unsigned int a = *(const unsigned int *) pa;
+    unsigned int b = *(const unsigned int *) pb;
+    int k;
+    for (k = 0; k < 8; k++) {
+        if (sInterAllRowsForSort[a][k] != sInterAllRowsForSort[b][k]) {
+            return sInterAllRowsForSort[a][k] < sInterAllRowsForSort[b][k] ? -1 : 1;
+        }
+    }
+    return (a > b) - (a < b);
+}
+
+static int CompareInterAllKey(const int *key, const int *row) {
+    int k;
+    for (k = 0; k < 8; k++) {
+        if (key[k] != row[k]) return key[k] < row[k] ? -1 : 1;
+    }
+    return 0;
+}
+
 int CheckInterAllHermite_simple
         (
                 int **InterAll,
@@ -3317,13 +3521,30 @@ int CheckInterAllHermite_simple
     unsigned int i, j, icntincorrect, itmpret;
     int isite1, isite2, isite3, isite4;
     int isigma1, isigma2, isigma3, isigma4;
-    int itmpsite1, itmpsite2, itmpsite3, itmpsite4;
-    int itmpsigma1, itmpsigma2, itmpsigma3, itmpsigma4;
+    int partner[8];
     unsigned int itmpIdx, icntHermite;
+    unsigned int ipos, ilo, ihi, imid;
+    unsigned int *order;
     int icheckHermiteCount = FALSE;
     double complex ddiff_intall;
     icntincorrect = 0;
     icntHermite = 0;
+
+    /* The partner of row i is looked up in the rows sorted by their indices,
+     * instead of by scanning every row: O(N log N) instead of O(N^2).
+     * Candidates with the partner's indices are visited in increasing row
+     * number, as in a plain scan, so the pairs and their order are unchanged:
+     * row i is paired with the first matching row j >= i. */
+    order = (unsigned int *) calloc(NInterAllOffDiagonal > 0 ? NInterAllOffDiagonal : 1,
+                                    sizeof(unsigned int));
+    if (order == NULL) {
+        fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+        return (-1);
+    }
+    for (i = 0; i < NInterAllOffDiagonal; i++) order[i] = i;
+    sInterAllRowsForSort = InterAllOffDiagonal;
+    qsort(order, NInterAllOffDiagonal, sizeof(unsigned int), CompareInterAllRowOrder);
+    sInterAllRowsForSort = NULL;
 
     for (i = 0; i < NInterAllOffDiagonal; i++) {
         itmpret = 0;
@@ -3336,37 +3557,43 @@ int CheckInterAllHermite_simple
         isite4 = InterAllOffDiagonal[i][6];
         isigma4 = InterAllOffDiagonal[i][7];
         icheckHermiteCount = FALSE;
-        for (j = 0; j < NInterAllOffDiagonal; j++) {
-            itmpsite1 = InterAllOffDiagonal[j][0];
-            itmpsigma1 = InterAllOffDiagonal[j][1];
-            itmpsite2 = InterAllOffDiagonal[j][2];
-            itmpsigma2 = InterAllOffDiagonal[j][3];
-            itmpsite3 = InterAllOffDiagonal[j][4];
-            itmpsigma3 = InterAllOffDiagonal[j][5];
-            itmpsite4 = InterAllOffDiagonal[j][6];
-            itmpsigma4 = InterAllOffDiagonal[j][7];
-            if (isite1 == itmpsite4 && isite2 == itmpsite3 && isite3 == itmpsite2 && isite4 == itmpsite1) {
-                if (isigma1 == itmpsigma4 && isigma2 == itmpsigma3 && isigma3 == itmpsigma2 && isigma4 == itmpsigma1) {
-                    ddiff_intall = cabs(ParaInterAllOffDiagonal[i] - conj(ParaInterAllOffDiagonal[j]));
-                    if (cabs(ddiff_intall) < eps_CheckImag0) {
-                        itmpret = 1;
-                        if (icheckHermiteCount == FALSE) {
-                            if (i <= j) {
-                                icheckHermiteCount = TRUE; //for not double counting
-                                if (2 * icntHermite >= NInterAllOffDiagonal) {
-                                    fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
-                                    return (-1);
-                                }
-                                for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
-                                    InterAll[2 * icntHermite][itmpIdx] = InterAllOffDiagonal[i][itmpIdx];
-                                    InterAll[2 * icntHermite + 1][itmpIdx] = InterAllOffDiagonal[j][itmpIdx];
-                                }
-                                ParaInterAll[2 * icntHermite] = ParaInterAllOffDiagonal[i];
-                                ParaInterAll[2 * icntHermite + 1] = ParaInterAllOffDiagonal[j];
-                                icntHermite++;
-                                break;
-                            }
+        /* Hermitian partner of (i1 s1 i2 s2 i3 s3 i4 s4) is (i4 s4 i3 s3 i2 s2 i1 s1). */
+        partner[0] = isite4; partner[1] = isigma4;
+        partner[2] = isite3; partner[3] = isigma3;
+        partner[4] = isite2; partner[5] = isigma2;
+        partner[6] = isite1; partner[7] = isigma1;
+        ilo = 0;
+        ihi = NInterAllOffDiagonal;
+        while (ilo < ihi) {
+            imid = ilo + (ihi - ilo) / 2;
+            if (CompareInterAllKey(partner, InterAllOffDiagonal[order[imid]]) > 0) {
+                ilo = imid + 1;
+            } else {
+                ihi = imid;
+            }
+        }
+        for (ipos = ilo; ipos < NInterAllOffDiagonal &&
+                         CompareInterAllKey(partner, InterAllOffDiagonal[order[ipos]]) == 0; ipos++) {
+            j = order[ipos];
+            ddiff_intall = cabs(ParaInterAllOffDiagonal[i] - conj(ParaInterAllOffDiagonal[j]));
+            if (cabs(ddiff_intall) < eps_CheckImag0) {
+                itmpret = 1;
+                if (icheckHermiteCount == FALSE) {
+                    if (i <= j) {
+                        icheckHermiteCount = TRUE; //for not double counting
+                        if (2 * icntHermite >= NInterAllOffDiagonal) {
+                            fprintf(stdoutMPI, "Elements of InterAll are incorrect.\n");
+                            free(order);
+                            return (-1);
                         }
+                        for (itmpIdx = 0; itmpIdx < 8; itmpIdx++) {
+                            InterAll[2 * icntHermite][itmpIdx] = InterAllOffDiagonal[i][itmpIdx];
+                            InterAll[2 * icntHermite + 1][itmpIdx] = InterAllOffDiagonal[j][itmpIdx];
+                        }
+                        ParaInterAll[2 * icntHermite] = ParaInterAllOffDiagonal[i];
+                        ParaInterAll[2 * icntHermite + 1] = ParaInterAllOffDiagonal[j];
+                        icntHermite++;
+                        break;
                     }
                 }
             }
@@ -3378,6 +3605,7 @@ int CheckInterAllHermite_simple
             icntincorrect++;
         }
     }
+    free(order);
 
     //if (icntincorrect != 0) {
     if (icntincorrect != 0 || NInterAllOffDiagonal != 2*icntHermite) {
@@ -3552,6 +3780,76 @@ int GetDiagonalInterAll
   return 0;
 }
 
+/* A diagonal operator n(i1 s1) n(i2 s2), with (i1 s1) <= (i2 s2); n(a) n(a)
+ * stands for n(a). im is the imaginary part of one contribution to its
+ * coefficient. */
+struct InterAllDiagonalImag {
+    int idx[4];
+    double im;
+};
+
+static int CompareInterAllDiagonalImag(const void *pa, const void *pb) {
+    const int *a = ((const struct InterAllDiagonalImag *) pa)->idx;
+    const int *b = ((const struct InterAllDiagonalImag *) pb)->idx;
+    int k;
+    for (k = 0; k < 4; k++) {
+        if (a[k] != b[k]) return a[k] < b[k] ? -1 : 1;
+    }
+    return 0;
+}
+
+static void SetInterAllDiagonalImag(struct InterAllDiagonalImag *e,
+                                    int isite1, int isigma1, int isite2, int isigma2, double im) {
+    if (isite1 > isite2 || (isite1 == isite2 && isigma1 > isigma2)) {
+        int itmp = isite1; isite1 = isite2; isite2 = itmp;
+        itmp = isigma1; isigma1 = isigma2; isigma2 = itmp;
+    }
+    e->idx[0] = isite1; e->idx[1] = isigma1;
+    e->idx[2] = isite2; e->idx[3] = isigma2;
+    e->im = im;
+}
+
+/* The diagonal rows keep only their real parts, so the imaginary parts must
+ * cancel for each operator: c+_a c_a c+_b c_b gives n(a) n(b), and
+ * c+_a c_b c+_b c_a gives n(a) - n(a) n(b). Rows whose imaginary parts cancel,
+ * such as (a a b b) and (b b a a) with conjugate values, are Hermitian. */
+static int CheckInterAllDiagonalReal(int **InterAll, complex double *ParaInterAll, const int NInterAll) {
+    struct InterAllDiagonalImag *terms;
+    int i, k, n = 0, icntincorrect = 0;
+    double im;
+
+    terms = (struct InterAllDiagonalImag *) calloc(NInterAll > 0 ? 2 * (size_t) NInterAll : 1,
+                                                  sizeof(*terms));
+    if (terms == NULL) {
+        fprintf(stdoutMPI, "Error: memory allocation failed while checking InterAll.\n");
+        return (-1);
+    }
+    for (i = 0; i < NInterAll; i++) {
+        const int *r = InterAll[i];
+        im = cimag(ParaInterAll[i]);
+        if (r[0] == r[2] && r[4] == r[6] && r[1] == r[3] && r[5] == r[7]) {
+            SetInterAllDiagonalImag(&terms[n++], r[0], r[1], r[4], r[5], im);
+        } else if (r[0] == r[6] && r[2] == r[4] && r[1] == r[7] && r[3] == r[5]) {
+            SetInterAllDiagonalImag(&terms[n++], r[0], r[1], r[0], r[1], im);
+            SetInterAllDiagonalImag(&terms[n++], r[0], r[1], r[2], r[3], -im);
+        }
+    }
+    qsort(terms, n, sizeof(*terms), CompareInterAllDiagonalImag);
+    for (i = 0; i < n; i = k) {
+        im = 0.0;
+        for (k = i; k < n && CompareInterAllDiagonalImag(&terms[i], &terms[k]) == 0; k++) {
+            im += terms[k].im;
+        }
+        if (fabs(im) >= eps_CheckImag0) {
+            fprintf(stdoutMPI, cErrNonHermiteInterAllDiagonal, terms[i].idx[0], terms[i].idx[1],
+                    terms[i].idx[2], terms[i].idx[3], im);
+            icntincorrect++;
+        }
+    }
+    free(terms);
+    return icntincorrect == 0 ? 0 : -1;
+}
+
 int GetDiagonalInterAll_simple
         (
                 int **InterAll,
@@ -3573,6 +3871,10 @@ int GetDiagonalInterAll_simple
     int isigma1, isigma2, isigma3, isigma4;
     icnt_diagonal=0;
     icnt_offdiagonal=0;
+
+    if (CheckInterAllDiagonalReal(InterAll, ParaInterAll, NInterAll) != 0) {
+        return (-1);
+    }
 
     for(i=0; i<NInterAll; i++){
         isite1=InterAll[i][0];
@@ -3629,7 +3931,11 @@ int ArrangeInterAllOffDiagonal
                 const int NInterAllOffDiagonal,
                 int **InterAllOffDiagonal,
                 complex double *ParaInterAllOffDiagonal,
-                const int iCalcModel
+                const int iCalcModel,
+                unsigned int *NTransfer,
+                const unsigned int transfer_capacity,
+                int **Transfer,
+                double complex *ParaTransfer
         ) {
     unsigned int i, tmp_i;
     int isite1, isite2, isite3, isite4;
@@ -3658,6 +3964,19 @@ int ArrangeInterAllOffDiagonal
                 if (isigma1 == isigma2 && isigma3 == isigma4) {
                     continue;
                 } else if (isigma1 == isigma4 && isigma2 == isigma3) {
+                    /* c_i^dag c_j c_k^dag c_l =
+                     * delta(j,k) c_i^dag c_l - c_i^dag c_l c_k^dag c_j.
+                     * Fully diagonal contractions were handled earlier.
+                     * These rows are Hermitian pairs; emit both transfers
+                     * before replacing the original quartet and its partner. */
+                    if (isite2 == isite3 && isite1 != isite4) {
+                        double complex value = -ParaInterAllOffDiagonal[2 * i];
+                        if (AppendTransfer(NTransfer, transfer_capacity, Transfer, ParaTransfer,
+                                           isite1, isigma1, isite4, isigma1, value) != 0 ||
+                            AppendTransfer(NTransfer, transfer_capacity, Transfer, ParaTransfer,
+                                           isite4, isigma1, isite1, isigma1, conj(value)) != 0)
+                            return -1;
+                    }
                     InterAllOffDiagonal[2 * i][0] = isite1;
                     InterAllOffDiagonal[2 * i][1] = isigma1;
                     InterAllOffDiagonal[2 * i][2] = isite4;
@@ -3957,6 +4276,7 @@ void InitializeInteractionNum
  )
 {
   X->NTransfer=0;
+  X->NTransferCapacity=0;
   X->NCoulombIntra=0;
   X->NCoulombInter=0;
   X->NIsingCoupling=0;
@@ -3986,6 +4306,7 @@ void InitializeInteractionNum
   X->NPairExcitationOperatorBra=0;
   //[s] Time Evolution
   X->NTETimeSteps=0;
+  X->NTETransferCapacity=0;
   X->NLaser=0;
   X->NTEInterAll=0;
   X->NTETransfer=0;
@@ -4206,6 +4527,34 @@ int CheckInterAllCondition(
   return 0;
 }
 
+static unsigned long InterAllRowHash(const int *key) {
+  unsigned long long h = 1469598103934665603ULL; /* FNV-1a */
+  int k;
+  for (k = 0; k < 8; k++) {
+    h ^= (unsigned int) key[k];
+    h *= 1099511628211ULL;
+  }
+  return (unsigned long) (h ^ (h >> 32));
+}
+
+/// \brief Allocate an empty row index for up to \p capacity InterAll rows.
+/// The table has at least twice as many slots as rows, so probing stays short.
+static int InterAllRowIndexInit(struct InterAllRowIndex *index, int capacity) {
+  unsigned long size = 16;
+  index->slot = NULL;
+  /* 2 * capacity must fit, and so must the next power of two above it. */
+  if (capacity > 0 && (unsigned long) capacity > (ULONG_MAX >> 2)) return -1;
+  while (size < 2UL * (unsigned long) (capacity > 0 ? capacity : 1)) size <<= 1;
+  index->slot = (unsigned int *) calloc(size, sizeof(unsigned int));
+  index->mask = size - 1;
+  return index->slot == NULL ? -1 : 0;
+}
+
+static void InterAllRowIndexFree(struct InterAllRowIndex *index) {
+  free(index->slot);
+  index->slot = NULL;
+}
+
 ///
 /// \brief Input InterAll Interactions (Operators of the same kinds are grouped together).
 /// \param icnt_interall total number of interall interactions
@@ -4221,6 +4570,8 @@ int CheckInterAllCondition(
 /// \param[in] isigma4 a spin index on the site 4.
 /// \param dvalue_re
 /// \param dvalue_im
+/// \param index hash table of the rows read so far (see InterAllRowIndexInit);
+///   NULL falls back to scanning every row.
 /// \return 0 Interaction is off-diagonal
 /// \return 1 Interaction is diagonal
 int InputInterAllInfo(
@@ -4231,19 +4582,36 @@ int InputInterAllInfo(
         int isite2, int isigma2,
         int isite3, int isigma3,
         int isite4, int isigma4,
-        double dvalue_re, double dvalue_im
+        double dvalue_re, double dvalue_im,
+        struct InterAllRowIndex *index
 ) {
   int i = 0;
   int iflg_interall = 0;
+  int key[8];
+  unsigned long pos = 0;
+  key[0] = isite1; key[1] = isigma1; key[2] = isite2; key[3] = isigma2;
+  key[4] = isite3; key[5] = isigma3; key[6] = isite4; key[7] = isigma4;
   //Collect and sum same components of InterAll interactions
-  for (i = 0; i < *icnt_interall; i++) {
-    if (isite1 == iInterAllInfo[i][0] && isite2 == iInterAllInfo[i][2] &&
-        isite3 == iInterAllInfo[i][4] && isite4 == iInterAllInfo[i][6] &&
-        isigma1 == iInterAllInfo[i][1] && isigma2 == iInterAllInfo[i][3] &&
-        isigma3 == iInterAllInfo[i][5] && isigma4 == iInterAllInfo[i][7]) {
-      cInterAllValue[i] += dvalue_re + dvalue_im * I;
-      iflg_interall = 1;
-      return 0;
+  if (index != NULL) {
+    pos = InterAllRowHash(key) & index->mask;
+    while (index->slot[pos] != 0) {
+      i = (int) index->slot[pos] - 1;
+      if (memcmp(iInterAllInfo[i], key, sizeof(key)) == 0) {
+        cInterAllValue[i] += dvalue_re + dvalue_im * I;
+        return 0;
+      }
+      pos = (pos + 1) & index->mask;
+    }
+  } else {
+    for (i = 0; i < *icnt_interall; i++) {
+      if (isite1 == iInterAllInfo[i][0] && isite2 == iInterAllInfo[i][2] &&
+          isite3 == iInterAllInfo[i][4] && isite4 == iInterAllInfo[i][6] &&
+          isigma1 == iInterAllInfo[i][1] && isigma2 == iInterAllInfo[i][3] &&
+          isigma3 == iInterAllInfo[i][5] && isigma4 == iInterAllInfo[i][7]) {
+        cInterAllValue[i] += dvalue_re + dvalue_im * I;
+        iflg_interall = 1;
+        return 0;
+      }
     }
   }
 
@@ -4258,6 +4626,7 @@ int InputInterAllInfo(
     iInterAllInfo[*icnt_interall][6] = isite4;
     iInterAllInfo[*icnt_interall][7] = isigma4;
     cInterAllValue[*icnt_interall] = dvalue_re + I * dvalue_im;
+    if (index != NULL) index->slot[pos] = (unsigned int) (*icnt_interall + 1);
     *icnt_interall+=1;
     //Check Diagonal part or not
     if (isite1 == isite2 && isite3 == isite4 &&

@@ -1,109 +1,109 @@
-Restart Mechanism
-=================
+Restart and state import
+========================
 
-This section describes the restart mechanism in :math:`{\mathcal H}\Phi`.
+HPhi has three independent mechanisms. ``ReStart`` continues a solver from
+its saved algorithmic state. ``InputEigenVec=1`` imports a state for CG
+evaluation or as the first state of a new TimeEvolution clock. ``CalcSpec``
+4/5 resumes the Lanczos spectrum sequence through ``TMComponents`` and
+``recalcvec``. Files from one mechanism must not be substituted for another.
 
-Overview
---------
+Solver continuation
+-------------------
 
-:math:`{\mathcal H}\Phi` supports checkpoint/restart functionality, allowing:
+``ReStart`` has the following values in ``CalcMod``: 0 disables continuation,
+1 starts a new run and writes checkpoints, 2 reads and updates checkpoints,
+and 3 reads checkpoints without rewriting them. The v3 manifest and vector
+format is used by CG, mTPQ, cTPQ and TimeEvolution in raw and ``TransSym``
+bases. The saved and current MPI process counts may differ. HPhi reads the
+saved contiguous global intervals and redistributes their intersections to
+the current ownership. Sector v3 continuation also permits metadata layout
+changes between ``replicated`` (0) and ``distributed`` (1). The global vector
+order remains unchanged even though rank ownership changes.
 
-- Resumption of interrupted calculations
-- Breaking large calculations into smaller jobs
-- Iterative refinement of eigenvectors
+``Lanczos_max`` is an absolute final bound for v3 continuation. CG resumes at
+the saved iteration label; TPQ/cTPQ and TimeEvolution resume at the saved next
+step. If the bound is below the saved CG iteration label, or at or below
+the saved TPQ/cTPQ/TimeEvolution next step, HPhi evaluates the restored state,
+does not add time-series rows, and does not rewrite a checkpoint. CG includes
+the iteration labeled ``Lanczos_max``, whereas TPQ/cTPQ/TimeEvolution exclude
+that step. A terminal CG checkpoint is rechecked with the current
+``LanczosEps``. A stricter tolerance can resume iterations; an upper-limit
+no-op must not be described as currently converged.
 
-Restart Files
--------------
+``CheckpointInterval`` controls periodic CG, mTPQ and cTPQ checkpoints. Zero
+means end-only. TimeEvolution uses ``OutputInterval`` for continuation
+checkpoints, and its time table must contain the saved next step. See
+:doc:`the restart file specification <../filespecification/outputfiles_en/restart_en>`.
 
-The following files are used for restart:
+State import
+------------
 
-**Eigenvector files**
-  ``zvo_eigenvec_{rank}_set{set}.dat``
-    Stores the eigenvector for each MPI rank.
+State import validates the model, basis identity, sector and phase, payload
+length, norm and digest. Source method, state, step, time and solver scalars
+are provenance; they do not resume the source solver. CG evaluates an imported
+state. TimeEvolution starts at step zero on its current time grid. v3 imports
+are redistributed automatically when the saved and current process counts
+differ. Sector v3 and old sector v1/v2 imports also permit metadata layout
+0/1 changes. For v1/v2, HPhi verifies the payload checksum using the saved
+partition before redistribution and uses the partition-independent sector
+digest to validate the basis set. The basis builder's canonical
+representative-state sort fixes its global order, so an equal set has the
+same order. The output-file reference gives the required copy procedure.
 
-**Restart vector files**
-  ``restart_{rank}.dat``
-    Contains the Lanczos vectors needed to resume iteration.
+Changing the MPI process count
+------------------------------
 
-**Tri-diagonal matrix**
-  ``zvo_Lanczos_Step.dat``
-    Stores the Lanczos coefficients.
+Keep every source-rank file, including a file for an empty owner. For v3
+continuation, copy the manifest and every vector file named by it, then run
+with the desired process count; no extra parameter is needed. v3 continuation
+uses the count in each manifest row and ignores ``RestartSourceRanks``. This
+also permits an interrupted TPQ/cTPQ migration to resume when some samples
+are v3 files written by the new process count and other samples are legacy
+files: the parameter applies only to those remaining legacy samples. It can
+be removed after all samples have been republished as v3.
 
-Input/Output Settings
----------------------
+For v3 or sector v1/v2 state import, copy every source file under the import
+prefix and run with the desired process count. Their headers provide the
+source count. ``RestartSourceRanks`` is optional for state import and acts
+only as an additional equality check.
 
-In the ``CalcMod`` input file:
+For legacy raw import or continuation, copy every saved per-rank file and add
+``RestartSourceRanks=<saved process count>`` to ``ModPara`` before changing
+the process count. HPhi never guesses this value from file names, because a
+missing empty trailing rank would otherwise be indistinguishable from a
+smaller complete file set.
 
-``iInputEigenVec``
-  - ``0``: Start from random or specified initial vector (default)
-  - ``1``: Read eigenvector from file and recalculate
-  - ``2``: Read eigenvector from file
+Legacy and spectrum behavior
+----------------------------
 
-``iOutputEigenVec``
-  - ``0``: Do not output eigenvector (default)
-  - ``1``: Output eigenvector to file
+Legacy raw ``tmpvec_set*_rank_*.dat`` remains readable by CG and TPQ/cTPQ.
+Because this format stores neither its source rank count nor identity words,
+rank-changing reads require ``RestartSourceRanks``. Keep every saved rank
+file, including an empty trailing rank; HPhi checks all native headers, file
+lengths, steps and the global dimension before redistribution, but cannot
+validate model or sector identity from the files.
+Legacy CG keeps its historical additional-iteration meaning: iteration labels
+restart at one and the old ``Lanczos_Step`` prefix is not recovered. Legacy
+TPQ/cTPQ and raw TimeEvolution recover output rows below their validated next
+step when possible. Old sector v1/v2 files are state-import formats, not solver
+continuation checkpoints.
 
-Usage Examples
---------------
+Ground-state Lanczos and ``CalcSpec`` 4/5 retain their existing
+``TMComponents``/``recalcvec`` behavior and iteration meaning. They do not use
+the v3 solver manifest.
 
-**Initial calculation with eigenvector output**
+Output recovery
+---------------
 
-Set ``iOutputEigenVec = 1`` in the CalcMod file.
-After the calculation completes, eigenvector files will be written.
+Before appending, HPhi validates every required checkpoint, removes complete
+rows at or after the recovery boundary, drops an incomplete final line, and
+rejects malformed interior rows. A missing history file is created and only
+new rows can then be written; a missing prefix cannot be reconstructed.
+Per-set files and CG/TimeEvolution histories reproduce uninterrupted row
+order. Shared TPQ aggregate files follow execution order, so compare them by
+sorted ``(set, step, observable)`` keys when several sets resume.
 
-**Restart from eigenvector**
-
-Set ``iInputEigenVec = 1`` and ``iOutputEigenVec = 1``.
-The calculation will read the eigenvector from the previous run
-and refine it.
-
-**Calculate expectation values only**
-
-Set ``iInputEigenVec = 2``.
-The eigenvector will be read and used to compute observables
-without further diagonalization.
-
-File Format
------------
-
-Eigenvector files are stored in binary format for efficiency.
-Each file contains:
-
-1. Header information (system size, etc.)
-2. Complex double array of eigenvector components
-
-The files are platform-dependent due to binary format.
-Ensure restart files are used on the same architecture.
-
-MPI Considerations
-------------------
-
-When using MPI, each process writes and reads its own restart files.
-The number of MPI processes must match between the original and restart runs.
-
-If you need to change the process count, you must:
-
-1. Gather all eigenvector files
-2. Redistribute the data
-3. Split into new per-process files
-
-Common Issues
--------------
-
-**File not found**
-  Ensure restart files are in the working directory with correct names.
-
-**Process count mismatch**
-  The number of MPI processes must match the original calculation.
-
-**File corruption**
-  If calculations produce unexpected results after restart,
-  the restart files may be corrupted. Delete them and start fresh.
-
-Best Practices
---------------
-
-- Regularly save eigenvector files during long calculations
-- Keep backup copies of restart files
-- Verify results after restart by checking conserved quantities
-- Document the calculation parameters used with each restart file
+The ``CalcTimer.dat`` rows ``Restart write`` (7100), ``Restart read`` (7110)
+and ``Restart recover outputs`` (7120) measure v3 publication, continuation
+vector loading, and time-series validation/rewrite respectively. They are
+instrumentation totals, not a controlled storage benchmark.

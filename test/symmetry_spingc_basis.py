@@ -299,10 +299,23 @@ def validation(root, hphi):
              lambda path: extra(path, 'PairHop', [(0, 1, .2)]))
     negative('unsupported_method', 'CalcType:',
              lambda path: replace(path, 'calc.def', 'CalcType 3', 'CalcType 6'))
+    # tJGC has no TransSym sector; HubbardGC and SpinlessFermionGC do.
     negative('unsupported_model', 'supports only SpinGC, Spin',
-             lambda path: (replace(path, 'calc.def', 'CalcModel 4', 'CalcModel 3'),
+             lambda path: (replace(path, 'calc.def', 'CalcModel 4', 'CalcModel 10'),
                            c.definition(path, 'loc.def', [(i, 0) for i in range(4)], 0)), empty)
-    negative('restart', 'does not support ReStart', lambda path: append(path, 'calc.def', 'ReStart 1\n'))
+    import shutil
+    restart = root/'cg_restart'
+    shutil.copytree(base, restart)
+    append(restart, 'calc.def', 'ReStart 1\n')
+    c.run_case(restart, hphi, 'accepted', [], dict(os.environ))
+    saved_manifest = (restart/'output/zvo_restart_manifest.dat').read_bytes()
+    assert b'method CG' in saved_manifest and b'ncomp 2' in saved_manifest
+    saved_history = (restart/'output/zvo_Lanczos_Step.dat').read_bytes()
+    replace(restart, 'calc.def', 'ReStart 1', 'ReStart 3')
+    c.run_case(restart, hphi, 'continued', [], dict(os.environ))
+    assert (restart/'output/zvo_restart_manifest.dat').read_bytes() == saved_manifest
+    assert (restart/'output/zvo_Lanczos_Step.dat').read_bytes() == saved_history
+    print('validation CG v3 restart accepted', flush=True)
     negative('spectrum', 'spectrum calculations', lambda path: append(path, 'calc.def', 'CalcSpec 1\n'))
     import shutil
     vectors = root/'fulldiag_vectors'

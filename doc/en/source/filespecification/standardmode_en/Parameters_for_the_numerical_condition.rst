@@ -22,13 +22,44 @@ Parameters for the numerical condition
    calculation with the restart-file generated in the previous run,
    ``"Restart"`` for ``"Restart_out"`` + ``"Restart_in"``.
 
+   CG, mTPQ, cTPQ and TimeEvolution use v3 continuation checkpoints in raw
+   and ``TransSym`` bases. v3 permits a different MPI process count and sector
+   metadata layout 0/1 changes. State import through
+   ``EigenVecIO="In"`` starts a new evaluation or time grid and is not solver
+   continuation. Lanczos/spectrum restart remains a separate legacy path.
+
+*  ``CheckpointInterval``
+
+   **Type :** Non-negative integer less than ``INT_MAX`` (default: omitted,
+   equivalent to ``0``)
+
+   **Description :** Periodic v3 checkpoint interval for CG, mTPQ and cTPQ.
+   Zero writes only at the end. A positive value requires ``Restart_out`` or
+   ``Restart``. TimeEvolution uses ``OutputInterval`` instead. Standard mode
+   writes this expert parameter only when it is specified.
+
+*  ``RestartSourceRanks``
+
+   **Type :** Non-negative integer less than ``INT_MAX`` (default: omitted,
+   equivalent to ``0``)
+
+   **Description :** Expected process count in restart or imported vector
+   files. For legacy raw files, zero means the current count and a rank-changing
+   read requires the saved count explicitly. v3 and sector v1/v2 files are
+   self-describing and redistribute automatically. v3 continuation ignores
+   this parameter and uses each manifest row. For v3 and sector v1/v2 state
+   import, a positive value is optional but must match the header. Standard
+   mode writes this parameter only when specified.
+
 *  ``Lanczos_max``
 
    **Type :** Positive integer (default value: ``2000``)
 
    **Description :** The upper limit of the Lanczos/LOBCG/BiCG step and
    the number of steps for TPQ/Time=evolution are specified with this
-   parameter.
+   parameter. For v3 continuation this is an absolute total/final bound;
+   lowering it below the saved next step produces a valid no-op evaluation.
+   Legacy CG and Lanczos retain their historical additional-step meaning.
 
 *  ``initial_iv``
 

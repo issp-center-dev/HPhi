@@ -40,7 +40,8 @@ static void OutputSymmetryRankStats(const struct BindStruct *X)
     1100, 1110, 1115, 1111, 1112, 1123, 1113, 1114,
     1101, 1120, 1121, 1122, 1130, 1131, 1132,
     1133, 1134, 1135, 1124, 1125, 4113,
-    1, 1501, 1502, 1503, 1510, 1511, 1512, 1513
+    1, 1501, 1502, 1503, 1510, 1511, 1512, 1513,
+    7100, 7110, 7120
   };
   static const char *work_keys[] = {
     "basis_raw_states",
@@ -832,6 +833,10 @@ void OutputTimer(struct BindStruct *X) {
   }
   
   fprintf(fp,"================================================\n");
+
+  StampTime(fp, "  Restart write", 7100);
+  StampTime(fp, "  Restart read", 7110);
+  StampTime(fp, "  Restart recover outputs", 7120);
   
   StampTime(fp,"All mltply",1);
   StampTime(fp,"  symmetry input Allgatherv",1501);

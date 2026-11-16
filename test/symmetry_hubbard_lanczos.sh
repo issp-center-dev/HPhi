@@ -374,13 +374,14 @@ assert_replicated_rank_stats() {
                 header_basis_layout != "replicated" ||
                 header_matvec_mode != "plan" ||
                 header_vector_exchange != expected_exchange ||
-                timer_count != 29 || work_count != 107 ||
+                timer_count != 32 || work_count != 107 ||
                 metric_count != 15 || digest_count != 1 ||
                 schedule_digest_count != 1) bad = 1
             if (timer_seen[1112] != 1 || timer_seen[1123] != 1 ||
                 timer_seen[1124] != 1 || timer_seen[1125] != 1 ||
                 timer_seen[1133] != 1 || timer_seen[1134] != 1 ||
-                timer_seen[1135] != 1) bad = 1
+                timer_seen[1135] != 1 || timer_seen[7100] != 1 ||
+                timer_seen[7110] != 1 || timer_seen[7120] != 1) bad = 1
             if (abs(work_mean["basis_raw_states"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_state_enumerator_calls"] * expected_ranks - 16) > 1.0e-12) bad = 1
             if (abs(work_mean["basis_diagonal_evaluator_calls"] * expected_ranks - 16) > 1.0e-12) bad = 1

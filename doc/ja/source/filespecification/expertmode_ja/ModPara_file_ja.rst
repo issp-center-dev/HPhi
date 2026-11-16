@@ -90,6 +90,27 @@ ModParaファイル
    **説明 :**
    アウトプットファイルのヘッダ。例えば、一体のGreen関数の出力ファイル名が\ **xxx\_Lanczos\_cisajs.dat**\ として出力されます(xxxに\ ``CDataFileHead``\ で指定した文字が記載)。
 
+-  ``CheckpointInterval``
+
+   **形式 :** int型 (0以上 ``INT_MAX`` 未満、デフォルト値 0)
+
+   **説明 :** CG、mTPQ、cTPQのv3継続checkpoint周期です。0は終端だけで
+   書きます。正の値には ``ReStart=1`` または2が必要です。TimeEvolutionでは
+   使わず、``OutputInterval`` を使います。
+
+-  ``RestartSourceRanks``
+
+   **形式 :** int型 (0以上 ``INT_MAX`` 未満、デフォルト値 0)
+
+   **説明 :** restart/import fileに期待するMPI process数です。0は現在の
+   process数をlegacy raw fileのsource数として扱います。legacy raw file一式を
+   異なるprocess数で読む場合は、このparameterに保存時のrank file数を必ず指定し、
+   要素数0のrankを含む全fileを残してください。v3とsector v1/v2は保存process数を
+   自己記述し、自動的に再配置します。v3継続ではこのparameterを無視して各manifest行の
+   process数を使うため、TPQ/cTPQの一部sampleだけがv3へ移行済みでも再開できます。
+   v3およびsector v1/v2の状態importでは指定は任意ですが、正の値を指定した場合は
+   headerのprocess数と一致する必要があります。
+
 -  ``Nsite``
 
    **形式 :** int型 (自然数)
@@ -109,6 +130,20 @@ ModParaファイル
 
    **説明 :**
    :math:`2S_z`\ を指定する整数。グランドカノニカルの場合には使用されません。電子系、近藤格子模型で\ :math:`S_z`\ 保存の計算を行う場合には\ ``Ncond``\ を指定する必要があります。\ ``CalcModel`` = 0（電子系 Hubbard 模型）において\ ``2Sz``\ を指定せず\ ``Ncond``\ のみを与えると、電子数を固定しつつ\ :math:`S_z`\ を自由とする\ ``HubbardNConserved``\ 模型が選択されます。これは 2Sz 非保存（スピン交差）系の一体励起非対角（ブラ・ケット）動的グリーン関数で用いるセクターです。
+
+-  ``ParticleParity``
+
+   **形式 :** int型 (0、1、-1)
+
+   **説明 :**
+   HubbardGCまたはSpinlessFermionGCの対称性セクター（\ ``TransSym``\ ）で、すべての粒子数（0、既定値）、偶数の\ :math:`N`\ （1）、奇数の\ :math:`N`\ （-1）を選びます。それ以外の値と、\ ``TransSym``\ なしまたは他の模型での0以外の値は拒否します。
+
+-  ``SpinFlipParity``
+
+   **形式 :** int型 (0、1、-1)
+
+   **説明 :**
+   スピン1/2のSpinGC、または\ ``2Sz=0``\ のSpinの対称性セクター（\ ``TransSym``\ ）で、全スピン反転\ :math:`P_x=\prod_i\sigma^x_i`\ の固有値\ :math:`p=+1`\ （1）または\ :math:`p=-1`\ （-1）を選びます。0（既定値）では\ :math:`P_x`\ を使いません。それ以外の値と、\ ``TransSym``\ なし、他の模型、\ :math:`S_z\neq 0`\ での0以外の値は拒否します。\ :ref:`Subsec:TransSymSpinFlip`\ を参照してください。
 
 -  ``initial_iv``
 
@@ -167,7 +202,8 @@ Lanczos法で使用するパラメータ
    **説明 :** Lanczosステップを行う回数の最大値を与えます。
    指定した精度内で収束した場合には、これより短い回数で終了します。
    この回数以内で収束しない場合はエラー終了します。
-   再計算を行う場合には、\ ``Lanczos_max``\ の最大数を過去のステップ数よりも大きくする必要があります。
+   legacy Lanczosリスタートでは、\ ``Lanczos_max``\ は絶対的な最終stepではなく、
+   保存stepからの**追加**step数です。
 
 -  ``LanczosEps``
 
@@ -202,7 +238,9 @@ CG法で使用するパラメータ
    **説明 :** CG法を行う際のステップ数の最大値を与えます。
    指定した精度内で収束した場合には、これより短い回数で終了します。
    この回数以内で収束しない場合はエラー終了します。
-   再計算を行う場合には、\ ``Lanczos_max``\ の最大数を過去のステップ数よりも大きくする必要があります。
+   legacy LOBPCGリスタートでは、\ ``Lanczos_max``\ は保存点からの
+   **追加**反復数です。v3 CG継続では絶対的な最終反復labelです。保存した次labelより
+   小さい場合は反復せず復元vectorを評価します。この上限no-opは現在の収束を主張しません。
 
 -  ``LanczosEps``
 
@@ -221,7 +259,8 @@ TPQ法で使用するパラメータ
    **形式 :** int型 (自然数)
 
    **説明 :** TPQ法の総ステップ数を与えます。
-   再計算を行う場合には、\ ``Lanczos_max``\ の最大数を過去のステップ数よりも大きくする必要があります。
+   TPQ/cTPQリスタートでも絶対的な総step数を表します。保存した次step以下も有効な
+   no-opで、時系列行を追加せずcheckpointを書き直さずに復元状態を評価します。
 
 -  ``LargeValue``
 
@@ -383,7 +422,8 @@ TPQ法で使用するパラメータ
    **形式 :** int型 (自然数)
 
    **説明 :** 実時間発展法の総ステップ数を与えます。
-   再計算を行う場合には、\ ``Lanczos_max``\ の最大数を過去のステップ数よりも大きくする必要があります。
+   v3リスタートでも絶対的な総step数を表します。保存された次step以下は、
+   時刻表境界の検証後に有効なno-opです。
 
 -  ``ExpandCoef``
 
@@ -411,7 +451,9 @@ TPQ法で使用するパラメータ
 
 -  ``OutputInterval``
 
-   ``OutputEigenVec=1`` の場合は正の値が必要です。明示指定したintervalと反復回数は
+   ``OutputEigenVec=1`` の場合、および ``ReStart=1`` または2でv3 TimeEvolution
+   continuation checkpointを書く場合は正の値が必要です。時刻表は保存された次stepを
+   含む必要があります。明示指定したintervalと反復回数は
    ``INT_MAX`` 未満の有限な整数に限ります。
 
    **形式 :** int型 (自然数)
@@ -420,6 +462,13 @@ TPQ法で使用するパラメータ
    (``CalcMod``\ ファイルで\ ``OutputEigenVec=1``\ にすると有効になります)
 
 
+
+TransSymを使うHubbardGC・SpinlessFermionGC
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``2Sz``、``Nup``、``Ndown``、``Ncond`` を省略してください。0を含む明示指定は
+拒否します。``ParticleParity`` で偶数または奇数の粒子数に限定できます。次元、
+pair項、ファイルの識別は :ref:`Subsec:TransSym` を参照してください。
 
 TransSymを使うSpinGC
 ~~~~~~~~~~~~~~~~~~~~
@@ -432,6 +481,8 @@ TPQ/cTPQパラメータは単一sectorの標本に対する指定です。sector
 ``InvTemp`` は固有ベクトル出力を要求できません。TEは正の ``ExpandCoef``、
 有限で非減少の時間列、観測量・checkpointの ``ExpecInterval`` / ``OutputInterval``
 を使います。磁化モーメント、読込の意味、入力例は :ref:`Subsec:TransSym` を参照してください。
+``SpinFlipParity`` でセクターに全スピン反転を加えられます。 ``2Sz=0`` の ``Spin`` でも
+使えます（:ref:`Subsec:TransSymSpinFlip`）。
 
 .. raw:: latex
 

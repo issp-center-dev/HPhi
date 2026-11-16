@@ -6,12 +6,50 @@
 #include "symmetry_kondo.h"
 #include "symmetry_kondo_terms.h"
 
+int IsSymmetrySpinfulFermionModel(int model)
+{
+  return model == Hubbard || model == HubbardNConserved || model == HubbardGC ||
+         model == tJ || model == tJNConserved;
+}
+
+int IsSymmetryTJModel(int model)
+{
+  return model == tJ || model == tJNConserved;
+}
+
+int IsSymmetrySpinlessFermionModel(int model)
+{
+  return model == SpinlessFermion || model == SpinlessFermionGC;
+}
+
+int IsSymmetryFermionGCModel(int model)
+{
+  return model == HubbardGC || model == SpinlessFermionGC;
+}
+
+int SymmetryUsesSpinFlip(const struct DefineList *def)
+{
+  return def != NULL && def->iFlgSymmetryBasis && def->iSpinFlipParity != 0 &&
+         (def->iCalcModel == Spin || def->iCalcModel == SpinGC);
+}
+
+int SymmetryOperationFlipsSpins(const struct DefineList *def, unsigned int op)
+{
+  return def != NULL && def->SymTransFlip != NULL && op < def->NSymTrans &&
+         def->SymTransFlip[op] != 0;
+}
+
 int SymmetryUsesExtendedTerms(const struct DefineList *def)
 {
+  /* The legacy plan only has the fixed-Sz Hubbard hopping kernel. Its Spin
+   * invariance checks permute sites only, so Px also takes the common path. */
   return IsSymmetryKondoModel(def->iCalcModel) || def->iCalcModel == SpinGC ||
+      SymmetryUsesSpinFlip(def) ||
       (def->iFlgSymmetryBasis && def->iCalcType == TimeEvolution &&
           (def->NLaser || def->NTETransferMax || def->NTEInterAllMax)) ||
-      def->iCalcModel == tJ || def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
+      IsSymmetryTJModel(def->iCalcModel) || def->iCalcModel == HubbardNConserved ||
+      IsSymmetryFermionGCModel(def->iCalcModel) ||
+      def->EDNChemi || def->NInterAll || def->NInterAll_Diagonal ||
       def->NInterAll_OffDiagonal || def->NPairHopping ||
       (def->iCalcModel == Hubbard && (def->NCoulombInter || def->NHundCoupling ||
        def->NExchangeCoupling || def->NIsingCoupling)) ||
@@ -32,7 +70,7 @@ static int emit(const struct DefineList *def, int kind, unsigned int factors,
   if (!isfinite(creal(value)) || !isfinite(cimag(value))) return -1;
   for (i = 0; i < 4 * factors; i += 2) {
     if (index[i] < 0 || (unsigned int)index[i] >= def->Nsite ||
-        index[i+1] < 0 || index[i+1] > (def->iCalcModel == SpinlessFermion ? 0 : 1))
+        index[i+1] < 0 || index[i+1] > (IsSymmetrySpinlessFermionModel(def->iCalcModel) ? 0 : 1))
       return -1;
     term.index[i] = index[i];
     term.index[i+1] = index[i+1];
@@ -62,10 +100,11 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
   int a, b, s, t;
   if (!def || !callback || kind < -1 || kind > 1 || def->Nsite == 0 ||
       (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
-       def->iCalcModel != SpinlessFermion &&
-       def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+       !IsSymmetrySpinlessFermionModel(def->iCalcModel) &&
+       !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel)) || def->iFlgGeneralSpin ||
-      def->NNBodyInterAll || def->NAnomalousTerm ||
+      def->NNBodyInterAll ||
+      (def->NAnomalousTerm && !IsSymmetryFermionGCModel(def->iCalcModel)) ||
       (def->iCalcModel != SpinGC && def->NPairLiftCoupling) ||
       def->NIsingCoupling > def->NCoulombInter ||
       def->NIsingCoupling > def->NHundCoupling) return -1;
@@ -95,7 +134,7 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
     if (emit(def, kind, 2, def->InterAll_OffDiagonal[p],
              def->ParaInterAll_OffDiagonal[p], callback, context)) return -1;
   CHECK_STORAGE(def->NCoulombIntra, def->CoulombIntra, def->ParaCoulombIntra);
-  if (def->NCoulombIntra && def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+  if (def->NCoulombIntra && !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel)) return -1;
   for (p = 0; p < def->NCoulombIntra; ++p) {
     a = def->CoulombIntra[p][0];
@@ -104,18 +143,18 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
   CHECK_STORAGE(def->NCoulombInter, def->CoulombInter, def->ParaCoulombInter);
   for (p = 0; p < def->NCoulombInter; ++p) {
     a = def->CoulombInter[p][0]; b = def->CoulombInter[p][1];
-    for (s = 0; s <= (def->iCalcModel == SpinlessFermion ? 0 : 1); ++s)
-      for (t = 0; t <= (def->iCalcModel == SpinlessFermion ? 0 : 1); ++t)
+    for (s = 0; s <= (IsSymmetrySpinlessFermionModel(def->iCalcModel) ? 0 : 1); ++s)
+      for (t = 0; t <= (IsSymmetrySpinlessFermionModel(def->iCalcModel) ? 0 : 1); ++t)
         EMIT(2, def->ParaCoulombInter[p], a,s,a,s,b,t,b,t);
   }
   CHECK_STORAGE(def->NHundCoupling, def->HundCoupling, def->ParaHundCoupling);
-  if (def->NHundCoupling && def->iCalcModel == SpinlessFermion) return -1;
+  if (def->NHundCoupling && IsSymmetrySpinlessFermionModel(def->iCalcModel)) return -1;
   for (p = 0; p < def->NHundCoupling; ++p) {
     a = def->HundCoupling[p][0]; b = def->HundCoupling[p][1];
     for (s = 0; s < 2; ++s) EMIT(2, -def->ParaHundCoupling[p], a,s,a,s,b,s,b,s);
   }
   CHECK_STORAGE(def->NExchangeCoupling, def->ExchangeCoupling, def->ParaExchangeCoupling);
-  if (def->NExchangeCoupling && def->iCalcModel == SpinlessFermion) return -1;
+  if (def->NExchangeCoupling && IsSymmetrySpinlessFermionModel(def->iCalcModel)) return -1;
   for (p = 0; p < def->NExchangeCoupling; ++p) {
     a = def->ExchangeCoupling[p][0]; b = def->ExchangeCoupling[p][1];
     if (a == b) continue; /* Existing Exchange semantics. */
@@ -136,11 +175,30 @@ int EnumerateSymmetryTerms(const struct DefineList *def, int kind,
     EMIT(2, def->ParaPairLiftCoupling[p], a,0,a,1,b,0,b,1);
   }
   CHECK_STORAGE(def->NPairHopping, def->PairHopping, def->ParaPairHopping);
-  if (def->NPairHopping && def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+  if (def->NPairHopping && !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel)) return -1;
   for (p = 0; p < def->NPairHopping; ++p) {
     a = def->PairHopping[p][0]; b = def->PairHopping[p][1];
     EMIT(2, def->ParaPairHopping[p], a,0,b,0,a,1,b,1);
+  }
+  CHECK_STORAGE(def->NAnomalousTerm, def->AnomalousTerm, def->ParaAnomalousTerm);
+  for (p = 0; p < def->NAnomalousTerm; ++p) {
+    const int *row = def->AnomalousTerm[p];
+    struct SymmetryTerm term = {0};
+    unsigned int i;
+    if (row[0] != 0 && row[0] != 1) return -1;
+    term.kind = row[0] ? SYMMETRY_TERM_CREATE_PAIR : SYMMETRY_TERM_ANNIHILATE_PAIR;
+    term.factors = 1U;
+    term.value = def->ParaAnomalousTerm[p];
+    for (i = 0; i < 4U; ++i) term.index[i] = row[1+i];
+    if (!isfinite(creal(term.value)) || !isfinite(cimag(term.value)) ||
+        row[1] < 0 || (unsigned int)row[1] >= def->Nsite ||
+        row[3] < 0 || (unsigned int)row[3] >= def->Nsite ||
+        row[2] < 0 || row[2] > (IsSymmetrySpinlessFermionModel(def->iCalcModel) ? 0 : 1) ||
+        row[4] < 0 || row[4] > (IsSymmetrySpinlessFermionModel(def->iCalcModel) ? 0 : 1) ||
+        (row[1] == row[3] && row[2] == row[4])) return -1;
+    /* A pair changes N by two, so it is never diagonal. */
+    if (kind != 0 && callback(&term, context)) return -1;
   }
 #undef CHECK_STORAGE
 #undef EMIT
@@ -153,20 +211,20 @@ int ApplySymmetryFactors(const struct DefineList *def, unsigned int factors,
 {
   unsigned int f, nint;
   double s = 1.0;
-  unsigned int width = (def && (def->iCalcModel == Hubbard || def->iCalcModel == tJ ||
+  unsigned int width = (def && (IsSymmetrySpinfulFermionModel(def->iCalcModel) ||
       IsSymmetryKondoModel(def->iCalcModel))) ? 2U : 1U;
   if (!def || !index || !out || !sign || factors < 1U || factors > UINT_MAX / 4U ||
       def->Nsite == 0 || def->Nsite > CHAR_BIT * sizeof(state) / width ||
       (def->iCalcModel != Spin && def->iCalcModel != SpinGC &&
-       def->iCalcModel != SpinlessFermion &&
-       def->iCalcModel != Hubbard && def->iCalcModel != tJ &&
+       !IsSymmetrySpinlessFermionModel(def->iCalcModel) &&
+       !IsSymmetrySpinfulFermionModel(def->iCalcModel) &&
        !IsSymmetryKondoModel(def->iCalcModel))) return -1;
   if (IsSymmetryKondoModel(def->iCalcModel) &&
       !SymmetryKondoStateIsPhysical(def, state)) return -1;
   nint = 4U * factors;
   for (f = 0; f < nint; f += 2U)
     if (index[f] < 0 || (unsigned int)index[f] >= def->Nsite ||
-        index[f+1U] < 0 || index[f+1U] > (def->iCalcModel == SpinlessFermion ? 0 : 1))
+        index[f+1U] < 0 || index[f+1U] > (IsSymmetrySpinlessFermionModel(def->iCalcModel) ? 0 : 1))
       return -1;
   if (def->iCalcModel == Spin || def->iCalcModel == SpinGC)
     for (f = 0; f < factors; ++f)
@@ -189,9 +247,39 @@ int ApplySymmetryFactors(const struct DefineList *def, unsigned int factors,
     }
   }
   /* Project only after the complete product, preserving virtual states. */
-  if (def->iCalcModel == tJ && (state & (state >> 1U) & (ULONG_MAX / 3UL))) return 0;
+  if (IsSymmetryTJModel(def->iCalcModel) && (state & (state >> 1U) & (ULONG_MAX / 3UL)))
+    return 0;
   if (IsSymmetryKondoModel(def->iCalcModel) &&
       !SymmetryKondoStateIsPhysical(def, state)) return 0;
+  *out = state;
+  *sign = s;
+  return 1;
+}
+
+int ApplySymmetryPair(const struct DefineList *def, int create, const int *index,
+                      unsigned long state, unsigned long *out, double *sign)
+{
+  unsigned int width, op;
+  double s = 1.0;
+  if (!def || !index || !out || !sign || (create != 0 && create != 1) ||
+      !IsSymmetryFermionGCModel(def->iCalcModel) || def->Nsite == 0) return -1;
+  width = IsSymmetrySpinfulFermionModel(def->iCalcModel) ? 2U : 1U;
+  if (def->Nsite > CHAR_BIT * sizeof(state) / width) return -1;
+  for (op = 0; op < 4U; op += 2U)
+    if (index[op] < 0 || (unsigned int)index[op] >= def->Nsite ||
+        index[op+1U] < 0 || (unsigned int)index[op+1U] >= width) return -1;
+  if (index[0] == index[2] && index[1] == index[3]) return -1;
+  for (op = 4U; op > 0U;) { /* j, then i */
+    unsigned int orbital;
+    unsigned long mask, below;
+    op -= 2U;
+    orbital = width * (unsigned int)index[op] + (unsigned int)index[op+1U];
+    mask = 1UL << orbital;
+    below = state & (mask - 1UL);
+    if (((state & mask) != 0) == (create != 0)) return 0;
+    while (below) { s = -s; below &= below - 1UL; }
+    state ^= mask;
+  }
   *out = state;
   *sign = s;
   return 1;
@@ -203,21 +291,31 @@ int ApplySymmetryTerm(const struct DefineList *def,
 {
   double sign = 1.0;
   int status;
-  if (!term || !value || term->factors < 1U || term->factors > 2U) return -1;
-  status = ApplySymmetryFactors(def, term->factors, term->index, state, out, &sign);
+  if (!term || !value) return -1;
+  if (term->kind == SYMMETRY_TERM_ANNIHILATE_PAIR || term->kind == SYMMETRY_TERM_CREATE_PAIR) {
+    if (term->factors != 1U) return -1;
+    status = ApplySymmetryPair(def, term->kind == SYMMETRY_TERM_CREATE_PAIR,
+                               term->index, state, out, &sign);
+  } else {
+    if (term->kind != SYMMETRY_TERM_BILINEARS || term->factors < 1U || term->factors > 2U)
+      return -1;
+    status = ApplySymmetryFactors(def, term->factors, term->index, state, out, &sign);
+  }
   if (status == 1) *value = sign * term->value;
   return status;
 }
 
 /* Canonical polynomials are used only at validation time. Fermions use
- * normal-ordered creation/annihilation strings; Spin and SpinGC use the
- * independent local basis {I, E01, E10, E11}, with E00 = I - E11. */
+ * normal-ordered creation/annihilation strings (key[0] = 1 or 2 bilinears;
+ * 3 for c^dagger_a c^dagger_b and 4 for c_a c_b with a < b); Spin and SpinGC
+ * use the independent local basis {I, E01, E10, E11}, with E00 = I - E11. */
 struct Monomial { int key[7]; double complex value; };
 struct Polynomial {
   struct Monomial *terms;
   size_t count, capacity;
   const struct DefineList *def;
   const int *permutation;
+  int flip; /* Px: E_st -> E_(1-s)(1-t) at every Spin factor */
 };
 
 static int append_monomial(struct Polynomial *poly, const int key[7], double complex value)
@@ -243,6 +341,23 @@ static int canonical_term(const struct SymmetryTerm *input, void *context)
   memcpy(x, input->index, sizeof(x));
   if (poly->permutation)
     for (i = 0; i < 4*n; i += 2) x[i] = poly->permutation[x[i]];
+  /* Px is unitary: flip both local indices, never conjugate the value.
+   * It precedes the same-site product contraction and the E00 expansion. */
+  if (poly->flip) {
+    if ((poly->def->iCalcModel != Spin && poly->def->iCalcModel != SpinGC) ||
+        input->kind != SYMMETRY_TERM_BILINEARS) return -1;
+    for (i = 1; i < 4*n; i += 2) x[i] = 1 - x[i];
+  }
+  if (input->kind != SYMMETRY_TERM_BILINEARS) {
+    int width = IsSymmetrySpinfulFermionModel(poly->def->iCalcModel) ? 2 : 1;
+    int a = width*x[0]+x[1], b = width*x[2]+x[3];
+    if (a == b) return 0;
+    /* Anticommuting the two operators of a pair flips its sign. */
+    if (a > b) { i = a; a = b; b = i; value = -value; }
+    key[0] = input->kind == SYMMETRY_TERM_CREATE_PAIR ? 3 : 4;
+    key[1] = a; key[2] = b;
+    return append_monomial(poly, key, value);
+  }
   if (poly->def->iCalcModel == Spin || poly->def->iCalcModel == SpinGC) {
     if (n == 2 && x[0] == x[4]) {
       if (x[3] != x[5]) return 0;
@@ -271,7 +386,7 @@ static int canonical_term(const struct SymmetryTerm *input, void *context)
     }
     return 0;
   } else {
-    int width = (poly->def->iCalcModel == Hubbard || poly->def->iCalcModel == tJ) ? 2 : 1;
+    int width = IsSymmetrySpinfulFermionModel(poly->def->iCalcModel) ? 2 : 1;
     int a = width*x[0]+x[1], b = width*x[2]+x[3];
     if (n == 1) {
       key[0] = 1; key[1] = a; key[2] = b;
@@ -285,7 +400,8 @@ static int canonical_term(const struct SymmetryTerm *input, void *context)
       if (a == c || b == d) return 0;
       /* P O P vanishes if a normal-ordered string creates or annihilates
        * a doublon. Retain any contraction emitted above before discarding it. */
-      if (poly->def->iCalcModel == tJ && (a / 2 == c / 2 || b / 2 == d / 2)) return 0;
+      if (IsSymmetryTJModel(poly->def->iCalcModel) && (a / 2 == c / 2 || b / 2 == d / 2))
+        return 0;
       value = -value;
       if (a > c) { tmp = a; a = c; c = tmp; value = -value; }
       if (b > d) { tmp = b; b = d; d = tmp; value = -value; }
@@ -337,6 +453,8 @@ int ValidateSymmetryTerms(const struct DefineList *def)
   for (i = 0; i < base.count; ++i) {
     const int *key = base.terms[i].key;
     int delta = 0, f;
+    /* NConserved models fix only N, which every c^dagger c product keeps;
+     * GC models fix neither N nor Sz. */
     if (def->iCalcModel == Spin)
       for (f = 0; f < key[0]; ++f) delta += key[2+3*f] - key[3+3*f];
     else if (def->iCalcModel == Hubbard || def->iCalcModel == tJ)
@@ -349,6 +467,7 @@ int ValidateSymmetryTerms(const struct DefineList *def)
   for (g = 0; g < def->NSymTrans; ++g) {
     mapped.count = 0;
     mapped.permutation = def->SymTrans[g];
+    mapped.flip = SymmetryOperationFlipsSpins(def, g);
     if (collect_polynomial(&mapped)) goto done;
     if (base.count != mapped.count) goto invariant_error;
     for (i = 0; i < base.count; ++i)
@@ -360,6 +479,9 @@ int ValidateSymmetryTerms(const struct DefineList *def)
   goto done;
 invariant_error:
   fprintf(stdoutMPI, "Error: TransSym Hamiltonian invariance failed for normalized terms under op %u.\n", g);
+  if (SymmetryOperationFlipsSpins(def, g))
+    fprintf(stdoutMPI, "Error: op %u applies the spin flip Px of SpinFlipParity; "
+            "the Hamiltonian must commute with Px = prod_i sigma^x_i.\n", g);
 done:
   free(base.terms); free(mapped.terms);
   if (error) fprintf(stdoutMPI, "Error: invalid or unsupported TransSym Hamiltonian terms.\n");

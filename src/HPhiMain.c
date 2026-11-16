@@ -853,9 +853,22 @@ int main(int argc, char* argv[]){
   report_symmetry_basis_layout_selection(
       &(X.Bind), (enum SymmetryBasisLayout)symmetry_basis_layout);
 
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+  const char *symmetry_probe_action = getenv("HPHI_TEST_SYMMETRY_ACTION");
+  int symmetry_checkpoint_probe = symmetry_probe_action != NULL &&
+      strncmp(symmetry_probe_action, "fulldiag-checkpoint", 19) == 0;
+#endif
   if (X.Bind.Def.iCalcType == FullDiag
       && X.Bind.Def.iFlgScaLAPACK ==0
-      && nproc != 1) {
+      && nproc != 1
+#ifdef HPHI_TEST_SYMMETRY_PROBE
+      /* The checkpoint probe returns before entering LAPACK.  Let it build a
+       * multi-rank sector basis so old-rank checkpoint files can be tested on
+       * builds without ScaLAPACK or ELPA; production HPhi never has this
+       * compile definition. */
+      && !symmetry_checkpoint_probe
+#endif
+      ) {
     fprintf(stdoutMPI, "Error: Full Diagonalization by LAPACK is only allowed for one process.\n");
     FinalizeMPI();
     return(-1);

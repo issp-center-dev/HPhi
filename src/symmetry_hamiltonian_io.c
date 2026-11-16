@@ -10,6 +10,7 @@
 #include "symmetry_hamiltonian_io.h"
 #include "symmetry_kondo.h"
 #include "symmetry_sector.h"
+#include "symmetry_terms.h"
 #include "wrapperMPI.h"
 #ifdef HPHI_TEST_SYMMETRY_PROBE
 #include "symmetry_fulldiag_probe.h"
@@ -72,11 +73,13 @@ int BuildSymmetryHamiltonianIdentity(const struct BindStruct *X,
   memset(&local, 0, sizeof(local));
   local.model = (uint64_t)X->Def.iCalcModel;
   local.nsite = X->Def.Nsite;
-  if (X->Def.iCalcModel != SpinGC) {
+  if (X->Def.iCalcModel != SpinGC && !IsSymmetryFermionGCModel(X->Def.iCalcModel)) {
     local.nup = X->Def.Nup;
     local.ndown = X->Def.Ndown;
     local.ne = X->Def.Ne;
   }
+  if (IsSymmetryFermionGCModel(X->Def.iCalcModel) &&
+      GetSymmetryFermionGCFixedFlags(&X->Def, &local.fixed_flags) != 0) invalid = 1;
   local.phase = 1;
   if (IsSymmetryKondoModel(X->Def.iCalcModel)) {
     struct SymmetryKondoIdentity kondo;
@@ -383,7 +386,9 @@ typedef char matrix_keys_follow_identity
 static const struct { int model; const char *name; } matrix_models[] = {
   { Spin, "Spin" }, { SpinGC, "SpinGC" }, { SpinlessFermion, "SpinlessFermion" },
   { Hubbard, "Hubbard" }, { tJ, "tJ" }, { Kondo, "Kondo" },
-  { KondoNConserved, "KondoNConserved" }, { KondoGC, "KondoGC" }
+  { KondoNConserved, "KondoNConserved" }, { KondoGC, "KondoGC" },
+  { HubbardNConserved, "HubbardNConserved" }, { tJNConserved, "tJNConserved" },
+  { HubbardGC, "HubbardGC" }, { SpinlessFermionGC, "SpinlessFermionGC" }
 };
 
 static const char *model_name(uint64_t model)
@@ -871,13 +876,19 @@ static void canonical_parts(double complex value, double *re, double *im)
   if (*im == 0.0) *im = 0.0;
 }
 
-static int write_matrix_header(FILE *fp, const struct SymmetryHamiltonianIdentity *identity,
+static int write_matrix_header(FILE *fp, const struct DefineList *def,
+                               const struct SymmetryHamiltonianIdentity *identity,
                                unsigned long dim, uint64_t nnz)
 {
   uint64_t words[IDENTITY_WORDS];
   char text[32];
   int failed = fprintf(fp, "%s\n%sformat=%s\n%sscalar=%s\n", MATRIX_HEADER,
                        METADATA_PREFIX, MATRIX_FORMAT, METADATA_PREFIX, MATRIX_SCALAR) < 0;
+  /* For readers only: group_digest already identifies Px and p, and a
+   * plain % comment is skipped by every sector-hamiltonian-v1 reader. */
+  if (!failed && SymmetryUsesSpinFlip(def))
+    failed = fprintf(fp, "%% spin_flip_operator=product_sigma_x spin_flip_parity=%+d\n",
+                     def->iSpinFlipParity) < 0;
   pack_identity(identity, words);
   for (int field = 0; !failed && field < IDENTITY_WORDS; ++field) {
     format_identity_value(field, words[field], text, sizeof(text));
@@ -950,7 +961,7 @@ int OutputSymmetryHamiltonian(const struct BindStruct *X,
       nnz += re != 0.0 || im != 0.0;
     }
   }
-  if (myrank == 0 && !failed) failed = write_matrix_header(fp, &info->identity, dim, nnz) != 0;
+  if (myrank == 0 && !failed) failed = write_matrix_header(fp, &X->Def, &info->identity, dim, nnz) != 0;
   /* Pass 2: column-major lower triangle. Panel ranks agree before it and
    * after each column, so a failed root write stops the broadcasts; only
    * the root writes replicated storage. */

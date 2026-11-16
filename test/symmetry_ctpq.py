@@ -196,7 +196,7 @@ def check_schedule(path, model, length, momentum, states, raw, projector, explic
     # Feature gates must report TPQ-specific scope, before any MPI matvec.
     if model == "Spin" and momentum == 0:
         (path / "calc.def").write_text(calc)
-        for option in ["ReStart 1", "InputEigenVec 1", "OutputEigenVec 1", "InputHam 1", "OutputHam 1"]:
+        for option in ["InputEigenVec 1", "OutputEigenVec 1", "InputHam 1", "OutputHam 1"]:
             (path / "calc.def").write_text(calc + option + "\n")
             invoke(path, [fixture.HPHI, "-e", "sym.def"], option.split()[0],
                    failure=("OutputHam is only defined for FullDiag" if option.startswith("OutputHam")

@@ -88,18 +88,29 @@ void setmem_def
   X->Phys.charge_real_cor = d_1d_allocate(X->Def.Nsite * X->Def.Nsite);
   X->Phys.loc_spin_z = d_1d_allocate(X->Def.Nsite * X->Def.Nsite);
 
-  X->Def.EDChemi = i_1d_allocate(X->Def.EDNChemi + X->Def.NInterAll + X->Def.NTransfer);
-  X->Def.EDSpinChemi = i_1d_allocate(X->Def.EDNChemi + X->Def.NInterAll + X->Def.NTransfer);
-  X->Def.EDParaChemi = d_1d_allocate(X->Def.EDNChemi + X->Def.NInterAll + X->Def.NTransfer);
-  X->Def.GeneralTransfer = i_2d_allocate(X->Def.NTransfer, 4);
-  X->Def.ParaGeneralTransfer = cd_1d_allocate(X->Def.NTransfer);
+  /* Each InterAll row can produce at most one additional transfer. Keep the
+   * input counts intact until reading/aggregation, but reserve the full bound
+   * for both static and time-dependent normalization. */
+  uint64_t transfer_capacity = (uint64_t)X->Def.NTransfer + X->Def.NInterAll;
+  uint64_t te_transfer_capacity = (uint64_t)X->Def.NTETransferMax + X->Def.NTEInterAllMax;
+  if (transfer_capacity + te_transfer_capacity > INT_MAX) {
+    fprintf(stdoutMPI, "Error: transfer capacity including InterAll contractions is too large.\n");
+    exitMPI(-1);
+  }
+  X->Def.NTransferCapacity = (unsigned int)transfer_capacity;
+  X->Def.NTETransferCapacity = (unsigned int)te_transfer_capacity;
+  X->Def.EDChemi = i_1d_allocate(X->Def.EDNChemi + X->Def.NTransferCapacity);
+  X->Def.EDSpinChemi = i_1d_allocate(X->Def.EDNChemi + X->Def.NTransferCapacity);
+  X->Def.EDParaChemi = d_1d_allocate(X->Def.EDNChemi + X->Def.NTransferCapacity);
+  X->Def.GeneralTransfer = i_2d_allocate(X->Def.NTransferCapacity, 4);
+  X->Def.ParaGeneralTransfer = cd_1d_allocate(X->Def.NTransferCapacity);
 
   if (X->Def.iCalcType == TimeEvolution) {
-    X->Def.EDGeneralTransfer = i_2d_allocate(X->Def.NTransfer + X->Def.NTETransferMax, 4);
-    X->Def.EDParaGeneralTransfer = cd_1d_allocate(X->Def.NTransfer + X->Def.NTETransferMax);
+    X->Def.EDGeneralTransfer = i_2d_allocate(X->Def.NTransferCapacity + X->Def.NTETransferCapacity, 4);
+    X->Def.EDParaGeneralTransfer = cd_1d_allocate(X->Def.NTransferCapacity + X->Def.NTETransferCapacity);
   } else {
-    X->Def.EDGeneralTransfer = i_2d_allocate(X->Def.NTransfer, 4);
-    X->Def.EDParaGeneralTransfer = cd_1d_allocate(X->Def.NTransfer);
+    X->Def.EDGeneralTransfer = i_2d_allocate(X->Def.NTransferCapacity, 4);
+    X->Def.EDParaGeneralTransfer = cd_1d_allocate(X->Def.NTransferCapacity);
   }
 
   X->Def.CoulombIntra = i_2d_allocate(X->Def.NCoulombIntra, 1);
@@ -153,11 +164,17 @@ void setmem_def
   }
 
   {
-    const unsigned int symtrans = X->Def.NSymTrans > 0 ? X->Def.NSymTrans : 1;
+    /* SpinFlipParity appends (g, Px) after the input operations; readdef
+     * rejects a doubled count that does not fit. Without room the extension
+     * itself fails, so never allocate a wrapped size here. */
+    unsigned int symtrans = X->Def.NSymTrans > 0 ? X->Def.NSymTrans : 1;
     const unsigned int symsites = X->Def.Nsite > 0 ? X->Def.Nsite : 1;
+    if (X->Def.iSpinFlipParity != 0 && symtrans <= UINT_MAX / 2U) symtrans *= 2U;
+    X->Def.NSymTransCapacity = symtrans;
     X->Def.SymTrans = i_2d_allocate(symtrans, symsites);
     X->Def.SymTransAnti = i_2d_allocate(symtrans, symsites);
     X->Def.SymTransChar = cd_1d_allocate(symtrans);
+    X->Def.SymTransFlip = i_1d_allocate(symtrans);
   }
 
   X->Def.CisAjt = i_2d_allocate(X->Def.NCisAjt, 4);
@@ -195,10 +212,10 @@ void setmem_def
     //Time-dependent Transfer
     X->Def.NTETransfer = ui_1d_allocate(X->Def.NTETimeSteps);
     X->Def.NTETransferDiagonal = ui_1d_allocate(X->Def.NTETimeSteps);
-    X->Def.TETransfer = i_3d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferMax, 4);
-    X->Def.TETransferDiagonal = i_3d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferMax, 2);
-    X->Def.ParaTETransfer = cd_2d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferMax);
-    X->Def.ParaTETransferDiagonal = d_2d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferMax);
+    X->Def.TETransfer = i_3d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferCapacity, 4);
+    X->Def.TETransferDiagonal = i_3d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferCapacity, 2);
+    X->Def.ParaTETransfer = cd_2d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferCapacity);
+    X->Def.ParaTETransferDiagonal = d_2d_allocate(X->Def.NTETimeSteps, X->Def.NTETransferCapacity);
     //Time-dependent InterAll
     X->Def.NTEInterAll = ui_1d_allocate(X->Def.NTETimeSteps);
     X->Def.NTEInterAllDiagonal = ui_1d_allocate(X->Def.NTETimeSteps);

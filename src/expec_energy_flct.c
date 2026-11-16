@@ -120,10 +120,17 @@ int expec_energy_flct(struct BindStruct *X){
   
   switch(X->Def.iCalcModel){
   case HubbardGC:
-      expec_energy_flct_HubbardGC(X);
+      /* A sector stores representatives, not the raw GC list. */
+      if (X->Def.iFlgSymmetryBasis == TRUE) {
+          if (expec_energy_flct_Hubbard(X) != 0) return -1;
+      } else {
+          expec_energy_flct_HubbardGC(X);
+      }
   break;
   case Hubbard:
+  case HubbardNConserved:
   case tJ:
+  case tJNConserved:
   case tJGC:
   case Kondo:
   case KondoNConserved:
@@ -165,11 +172,19 @@ int expec_energy_flct(struct BindStruct *X){
       X->Phys.num2      = X->Def.NeMPI * X->Def.NeMPI;
       X->Phys.Sz        = 0.0;
       X->Phys.Sz2       = 0.0;
+      /* The FullDiag phys output reports N as num_up + num_down; spinless
+         particles are counted as up (Nup = Ncond, Ndown = 0 in readdef.c). */
+      X->Phys.num_up    = X->Def.NeMPI;
+      X->Phys.num_down  = 0.0;
     break;
 
   case SpinlessFermionGC:
       // Grand canonical: calculate particle number from wavefunction
-      expec_energy_flct_SpinlessFermionGC(X);
+      if (X->Def.iFlgSymmetryBasis == TRUE) {
+          if (EvaluateSymmetrySpinlessGCMoments(X, v0) != 0) return -1;
+      } else {
+          expec_energy_flct_SpinlessFermionGC(X);
+      }
     break;
 
   default:
@@ -646,7 +661,7 @@ int expec_energy_flct_SpinlessFermionGC(struct BindStruct *X) {
     X->Phys.num2     = tmp_N2;
     X->Phys.Sz       = 0.0;  // No spin for spinless
     X->Phys.Sz2      = 0.0;
-    X->Phys.num_up   = 0.0;
+    X->Phys.num_up   = tmp_N;  // counted as up, as in the canonical case
     X->Phys.num_down = 0.0;
 
     return 0;

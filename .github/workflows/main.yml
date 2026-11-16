@@ -48,6 +48,32 @@ jobs:
           ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
             -R '^(fulldiag_solver_keyword|green_partial_merge_check|elpa_configure_check|fulldiag_elpa_hubbard_chain|fulldiag_output_open_failure|fulldiag_output_open_failure_scalapack|fulldiag_eigenvector_output_elpa_np2|fulldiag_eigenvector_output_scalapack_np2|elpa_redist_check|elpa_statepanel_check|fulldiag_expecmode_equiv_np2|fulldiag_expecmode_scalapack_np2|symmetry_spingc_fulldiag|symmetry_kondo_fulldiag)$'
 
+      - name: NConserved sector FullDiag backends (2 ranks)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 2
+          HPHI_TEST_NCONSERVED_CORE_SCOPE: fulldiag
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^symmetry_nconserved_core$'
+
+      - name: Fermion GC sector FullDiag backends with pairs (2 ranks)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 2
+          HPHI_TEST_FERMION_GC_CORE_SCOPE: fulldiag
+          HPHI_FD_REQUIRE_BACKENDS: LAPACK,ScaLAPACK,ELPA
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^symmetry_fermion_gc_core$'
+
+      - name: Spin-flip sector FullDiag backends (2 ranks)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 2
+          HPHI_TEST_SPINFLIP_CORE_SCOPE: fulldiag
+          HPHI_FD_REQUIRE_BACKENDS: LAPACK,ScaLAPACK,ELPA
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^symmetry_spinflip_core$'
+
       - name: Sector FullDiag states, correlations, matrix I/O and reuse (2 ranks)
         env:
           MPIRUN: mpiexec --oversubscribe -np 2
@@ -73,6 +99,15 @@ jobs:
         run: |
           ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
             -R '^symmetry_fulldiag_(states|correlations|hamiltonian|reuse)$'
+
+      # Keep this in the existing Debug build: optimization can mask the
+      # signed-overflow loop on empty canonical Kondo ranks.
+      - name: Canonical Kondo empty ranks (16 ranks, Debug)
+        env:
+          MPIRUN: mpiexec --oversubscribe -np 16
+        run: |
+          ctest --test-dir "$RUNNER_TEMP/hphi-elpa-build" --output-on-failure \
+            -R '^kondo_mpi_dimension$'
 
       - name: ELPA three-rank regression tests
         env:
@@ -135,7 +170,8 @@ jobs:
           if [ ${{ runner.os }} = "macOS" ] ; then
             export FC=gfortran-15
           fi
-          cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5 $GITHUB_WORKSPACE
+          cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DMPIEXEC_PREFLAGS=--oversubscribe $GITHUB_WORKSPACE
 
       - name: build
         working-directory: ${{runner.workspace}}/build
@@ -170,7 +206,10 @@ jobs:
         if: ${{ matrix.mpisize == 16 }}
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -V -E spinone -LE "consistency|batching"
+        # The NConserved, fermion GC and spin-flip TPQ/cTPQ/TE suites are
+        # pre-release np16 checks; their continuation smoke stays in the
+        # io_restart suites.
+        run: ctest -V -E "spinone|^symmetry_nconserved_evolution$|^symmetry_fermion_gc_evolution$|^symmetry_spinflip_evolution$" -LE "consistency|batching"
 
       - name: ctest (mpisize=16, mpi batching)
         if: ${{ matrix.mpisize == 16 }}

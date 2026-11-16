@@ -333,7 +333,15 @@ int CheckMPI(struct BindStruct *X/**< [inout] */)
             return FALSE;
           }
         }/*for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++)*/
-      }  
+      }
+      else if (X->Def.iCalcModel == KondoGC) {
+        for (isite = X->Def.Nsite; isite < X->Def.NsiteMPI; isite++) {
+          if (X->Def.LocSpn[isite] != ITINERANT) {
+            fprintf(stdoutMPI, "\n Stop because local spin in the inter process region\n");
+            return FALSE;
+          }
+        }
+      }
       break; /*case KondoGC, Kondo*/
 
     } /*switch (X->Def.iCalcModel) 2(inner)*/

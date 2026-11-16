@@ -185,8 +185,10 @@ TransSym指定ファイル
 
 -  対応手法は ``Lanczos``、 ``CG``、 ``TPQ`` （microcanonical TPQ）、 ``cTPQ``、 ``FullDiag``、 ``TimeEvolution`` です。模型は :math:`S=1/2` で ``2Sz`` を
    固定した ``Spin``、 ``Ncond`` を固定した ``SpinlessFermion``、 ``Nup`` と
-   ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。固定Szを持たないスピン1/2の
-   ``SpinGC`` にも対応します（下記参照）。expert mode では次の項に対応します。
+   ``Ndown`` を固定した ``Hubbard`` / ``tJ`` です。 ``Ncond`` だけを固定した
+   ``Hubbard`` / ``tJ`` 、固定Szを持たないスピン1/2の ``SpinGC`` 、pair項と
+   任意の粒子数偶奇を持つ ``HubbardGC`` / ``SpinlessFermionGC`` にも対応します
+   （下記参照）。expert mode では次の項に対応します。
 
    - ``Spin``: 縦磁場の ``Trans``、 ``Exchange``、 ``Ising``、 ``CoulombInter``、
      ``Hund``、固定Szを保存する ``InterAll``。
@@ -208,18 +210,148 @@ TransSym指定ファイル
    spinlessのraw solverでは非対角 ``InterAll`` は引き続き非対応で、今回の拡張は
    ``TransSym`` に適用されます。Standard modeの入力生成は変更していません。
 
+   スピン1/2の ``SpinGC`` と ``2Sz=0`` の ``Spin`` では、 ``SpinFlipParity`` で
+   全スピン反転 :math:`P_x=\prod_i\sigma^x_i` を群に加えられます
+   （:ref:`Subsec:TransSymSpinFlip`）。
+
    相関関数（``OneBodyG``、``TwoBodyG``、``ThreeBodyG``、``FourBodyG``、
    ``SixBodyG``、``NBodyG``）は ``Lanczos``、``CG``、``TPQ``、``cTPQ``、
    ``TimeEvolution`` と、全固有状態についての ``FullDiag`` でsector内計算されます。
    値はsector内の厳密な期待値で、対称操作で互いに移り合う行は同じ値になり、
    sectorの外へ出る演算子は0になります。canonical ``Spin`` の
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` はraw基底と同様に起動時に拒否されます。
-   同じ積は ``NBodyG`` で指定できます。``AnomalousG``、スペクトル計算、リスタートは
-   本ファイルと併用できません。固有ベクトルの入出力は、
+   同じ積は ``NBodyG`` で指定できます。``AnomalousG`` は下記のフェルミオン
+   大正準セクターでだけ使え、スペクトル計算は本ファイルと併用できません。CG、mTPQ、cTPQ、TimeEvolutionはMPI process数を
+   変更したv3 solver継続に対応し、metadata layout 0/1の変更も許します。固有ベクトルの入出力は、
    CGとTimeEvolutionで下記のsector checkpoint形式により利用できます。FullDiagは
    全固有状態をこの形式で出力できます。ハミルトニアンの入出力はFullDiagだけで、
    識別情報付きのsector行列ファイル（:ref:`Subsec:ham`）を使います。
    未対応の組み合わせはエラーで終了します。
+
+
+粒子数だけを固定したHubbard・tJセクター（expert mode）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=0`` （Hubbard）または ``CalcModel=9`` （tJ）で ``TransSym`` と
+``Ncond`` を指定し、 ``2Sz``、 ``Nup``、 ``Ndown`` を省略すると、粒子数
+:math:`N=` ``Ncond`` だけを固定した空間対称性セクターになります。全スピンz成分
+:math:`S_z` は固定しないため、スピンを混ぜる ``Trans`` （スピン軌道型のホッピング、
+横磁場）や、 :math:`S^+_iS^+_j` のように :math:`S_z` を変える ``InterAll`` を
+ハミルトニアンに含められます。 ``Ncond`` と ``2Sz`` を同時に指定した場合、または
+和が ``Ncond`` に等しい ``Nup`` と ``Ndown`` を両方指定した場合は、上記の固定
+:math:`S_z` の ``Hubbard`` / ``tJ`` セクターになります。 ``2Sz`` を省略し、
+``Ncond`` と ``Nup`` / ``Ndown`` を併記した場合は、 ``Nup+Ndown`` が
+``Ncond`` と一致しない入力を拒否します。 ``Ncond`` と ``2Sz`` を同時に
+指定した場合は、従来のcanonical入力処理に従い、この2値から ``Nup`` と
+``Ndown`` を決定します。
+
+.. list-table:: 粒子数を固定したセクター
+   :header-rows: 1
+   :widths: 22 26 52
+
+   * - 空間
+     - 粒子数
+     - 対称性射影前の次元
+   * - HubbardNConserved（内部model 6）
+     - :math:`1\leq N\leq 2N_{\rm site}`
+     - :math:`\binom{2N_{\rm site}}{N}`
+   * - tJNConserved（内部model 11）
+     - :math:`1\leq N\leq N_{\rm site}`
+     - :math:`\binom{N_{\rm site}}{N}2^N` （二重占有なし）
+
+どちらも ``0 < Nsite <= CHAR_BIT*sizeof(unsigned long)/2`` を要求します。
+raw基底と同様に ``Ncond=0`` は拒否し、空の対称性セクターも拒否します。状態は上記の
+``Hubbard`` / ``tJ`` と同じサイトあたり2 bitの表現とフェルミオン置換符号を使い、
+tJの射影は演算子の積全体を作用させた結果に適用します。
+
+ハミルトニアンの項は、上記の ``Hubbard`` / ``tJ`` の項からスピンの制約を除いた
+ものです。 ``Trans`` （スピンを混ぜる項・複素係数を含む）、 ``CoulombIntra``、
+``CoulombInter``、 ``Hund``、 ``Ising``、 ``Exchange``、 ``PairHop``、 ``InterAll``
+に対応します。正規順序化したハミルトニアン全体についてHermite性と群不変性を
+検査します。生成・消滅の対の積はすべて :math:`N` を保存します。 ``PairLift``、
+``NBodyInterAll``、異常項、 ``CalcSpec`` は非対応です。
+
+6つの計算手法、6種類の相関関数（スピン反転演算子を含む）、状態の入出力、
+FullDiagのsector行列ファイル、MPI process数を変更したv3継続、両basis layoutは、
+固定 :math:`S_z` のセクターと同様に利用できます。 ``TEOneBody`` / ``TETwoBody`` は、
+各時刻で対称性を保つ限りスピンを混ぜてかまいません。エネルギー、TPQ、TEの出力では
+:math:`N` と :math:`N^2` は ``Ncond`` とその2乗に等しく、 :math:`S_z`、
+:math:`S_z^2`、二重占有数は状態から計算します（tJでは二重占有数は0です）。
+
+状態ファイルはversion 1、phase 1、28語のheaderのままです。model語（6または11）と
+粒子数で空間を識別し、 ``nup`` / ``ndown`` は0です。v3 restartファイルと行列
+ファイルの ``fixed_flags`` は0です。sector manifestには
+``model=HubbardNConserved`` または ``model=tJNConserved``、
+``fixed_quantities=ncond``、 ``fixed_ne`` を記録します。固定 :math:`S_z` の
+セクター、異なる粒子数、もう一方のmodel、異なる運動量のファイルは、次元が一致
+しても拒否します。
+
+
+pair項を持つフェルミオン大正準セクター（expert mode）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=3`` （HubbardGC）または ``CalcModel=8`` （SpinlessFermionGC）で
+``TransSym`` を指定すると、粒子数 :math:`N` も :math:`S_z` も固定しない大正準空間の
+空間対称性セクターになります。 ``Ncond``、 ``2Sz``、 ``Nup``、 ``Ndown`` は省略して
+ください。0を含め明示的な値は拒否します。ModParaファイルの ``ParticleParity`` を
+指定すると、さらに :math:`(-1)^N` を固定します。
+
+.. list-table:: フェルミオン大正準セクター
+   :header-rows: 1
+   :widths: 30 22 48
+
+   * - ``ParticleParity``
+     - 粒子数
+     - 対称性射影前の次元
+   * - 0（既定値）
+     - すべての :math:`N`
+     - :math:`2^M`
+   * - 1
+     - 偶数の :math:`N`
+     - :math:`2^{M-1}`
+   * - -1
+     - 奇数の :math:`N`
+     - :math:`2^{M-1}`
+
+ここで :math:`M` はHubbardGCで :math:`2N_{\rm site}`、SpinlessFermionGCで
+:math:`N_{\rm site}` です。全空間は :math:`M\leq` ``CHAR_BIT*sizeof(unsigned long)-2``、
+偶奇を指定した空間は :math:`M\leq` ``CHAR_BIT*sizeof(unsigned long)-1`` を要求します
+（64-bit環境のHubbardGCでは31サイトまで）。サイトの置換は :math:`N` を保つので、
+各運動量セクターは偶数部分と奇数部分に分かれます。両者の次元の和は偶奇を指定しない
+セクターの次元に等しくなりますが、一般に両者は等しくありません。 ``TransSym`` なし、
+または他の模型での0以外の ``ParticleParity`` はエラーです。
+
+ハミルトニアンには、上記の ``Hubbard`` （HubbardGC）または ``SpinlessFermion``
+（SpinlessFermionGC）の項（スピンを混ぜる項を含む）と、
+:ref:`AnomalousTermファイル <Subsec:anomalousterm>` のpair項
+:math:`c_ic_j`、 :math:`c^\dagger_ic^\dagger_j` （隣接するHermite共役の組で指定し、
+SpinlessFermionGCのスピン添字は0）を含められます。pair項は :math:`N` を2変え、
+:math:`(-1)^N` を保ちます。各演算子は右から順にフェルミオン符号付きで状態へ作用し、
+pair項を含めて正規順序化したハミルトニアン全体について群不変性を検査します。
+
+6つの計算手法すべてに対応します。FullDiagはLAPACK、ScaLAPACK、ELPAで、pair項を
+含むdenseなsector行列を作ります。TimeEvolutionではpair項の係数は時間によらず、
+``TEOneBody`` / ``TETwoBody`` はそれ以外の項を駆動し、各時刻で対称性を保つ必要が
+あります。 ``Laser`` は拒否します。6種類の相関関数と ``AnomalousG`` （:ref:`Subsec:anomalousgoutput`）は、
+rawの計算と同じファイル名・形式でsector内で計算します。ハミルトニアンにpair項が
+なくても計算します（例えば粒子数の異なる成分を含むTEの状態）。 :math:`N`、
+:math:`N^2`、 :math:`S_z`、 :math:`S_z^2`、二重占有数は状態から計算します。
+``CalcSpec`` は非対応です。
+
+状態ファイルはversion 2、phase 1、30語のheaderです。model語は3または8、 ``nup``、
+``ndown``、 ``ne`` と局在サイトmaskは0で、固定量flagsはすべての :math:`N`、偶数、
+奇数に対してそれぞれ0、4、12です（bit 2が偶奇の指定、bit 3が奇数）。v3 restart
+ファイルと行列ファイル（ ``fixed_flags`` ）も同じ値を持ちます。sector manifestには
+``model=HubbardGC`` または ``model=SpinlessFermionGC``、 ``fixed_quantities=none``、
+``particle_parity`` （ ``full`` 、 ``even`` 、 ``odd`` ）、 ``term_scope`` 内の
+pair行数 ``anomalous:`` 、pair項を含む ``hphi-parsed-hamiltonian-fnv1a64-v4`` の
+digestを記録します。異なる偶奇、粒子数を固定したセクター、もう一方のmodel、異なる
+運動量のファイルは、次元が一致しても拒否します。同じセクターの状態は、pair係数を
+変えたハミルトニアンへ読み込めます（quench）。v3継続ではこの変更を
+``hamiltonian_changed=yes`` と表示します。
+
+``TransSym`` なしの ``AnomalousTerm`` と ``AnomalousG`` の対応範囲は従来どおり
+（HubbardGCのみ）です。各ファイルの説明を参照してください。
 
 
 Kondoセクター（スピン1/2、expert mode）
@@ -323,7 +455,10 @@ KondoGCは上限を含まない厳密不等号を要求します。
      - 不可 / 不可
      - 両方
 
-両方とは ``replicated`` と ``distributed`` です。所有するセクター行が0のMPI
+両方とは ``replicated`` と ``distributed`` です。CG、mTPQ、cTPQ、TimeEvolutionは
+process数を変更したv3継続に対応し、metadata layout 0/1の変更も許します。
+状態import/export欄とは別の機能です。
+所有するセクター行が0のMPI
 rankもcollectiveと状態I/Oへ参加します。FullDiagはbuildに含まれるLAPACK
 （``Solver=0``）、ScaLAPACK（1）、ELPA（3）に対応し、後述のprocess grid制約が
 適用されます。全6形式は ``OneBodyG``、 ``TwoBodyG``、 ``ThreeBodyG``、
@@ -343,7 +478,10 @@ wordを使います。後述のversion 1のfieldに ``local_site_mask`` と
 ``fixed_quantity_flags`` を追加したものです。phase 2は上記の物理的並進規約です。
 flagsはKondoが3、NConservedが1、GCが0で、GCの ``nup/ndown/ne`` fieldは0です。
 manifestは局在mask・物理空間digest・固定量をHamiltonian digestと分離して記録
-します。importには模型・物理空間・sector・順序・rank数・layoutの一致が必要です。
+します。importでは模型・物理空間・sector・順序の一致が必要ですが、rank数とlayoutは
+変更できます。このv2形式では保存時の分割でpayload checksumを検証した後に再配置し、
+sector digestで基底集合を検証します。global基底順序は代表状態のcanonical sort規則で
+決まります。
 CGはimport状態を評価し、最適化を再開しません。TEは新しい時刻列で開始し、
 Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応します。
 非Kondoのcheckpointはversion 1 / phase 1 / 28 wordのままです。
@@ -360,8 +498,8 @@ Hamiltonian quenchも可能です。CG/TE間の4方向全てのimportに対応�
 
 general spin、新しいStandard-modeのKondo運動量生成、 ``NBodyInterAll``、
 ``AnomalousTerm``、 ``AnomalousG``、 ``CalcSpec``、スピン軸回転、反ユニタリ操作、
-多次元既約表現、solver restart、rank数変更を伴うcheckpoint
-再分配は非対応です。Hamiltonian I/OはFullDiagのsector行列ファイルに限ります。
+多次元既約表現は非対応です。
+Hamiltonian I/OはFullDiagのsector行列ファイルに限ります。
 FullDiagはさらにベクトル入力、distributed基底metadata、
 MAGMA、nonserial ``ExpecMode`` を除外します。
 
@@ -446,8 +584,10 @@ CGに ``Sz2`` 列は追加しません。mTPQとcTPQは **単一の空間対称�
 重みが必要で、単一sectorの標本はその和を表しません。
 
 CGのベクトル読込は入力状態を評価し、最適化を再開しません。TEの読込は新しい時間列を
-開始し、同一sector内のHamiltonian変更（quench）も許します。rank数、所有範囲、模型、
-sectorと位相規約は一致させます。どちらもsolver restartではなく ``ReStart`` は拒否します。
+開始し、同一sector内のHamiltonian変更（quench）も許します。模型、sector、global基底
+順序、位相規約は一致させますが、rank数、所有範囲、metadata layoutは変更できます。
+どちらもsolver restartではありません。``ReStart`` はこれとは別に、process数とmetadata
+layout 0/1を変更してCG、mTPQ、cTPQ、TimeEvolutionのv3 dataを継続できます。
 SpinGC checkpointもversion 1で、headerは ``model=4``、``nup/ndown/ne`` は0です。
 Hamiltonian fingerprintは解析済みPairLift行を含む
 ``hphi-parsed-hamiltonian-fnv1a64-v3`` です。非Kondoのcanonical模型はv2と既存checkpoint形式を
@@ -456,10 +596,10 @@ Hamiltonian fingerprintは解析済みPairLift行を含む
 SpinGCは ``TEOneBody`` / ``TETwoBody`` の駆動に対応し、下記の右端Taylor規約を使います。
 使用する全時刻の入力を伝播前に検査します。``Laser`` は拒否されます。
 代わりに、群不変なサイト内 ``TEOneBody`` またはスピン積の ``TETwoBody`` を指定してください。
-general spin、Boost、新しいStandard-modeのSpinGC運動量入力、スピン軸回転、
-全スピン反転、反ユニタリ操作、多次元既約表現、spectrum、
-solver restart、rank数を変更したcheckpoint再分配は対象外です（Hamiltonian入出力は
-FullDiagのsector行列ファイルに限ります）。
+全スピン反転 :math:`P_x` は ``SpinFlipParity`` で使えます（:ref:`Subsec:TransSymSpinFlip`）。
+general spin、Boost、新しいStandard-modeのSpinGC運動量入力、その他のスピン軸回転、
+反ユニタリ操作、多次元既約表現、spectrumは対象外です
+（Hamiltonian入出力はFullDiagのsector行列ファイルに限ります）。
 このSpinGC sector経路では ``CoulombIntra``、``PairHop``、``NBodyInterAll``、
 ``AnomalousG`` も非対応です。FullDiagはベクトル入力、distributed基底metadata、
 MAGMAと非serial ``ExpecMode`` も拒否します。
@@ -537,8 +677,9 @@ SSの ``phys_var`` 列は従来どおり :math:`\langle H^2\rangle` で、
 エネルギー平均の二乗を引いた分散ではありません。
 ``OutputGreenFormat=1`` によりSS/Norm/Flctと相関関数の集約出力を使えます。
 相関関数は ``ExpecInterval`` が選ぶTPQ評価stepで再計算されます。大規模sectorで
-全site pairを毎step要求すると高コストになります。restart、ベクトル入出力、
-スペクトルは ``TransSym`` と併用できません。
+全site pairを毎step要求すると高コストになります。v3 restartではprocess数と
+metadata layout 0/1を変更できます。TPQの状態vector import/exportとスペクトルは
+``TransSym`` と併用できません。
 
 計算結果は **単一の対称性セクター内** のtraceを推定します。
 固定量子数空間全体の熱平均ではありません。manifestには
@@ -560,7 +701,10 @@ Taylor打ち切り次数の収束は利用者が確認してください。
 有限値で単調非減少である必要があります。同じbetaの繰り返しは刻み0として扱います。 ``nmax`` は ``INT_MAX`` 未満の正の整数、
 両flagは0または1です。行 ``i`` の次数はbeta ``i`` から ``i+1`` への発展に使い、
 最終行の次数は使いません。セクター内cTPQでは初期・最終点も含めて
-``eigen`` が非ゼロの行を拒否します。ベクトル入出力とrestartは引き続き非対応です。
+``eigen`` が非ゼロの行を拒否します。ベクトル入出力は引き続き非対応です。
+一様scheduleのcTPQはprocess数を変更したv3 restartを利用でき、metadata layout 0/1の
+変更も許しますが、
+``InvTemp`` は ``ReStart=2`` または3と組み合わせられません。
 明示scheduleでは初期点と ``physcal=1`` の行で相関関数を出力します。``InvTemp`` を
 指定しない場合は ``ExpecInterval`` が出力stepを選びます。``OutputGreenFormat=1`` は
 全sample・stepを添字付きの相関関数集約ファイルへまとめます。
@@ -571,12 +715,14 @@ manifestには ``canonical_tpq_steps``、 ``beta_schedule`` と、一定刻み�
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 expert modeの ``CalcType=4`` は、保存済みセクターベクトルを静的Hamiltonianで
-時間発展させます。 ``InputEigenVec=1``、 ``ReStart=0``、正整数の ``ExpandCoef`` を
+時間発展させます。新しいimport軌道では ``InputEigenVec=1``、 ``ReStart=0``、
+正整数の ``ExpandCoef`` を
 指定し、namelistへ ``SpectrumVec seed_eigenvec_0`` を追加します。
 ``output/seed_eigenvec_0_rank_<rank>.dat`` は下記のsector形式が必要です。
 CGの ``OutputEigenVec=1`` で作成できます。セクターFullDiagも全固有状態をこの形式で
-出力します（:ref:`Subsec:eigenvec` を参照）。基底・sector・MPI数・layoutは一致が
-必要ですが、quenchのためHamiltonianは変更できます。既定layoutはdistributed、
+出力します（:ref:`Subsec:eigenvec` を参照）。基底・sector・global順序・位相規約は
+一致が必要ですが、MPI数とlayoutは変更でき、quenchのためHamiltonianも変更できます。
+既定layoutはdistributed、
 ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated`` で参照用layoutを選択できます。
 
 TE実行前にCGのseedを全rank分、別prefixで保存するか、TE側の
@@ -595,7 +741,9 @@ sectorの最終出力が別名であっても、このrow 0での上書きは防
 時間間隔を減らして収束を確認してください。相関関数は伝播後、``ExpecInterval`` が
 選ぶstepで評価されます。``OutputGreenFormat=1`` は0始まりの時刻stepを添字として
 集約ファイルへまとめます。大規模sectorで全site pairを毎step要求すると高コストに
-なります。``ReStart`` は引き続き非対応です。
+なります。v3 ``ReStart`` はprocess数とmetadata layout 0/1を変更して保存済みTE時計を
+継続できます。
+import来歴を新しい時計としては使いません。
 manifestには実際の時刻列・次数と入力checkpointのmethod/state/step/time/H digestを
 記録します。FullDiag由来の場合は ``source_hamiltonian_kind=sector_matrix_v1`` も
 記録します。このdigestは対角化したsector行列を表し、TEのHamiltonianとは比較
@@ -614,9 +762,10 @@ manifestには実際の時刻列・次数と入力checkpointのmethod/state/step
 
 ``TEOneBody`` または ``TETwoBody`` の1種類で駆動できます。
 canonical模型とKondoの3空間では ``Laser`` も選べます。Kondoには上記の幾何・
-ゲージ制限が適用され、SpinGCでは拒否します。
+ゲージ制限が適用され、SpinGC、HubbardGC、SpinlessFermionGCでは拒否します。
 one-body/two-body項は静的Hamiltonianへの加算、Peierls駆動は解析済みtransfer係数の
-位相変更です。Spin、SpinlessFermion、Hubbard、tJとKondoの3空間で対角・非対角項に対応します。
+位相変更です。Spin、SpinlessFermion、Hubbard、tJ、HubbardGC、SpinlessFermionGCと
+Kondoの3空間で対角・非対角項に対応します。
 raw spinless solverの対角TE項に対する制限は変更しません。
 
 初期vector読込と時系列出力より前に、使用する全時刻について係数の有限性、
@@ -647,9 +796,13 @@ expert modeのCGでは ``OutputEigenVec=1`` と ``InputEigenVec=1`` を使えま
 セクターFullDiagも全固有状態を同じ形式で出力します。
 ファイル名は ``output/<CDataFileHead>_eigenvec_<state>_rank_<rank>.dat`` で、
 状態・rankの番号は0始まりです。要素を持たないrankもファイルを出力します。
-読込には、模型・固定量子数・群と指標・sector・MPI rank数・layout・局所分担・
-global indexと代表状態の対応・基底位相規約の一致が必要です。
-従来のraw基底vector、 ``InputEigenVec=2``、 ``ReStart`` は拒否します。
+読込には、模型・固定量子数・群と指標・sector・global indexと代表状態の対応・
+基底位相規約の一致が必要です。MPI rank数、layout、局所分担は変更できます。
+従来のraw基底vectorと ``InputEigenVec=2`` はこのimport形式では拒否します。
+solver継続には :ref:`Subsec:restart_v3` の別のv3 manifest/vector fileを使います。
+v3はrank数とmetadata layout 0/1を変更した状態importにも対応します。旧v1/v2では
+保存時の分割でDATA checksumを検証してから再配置します。source file一式のlayoutは
+同じ有効値である必要がありますが、現在のlayoutは変更できます。
 CGの入力実行は与えた状態の物理量を評価し、固有状態の再計算や反復再開は行いません。
 
 生成時のHamiltonian digestは別に記録し、同一sector内のquench用に現在のHamiltonianと
@@ -762,7 +915,8 @@ statusとこの行を併せて確認してください。
 canonical化を行い、読み込んだ値の ``matrix_digest`` を記録します。manifestは
 ``matrix_source=input`` で、固有値だけの指定でも ``output_scope=requested`` と
 なります。行列ファイルはrank数やsolverを変えて読み込めますが、固有状態の
-checkpointは同じrank数・layoutで使います。保存した状態をTEやCGで使うと、
+checkpointもCGまたはTEへ別のrank数・metadata layoutでimportできます。v1/v2のDATA
+checksumは保存時の分割に従って検証してから再配置します。保存した状態をTEやCGで使うと、
 利用側の定義ファイルのHamiltonianで評価されます。
 
 ``CalcTimer.dat`` には
@@ -796,6 +950,8 @@ gather/scatter [5710]、相関 [5720]、checkpoint [5730] を表示します。
   並べて置換と指標を hash 化します。操作番号の変更には依存しません。
   指標の各成分は :math:`10^{-10}` 刻みに丸めます。この量子化は、丸め境界付近の
   浮動小数点入力を一般的に同値判定するものではありません。
+  ``SpinFlipParity`` を指定した場合の ``hphi-group-spinflip-fnv1a64-v1`` は、
+  各操作の :math:`P_x` の有無（置換の次の並べ替えキー）と :math:`p` も hash 化します。
 - ``sector_digest``: ``hphi-sector-multiset-v1:count:xor:sum`` は、各基底の
   代表状態、軌道サイズ、固定部分群サイズを FNV-1a 64 で hash 化し、列挙順や
   MPI 分割によらず集約します。整数は固定幅 little-endian、和は :math:`2^{64}` を
@@ -811,6 +967,90 @@ gather/scatter [5710]、相関 [5720]、checkpoint [5730] を表示します。
 これらは照合のための fingerprint であり、衝突のない同値性の証明ではありません。
 順序に依存しない fingerprint だけでは、checkpoint のベクトル成分の並びも検証できません。
 従来の計算結果と ``CalcTimerRankStats.dat`` の形式は変更しません。
+
+.. _Subsec:TransSymSpinFlip:
+
+全スピン反転Px（スピン1/2、expert mode）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+全スピン反転
+
+.. math::
+
+   P_x=\prod_{i=0}^{N_{\rm site}-1}\sigma^x_i ,\qquad P_x^2=1
+
+は、全サイトの上向きと下向きを振幅 :math:`+1` で交換します。 :math:`S^x_i` を保ち、
+:math:`S^y_i` と :math:`S^z_i` の符号を反転します。ModParaファイルの
+``SpinFlipParity`` で、 ``TransSym`` のセクター内で固有値 :math:`p=+1` または
+:math:`p=-1` を選びます。
+
+.. list-table:: ``SpinFlipParity`` を使える模型
+   :header-rows: 1
+   :widths: 30 70
+
+   * - 模型
+     - 条件
+   * - ``SpinGC`` （``CalcModel=4``）
+     - スピン1/2。 :math:`S_z` は固定しません
+   * - ``Spin`` （``CalcModel=1``）
+     - スピン1/2で ``2Sz=0`` （:math:`P_x` は :math:`S_z` を :math:`-S_z` に写します）
+
+``SpinFlipParity=0`` または指定なしでは、従来のセクター、ファイル、digestを
+そのまま使います。0以外の値には ``TransSym`` が必要です。 :math:`P_x` だけを
+使う場合は、恒等操作だけの ``TransSym`` ファイル（ ``NQPTrans 1``、指標1、
+全サイトについて ``0 i i 1``）を指定してください。それ以外の値、フェルミオン模型と
+Kondo模型、general spin、 :math:`S_z\neq 0` の ``Spin`` は拒否します。
+:math:`P_x` は :math:`P_z=\prod_i\sigma^z_i`、フェルミオンの ``ParticleParity``、
+時間反転とは別の対称性です。このファイルの ``Anti`` 列は使いません。
+
+HPhiはファイルの群 :math:`G` を :math:`G\times Z_2` に拡張します。操作
+:math:`(g,f)` は :math:`T_g` の後に :math:`P_x^f` を作用させ、
+
+.. math::
+
+   (g,f)(h,e)=(gh, f\oplus e),\qquad \chi(g,f)=\chi(g)\,p^f
+
+とします。射影演算子は :math:`\Pi_\chi(1+pP_x)/2` です。最初の :math:`|G|` 個の
+操作はファイルの操作、次の :math:`|G|` 個はそれらと :math:`P_x` の積です。manifestと
+ログの ``group_order`` は :math:`2|G|` です。代表状態は :math:`G\times Z_2` 軌道の
+最小のbit列で、係数は正の実数です。各指標で
+:math:`D(\chi,+)+D(\chi,-)=D(\chi)` ですが、2つの次元は一般に等しくありません。
+例えば4サイトでは、Neel状態は並進と :math:`P_x` の積で不変なため、
+:math:`(k=0,p=+1)` と :math:`(k=\pi,p=-1)` にだけ現れます。空のセクターは
+``TransSym sector has zero basis dimension`` で終了します。
+
+ハミルトニアン全体が :math:`P_x` と可換でなければなりません。検査では各局所単位
+:math:`E^{st}_i=|s\rangle_i\langle t|` を :math:`E^{1-s,1-t}_i` に写し（係数は
+複素共役しません）、集約した項を比較します。入力の各行が個別に不変である必要は
+ありません。横磁場 :math:`h_xS^x`、 ``Ising``、 ``Exchange``、実数の ``PairLift``、
+:math:`S^y_iS^z_j+S^z_iS^y_j` のような積は使えます。 :math:`h_zS^z`、
+:math:`h_yS^y`、虚数係数の ``PairLift``、 ``Spin`` の
+:math:`i(S^+_iS^-_j-S^-_iS^+_j)` は使えません。違反は
+``TransSym Hamiltonian invariance failed ... under op`` :math:`n`
+（:math:`n\geq|G|`）で報告します。横磁場には ``SpinGC`` が必要です。
+``Spin`` セクターの :math:`S_z` を保たないためです。
+
+上記のセクターと同様に6つの計算手法、両basis layout、全形式の相関関数、CG/TEの
+ベクトル入出力、FullDiagの状態・Hamiltonianファイル、MPI process数を変更した
+v3継続に対応します。 :math:`P_x` セクターでは :math:`\langle S_z\rangle=0` で、
+エネルギーとFlctのファイルの ``Sz`` は0です。 :math:`S_z^2` は状態から計算します。
+:math:`S^z_i` や :math:`S^y_i` のように :math:`P_x` で符号が変わる演算子の相関は0、
+:math:`\langle S^x_i\rangle` は0とは限らず、
+:math:`\langle E^{00}_i\rangle=\langle E^{11}_i\rangle=1/2` です。
+``TEOneBody`` / ``TETwoBody`` の各時刻の入力も :math:`P_x` を保つ必要があり、例えば
+:math:`h_z(t)\neq 0` の時刻があれば伝播の前に終了します。TPQとcTPQは単一の
+:math:`(\chi,p)` セクターの推定で、全体の熱平均ではありません。異なる :math:`p`
+の間の遷移と ``CalcSpec`` は非対応です。
+
+状態、restart、行列のファイル形式は変更しません。 ``Spin`` / ``SpinGC`` の状態
+ファイルはversion 1のままです。group digestは ``hphi-group-spinflip-fnv1a64-v1``
+になり、各操作の :math:`P_x` の有無と :math:`p` を含みます。このため他の :math:`p`、
+他の指標、 :math:`P_x` なしのファイルは、次元が一致しても拒否します。
+``SpinFlipParity`` なしのファイルは ``hphi-group-fnv1a64-v1`` のdigestのままです。
+manifestには ``spin_flip_operator=product_sigma_x``、 ``spin_flip_parity=+1``
+または ``-1``、 ``input_group_order`` を追加し、Hamiltonian行列ファイルには同じ
+演算子とparityのコメント行を追加します。Standard modeは ``SpinFlipParity`` を
+出力しません。
 
 .. raw:: latex
 

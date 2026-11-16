@@ -189,7 +189,9 @@ Use rules
 *  The ``Lanczos``, ``CG``, ``TPQ`` (microcanonical TPQ), ``cTPQ``, ``FullDiag``, and ``TimeEvolution`` methods support ``Spin`` with
    :math:`S=1/2` and fixed ``2Sz``, ``SpinlessFermion`` with fixed ``Ncond``,
    and ``Hubbard`` / ``tJ`` with fixed ``Nup`` and ``Ndown``.
-   Spin-one-half ``SpinGC`` without fixed Sz is also supported as described below.
+   ``Hubbard`` / ``tJ`` with only ``Ncond`` fixed, spin-one-half ``SpinGC``
+   without fixed Sz, and ``HubbardGC`` / ``SpinlessFermionGC`` with pair terms
+   and an optional particle-number parity are also supported as described below.
    Expert-mode Hamiltonian terms are:
 
    * ``Spin``: longitudinal ``Trans`` (local diagonal fields), ``Exchange``,
@@ -213,6 +215,10 @@ Use rules
    terms remain unsupported. SpinGC supports ``PairLift`` as described below. The raw spinless solver still rejects off-diagonal ``InterAll``;
    this extension applies to ``TransSym``. Standard-mode generation is unchanged.
 
+   For spin-one-half ``SpinGC`` and ``Spin`` with ``2Sz=0``, the global spin
+   flip :math:`P_x=\prod_i\sigma^x_i` can be added to the group with
+   ``SpinFlipParity`` (:ref:`Subsec:TransSymSpinFlip`).
+
    Correlation functions (``OneBodyG``, ``TwoBodyG``, ``ThreeBodyG``,
    ``FourBodyG``, ``SixBodyG``, and ``NBodyG``) are computed in the sector for
    ``Lanczos``, ``CG``, ``TPQ``, ``cTPQ``, ``TimeEvolution`` and, for every
@@ -221,14 +227,151 @@ Use rules
    other by a symmetry operation have the same value, and an operator that
    leaves the sector gives zero. For canonical ``Spin``,
    ``ThreeBodyG``/``FourBodyG``/``SixBodyG`` are rejected at startup as in the
-   raw basis; ``NBodyG`` expresses the same products. ``AnomalousG``, spectrum
-   calculations and restart are not supported together with this file.
+   raw basis; ``NBodyG`` expresses the same products. ``AnomalousG`` is
+   available only in the fermion grand-canonical sectors below, and spectrum
+   calculations are not supported together with this file. CG,
+   mTPQ, cTPQ and TimeEvolution support v3 solver continuation across MPI
+   process counts, including metadata layout 0/1 changes.
    Eigenvector I/O is available for CG and
    TimeEvolution through the sector checkpoint format below; FullDiag can
    export every eigenstate in that format. Hamiltonian input and output are
    available for FullDiag only, through the identified sector matrix file
    (:ref:`Subsec:ham`). Unsupported
    combinations terminate with an error.
+
+
+Hubbard and tJ sectors with fixed particle number only (expert mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=0`` (Hubbard) or ``CalcModel=9`` (tJ) with ``TransSym`` and
+``Ncond``, and without ``2Sz``, ``Nup`` and ``Ndown``, selects a
+spatial-symmetry sector in which only the particle number
+:math:`N=` ``Ncond`` is fixed. Total :math:`S_z` is not fixed, so the
+Hamiltonian may contain spin-mixing ``Trans`` terms (spin-orbit-type hopping,
+transverse fields) and ``InterAll`` terms that change :math:`S_z`, such as
+:math:`S^+_iS^+_j`. When ``Ncond`` is given together with ``2Sz``, or with
+both ``Nup`` and ``Ndown`` whose sum equals ``Ncond``, the fixed-:math:`S_z`
+``Hubbard`` / ``tJ`` sector above is used. If ``2Sz`` is omitted and both
+``Nup`` and ``Ndown`` are specified with ``Ncond``, their sum must equal
+``Ncond``; otherwise the input is rejected. When ``Ncond`` and ``2Sz`` are
+both specified, the existing canonical input handling determines ``Nup``
+and ``Ndown`` from those two values.
+
+.. list-table:: Fixed-N sectors
+   :header-rows: 1
+   :widths: 22 26 52
+
+   * - Space
+     - Particle number
+     - Dimension before projection
+   * - HubbardNConserved (internal model 6)
+     - :math:`1\leq N\leq 2N_{\rm site}`
+     - :math:`\binom{2N_{\rm site}}{N}`
+   * - tJNConserved (internal model 11)
+     - :math:`1\leq N\leq N_{\rm site}`
+     - :math:`\binom{N_{\rm site}}{N}2^N` (no doubly occupied site)
+
+Both require ``0 < Nsite <= CHAR_BIT*sizeof(unsigned long)/2``. As in the
+raw basis, ``Ncond=0`` is rejected; empty symmetry sectors are rejected as
+well. States use the two-bit site encoding and the fermion permutation sign of
+``Hubbard`` / ``tJ`` above, and the tJ projection is applied to the result of a
+whole operator product.
+
+The supported Hamiltonian families are those of ``Hubbard`` / ``tJ`` above
+without the spin restriction: ``Trans`` (including spin-mixing and complex
+terms), ``CoulombIntra``, ``CoulombInter``, ``Hund``, ``Ising``, ``Exchange``,
+``PairHop`` and ``InterAll``. Hermiticity and group invariance are checked for
+the whole normal-ordered Hamiltonian; every product of creation-annihilation
+pairs conserves :math:`N`. ``PairLift``, ``NBodyInterAll``, anomalous terms and
+``CalcSpec`` remain unsupported.
+
+All six methods, the six correlation formats (spin-flip operators included),
+state import/export, the FullDiag sector matrix file, v3 continuation across
+process counts and both basis layouts are available as for the fixed-:math:`S_z`
+sectors. ``TEOneBody`` / ``TETwoBody`` may mix spins at every time if they keep
+the symmetry. In the energy, TPQ and TE outputs, :math:`N` and :math:`N^2` equal
+``Ncond`` and its square, while :math:`S_z`, :math:`S_z^2` and the doublon
+number are computed from the state (the doublon number is zero for tJ).
+
+State files keep version 1, phase 1 and 28 header words. The model word (6 or
+11) and the particle number identify the space, and ``nup`` / ``ndown`` are 0;
+v3 restart files and the matrix file have ``fixed_flags`` 0. The sector
+manifest records ``model=HubbardNConserved`` or ``model=tJNConserved``,
+``fixed_quantities=ncond`` and ``fixed_ne``. Files of a fixed-:math:`S_z`
+sector, another particle number, the other model or another momentum are
+rejected even when the dimensions agree.
+
+
+Fermion grand-canonical sectors with pair terms (expert mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``CalcModel=3`` (HubbardGC) or ``CalcModel=8`` (SpinlessFermionGC) with
+``TransSym`` selects a spatial-symmetry sector of the grand-canonical space, in
+which neither the particle number :math:`N` nor :math:`S_z` is fixed. Omit
+``Ncond``, ``2Sz``, ``Nup`` and ``Ndown``; explicit values, including zero, are
+rejected. The optional ``ParticleParity`` of the ModPara file also fixes
+:math:`(-1)^N`:
+
+.. list-table:: Fermion GC sectors
+   :header-rows: 1
+   :widths: 30 22 48
+
+   * - ``ParticleParity``
+     - Particle numbers
+     - Dimension before projection
+   * - 0 (default)
+     - all :math:`N`
+     - :math:`2^M`
+   * - 1
+     - even :math:`N`
+     - :math:`2^{M-1}`
+   * - -1
+     - odd :math:`N`
+     - :math:`2^{M-1}`
+
+Here :math:`M=2N_{\rm site}` for HubbardGC and :math:`M=N_{\rm site}` for
+SpinlessFermionGC. The full space requires :math:`M\leq`
+``CHAR_BIT*sizeof(unsigned long)-2`` and one parity :math:`M\leq`
+``CHAR_BIT*sizeof(unsigned long)-1`` (at most 31 HubbardGC sites on 64-bit
+systems). Site permutations keep :math:`N`, so each momentum sector splits into
+its even and odd parts; their dimensions add up to the full sector but are not
+equal in general. A nonzero ``ParticleParity`` without ``TransSym`` or with
+another model is an error.
+
+The Hamiltonian may contain the families of ``Hubbard`` (HubbardGC) or
+``SpinlessFermion`` (SpinlessFermionGC) above, including spin-mixing terms, and
+the pair terms :math:`c_ic_j` and :math:`c^\dagger_ic^\dagger_j` of the
+:ref:`AnomalousTerm file <Subsec:anomalousterm>` (adjacent Hermitian conjugate
+pairs; the spin index is 0 for SpinlessFermionGC). A pair changes :math:`N` by
+two and keeps :math:`(-1)^N`. Every operator acts on a state from the right with
+its fermion sign, and the group invariance is checked for the whole
+normal-ordered Hamiltonian including the pairs.
+
+All six methods are available. FullDiag builds the pairs into the dense sector
+matrix with LAPACK, ScaLAPACK and ELPA. In TimeEvolution the pair coefficients
+are static; ``TEOneBody`` / ``TETwoBody`` drive the other terms and must keep
+the symmetry at every time, and ``Laser`` is rejected. The six correlation formats and ``AnomalousG``
+(:ref:`Subsec:anomalousgoutput`) are evaluated in the sector with the file names
+and formats of the raw calculation, also when the Hamiltonian has no pair terms
+(for example, for a TE state that mixes particle numbers). :math:`N`,
+:math:`N^2`, :math:`S_z`, :math:`S_z^2` and the doublon number are computed from
+the state. ``CalcSpec`` is not supported.
+
+State files use version 2, phase 1 and 30 header words: the model word is 3 or
+8, ``nup``, ``ndown``, ``ne`` and the local-site mask are 0, and the fixed-quantity
+flags are 0, 4 or 12 for all, even or odd :math:`N` (bit 2 selects a parity,
+bit 3 the odd one). The v3 restart files and the matrix file (``fixed_flags``)
+carry the same values. The sector manifest records ``model=HubbardGC`` or
+``model=SpinlessFermionGC``, ``fixed_quantities=none``, ``particle_parity``
+(``full``, ``even`` or ``odd``), the number of pair rows as ``anomalous:`` in
+``term_scope``, and a ``hphi-parsed-hamiltonian-fnv1a64-v4`` digest that includes
+the pair terms. Files of another parity, a fixed-:math:`N` sector, the other
+model or another momentum are rejected even when the dimensions agree. A state
+of the same sector may be imported with other pair coefficients (a quench); a
+v3 continuation reports such a change as ``hamiltonian_changed=yes``.
+
+Without ``TransSym``, ``AnomalousTerm`` and ``AnomalousG`` keep their raw scope
+(HubbardGC only; see those files).
 
 
 Kondo sectors (spin one-half, expert mode)
@@ -339,7 +482,10 @@ products can be written as ``InterAll``. An empty Hamiltonian is valid.
      - No / No
      - Both
 
-Both layouts mean ``replicated`` and ``distributed``. MPI ranks with no
+Both layouts mean ``replicated`` and ``distributed``. CG, mTPQ, cTPQ and
+TimeEvolution support v3 continuation across process counts and metadata
+layout 0/1 changes;
+this is separate from the state import/export column. MPI ranks with no
 owned sector rows still participate in collective operations and state I/O.
 FullDiag supports LAPACK (``Solver=0``), ScaLAPACK (1) and ELPA (3) when
 built with those backends; the process-grid restrictions below apply.
@@ -362,9 +508,13 @@ and ``fixed_quantity_flags``. Phase 2 denotes the physical translation
 above. Flags are 3 (Kondo), 1 (NConserved), or 0 (GC); GC has zero
 ``nup/ndown/ne`` header fields. The manifest records the local mask,
 physical-space digest and fixed quantities separately from the Hamiltonian
-digest. Same model, physical space, sector, ordering, rank count and layout
-are required for import. CG evaluates an imported state without restarting
-optimization; TE starts a new time grid and permits a Hamiltonian quench.
+digest. The model, physical space, sector and ordering must match for import,
+while the rank count and layout may change. For these v2 files, the payload
+checksum is verified with the saved partition before redistribution and the
+sector digest verifies the basis set. The canonical representative-state sort
+fixes the global basis order. CG evaluates an imported state without
+restarting optimization; TE starts a new time grid and permits a Hamiltonian
+quench.
 All four CG/TE import directions are supported. Non-Kondo checkpoints keep
 version 1 / phase 1 / 28 words unchanged.
 
@@ -385,9 +535,9 @@ invariant ``TEOneBody`` hopping increments in a consistent gauge.
 
 General spin, new Standard-mode Kondo momentum generation, ``NBodyInterAll``,
 ``AnomalousTerm``, ``AnomalousG``, ``CalcSpec``, spin-axis rotations,
-antiunitary operations, multidimensional irreducible representations,
-solver restart and rank-changing checkpoint redistribution remain
-unsupported. Hamiltonian I/O is limited to the FullDiag sector matrix file.
+antiunitary operations, and multidimensional irreducible representations
+remain unsupported. Hamiltonian I/O
+is limited to the FullDiag sector matrix file.
 FullDiag additionally excludes vector input,
 distributed basis metadata, MAGMA and nonserial ``ExpecMode``.
 
@@ -476,8 +626,11 @@ statistical weights; a single sector sample is not such a sum.
 
 CG vector import evaluates supplied states without restarting optimization.
 TE import starts a new time grid; it can use a different Hamiltonian within
-the same sector (quench). Same rank count, ownership, model, sector and phase
-are required. Neither import is solver restart; ``ReStart`` remains rejected.
+the same sector (quench). Model, sector, global basis order and phase must
+match; the rank count, ownership and metadata layout may change. Neither import
+is solver restart. ``ReStart`` separately continues CG, mTPQ, cTPQ and
+TimeEvolution from v3 data across process counts and metadata layout 0/1
+changes.
 SpinGC checkpoints retain version 1 with ``model=4`` and zero ``nup/ndown/ne``
 header fields. Their Hamiltonian fingerprint is
 ``hphi-parsed-hamiltonian-fnv1a64-v3``, which includes parsed PairLift rows.
@@ -487,10 +640,10 @@ The manifest has ``fixed_quantities=none`` and ``full_dim=2^Nsite``.
 ``TEOneBody`` and ``TETwoBody`` may drive SpinGC using the right-endpoint
 Taylor rule described below. Every used slice is checked before propagation.
 ``Laser`` is rejected; use invariant on-site ``TEOneBody`` or spin-product
-``TETwoBody`` entries instead. General spin, Boost, new Standard-mode
-SpinGC momentum input, spin-axis rotations, global spin flip, antiunitary
-operations, multidimensional irreducible representations, spectrum,
-solver restart and rank-changing checkpoint redistribution are unsupported
+``TETwoBody`` entries instead. The global spin flip :math:`P_x` is available
+with ``SpinFlipParity`` (:ref:`Subsec:TransSymSpinFlip`). General spin, Boost,
+new Standard-mode SpinGC momentum input, other spin-axis rotations, antiunitary
+operations, multidimensional irreducible representations, and spectrum are unsupported
 (Hamiltonian I/O is limited to the FullDiag sector matrix file). ``CoulombIntra``, ``PairHop``, ``NBodyInterAll`` and
 ``AnomalousG`` are not supported in this SpinGC sector path. FullDiag also
 rejects vector input, distributed basis metadata, MAGMA, and nonserial
@@ -541,6 +694,95 @@ CG example, request :math:`S_i^z S_j^z` via ``TwoBodyG`` and sum over all
 :math:`i,j` (each :math:`S_i^z=(E_i^{11}-E_i^{00})/2`).
 This example does not add or require a Standard-mode keyword.
 
+.. _Subsec:TransSymSpinFlip:
+
+Global spin flip Px (spin one-half, expert mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The global spin flip
+
+.. math::
+
+   P_x=\prod_{i=0}^{N_{\rm site}-1}\sigma^x_i ,\qquad P_x^2=1,
+
+exchanges up and down at every site with amplitude :math:`+1`. It keeps
+:math:`S^x_i` and reverses :math:`S^y_i` and :math:`S^z_i`. ``SpinFlipParity``
+of the ModPara file selects its eigenvalue :math:`p=+1` or :math:`p=-1` inside
+the sector of ``TransSym``:
+
+.. list-table:: Models with ``SpinFlipParity``
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Model
+     - Condition
+   * - ``SpinGC`` (``CalcModel=4``)
+     - spin one-half; :math:`S_z` is not fixed
+   * - ``Spin`` (``CalcModel=1``)
+     - spin one-half with ``2Sz=0`` (:math:`P_x` maps :math:`S_z` to :math:`-S_z`)
+
+``SpinFlipParity=0`` or no entry keeps the previous sector, its files and its
+digests. A nonzero value requires ``TransSym``; to use :math:`P_x` alone, give a
+``TransSym`` file with only the identity (``NQPTrans 1``, character 1,
+``0 i i 1`` for every site). Other values, fermion and Kondo models, general
+spin and ``Spin`` with :math:`S_z\neq 0` are rejected. :math:`P_x` is a
+different symmetry from :math:`P_z=\prod_i\sigma^z_i`, from the fermion
+``ParticleParity`` and from time reversal; the ``Anti`` column of this file is
+not used for it.
+
+HPhi extends the group :math:`G` of the file to :math:`G\times Z_2`. The
+operation :math:`(g,f)` applies :math:`T_g` and then :math:`P_x^f`, with
+
+.. math::
+
+   (g,f)(h,e)=(gh, f\oplus e),\qquad \chi(g,f)=\chi(g)\,p^f,
+
+so the projector is :math:`\Pi_\chi(1+pP_x)/2`. The first :math:`|G|`
+operations are the file's ones and the next :math:`|G|` are their products
+with :math:`P_x`; ``group_order`` in the manifest and the log is :math:`2|G|`.
+Representatives are the smallest words of the :math:`G\times Z_2` orbits, with
+positive real coefficients. For each character
+:math:`D(\chi,+)+D(\chi,-)=D(\chi)`, but the two dimensions are not equal in
+general: for example, at four sites the Neel words are fixed by translation
+times :math:`P_x` and survive only for :math:`(k=0,p=+1)` and :math:`(k=\pi,p=-1)`.
+An empty sector stops with ``TransSym sector has zero basis dimension``.
+
+The whole Hamiltonian must commute with :math:`P_x`. The check maps every local
+unit :math:`E^{st}_i=|s\rangle_i\langle t|` to :math:`E^{1-s,1-t}_i` (the
+coefficient is not conjugated) and compares the combined terms, so single input
+rows need not be invariant. Transverse fields :math:`h_xS^x`, ``Ising``,
+``Exchange``, real ``PairLift`` and products such as
+:math:`S^y_iS^z_j+S^z_iS^y_j` are allowed; :math:`h_zS^z`, :math:`h_yS^y`,
+imaginary ``PairLift`` coefficients and the ``Spin`` term
+:math:`i(S^+_iS^-_j-S^-_iS^+_j)` are not. A violation is reported as
+``TransSym Hamiltonian invariance failed ... under op`` :math:`n` with
+:math:`n\geq|G|`. A transverse field needs ``SpinGC``: it does not keep the
+:math:`S_z` of a ``Spin`` sector.
+
+All six methods are available as for the sectors above, with both basis
+layouts, correlations of all formats, CG/TE vector import and export, FullDiag
+state and Hamiltonian files, and v3 continuation across MPI process counts. In
+a :math:`P_x` sector :math:`\langle S_z\rangle=0` and the
+energy and Flct files report ``Sz`` = 0; :math:`S_z^2` is evaluated from the
+state. Correlations of operators that change sign under :math:`P_x`, such as
+:math:`S^z_i` and :math:`S^y_i`, vanish, while :math:`\langle S^x_i\rangle`
+can be nonzero and :math:`\langle E^{00}_i\rangle=\langle E^{11}_i\rangle=1/2`.
+Every ``TEOneBody``/``TETwoBody`` slice must keep :math:`P_x`; a slice with, for
+example, :math:`h_z(t)\neq 0` stops the run before propagation. TPQ and cTPQ
+estimate a single :math:`(\chi,p)` sector, not the full thermal ensemble.
+Transitions between different :math:`p` and ``CalcSpec`` are not supported.
+
+State, restart and matrix files keep their formats: ``Spin``/``SpinGC`` state
+files remain version 1. The group digest becomes
+``hphi-group-spinflip-fnv1a64-v1``, which covers the :math:`P_x` flag of each
+operation and :math:`p`. Files of the other :math:`p`, of another character or
+without :math:`P_x` are therefore rejected even when the dimensions agree, and
+files without ``SpinFlipParity`` keep the ``hphi-group-fnv1a64-v1`` digest. The
+manifest adds ``spin_flip_operator=product_sigma_x``,
+``spin_flip_parity=+1`` or ``-1`` and ``input_group_order``; the Hamiltonian
+matrix file adds a comment line with the same operator and parity. Standard
+mode does not write ``SpinFlipParity``.
+
 Sector Lanczos basis layout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -574,8 +816,10 @@ meaning :math:`\langle H^2\rangle`, not the subtracted variance.
 ``OutputGreenFormat=1`` selects the usual aggregate files for SS/Norm/Flct and
 for the correlation functions. Correlation functions are recomputed at the TPQ
 evaluation steps selected by ``ExpecInterval``; requesting every site pair at
-every step can be expensive for large sectors. Restart, vector I/O, and
-spectrum remain unavailable with ``TransSym``.
+every step can be expensive for large sectors. v3 restart is available with
+rank redistribution and metadata layout 0/1 changes; state vector
+import/export and spectrum
+remain unavailable for TPQ.
 
 These results estimate the trace within a **single symmetry sector**; they
 are not a thermal average over the entire fixed-quantum-number space.
@@ -600,7 +844,10 @@ at zero and be finite and nondecreasing. Repeated beta values represent a zero s
 integer less than ``INT_MAX``, and both flags are 0 or 1. The order on row
 ``i`` advances from beta ``i`` to beta ``i+1``; the final order is unused.
 Sector cTPQ rejects any nonzero ``eigen`` flag, including at the initial or
-final point. Vector I/O and restart remain unsupported.
+final point. Vector I/O remains unsupported. Uniform-schedule cTPQ can use v3
+restart with rank redistribution and metadata layout 0/1 changes;
+``InvTemp`` cannot be combined
+with ``ReStart=2`` or 3.
 For an explicit schedule, correlation functions are written at the initial
 point and at rows whose ``physcal`` flag is 1. Without ``InvTemp``,
 ``ExpecInterval`` selects the correlation steps. ``OutputGreenFormat=1``
@@ -613,14 +860,16 @@ Sector time evolution with a static Hamiltonian
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In expert mode, ``CalcType=4`` evolves a sector checkpoint with a static
-Hamiltonian. Set ``InputEigenVec=1``, ``ReStart=0``, a positive integer
+Hamiltonian. For a new imported trajectory set ``InputEigenVec=1``,
+``ReStart=0``, a positive integer
 ``ExpandCoef``, and ``SpectrumVec seed_eigenvec_0`` in the namelist. The
 rank files ``output/seed_eigenvec_0_rank_<rank>.dat`` must use the sector
 format below. A CG run with ``OutputEigenVec=1`` provides such files, and so
 does a sector FullDiag run for every eigenstate (see :ref:`Subsec:eigenvec`).
-The basis, sector, MPI size and layout must match; the Hamiltonian may differ
-for a quench. The default layout is distributed; replicated remains available
-through ``HPHI_SYMMETRY_BASIS_LAYOUT=replicated``.
+The basis, sector, global order and phase must match; the MPI size and layout
+may change, and the Hamiltonian may differ for a quench. The default layout is
+distributed; replicated remains available through
+``HPHI_SYMMETRY_BASIS_LAYOUT=replicated``.
 
 Before running TE, preserve all rank files of the CG seed under a separate
 prefix, or change the TE ``CDataFileHead``. If the input and output prefixes
@@ -643,7 +892,10 @@ convergence.
 Correlation functions are evaluated after propagation at the steps selected
 by ``ExpecInterval``. ``OutputGreenFormat=1`` collects them into files indexed
 by the zero-based time-grid step. Requesting every site pair at every step can
-be expensive for large sectors. ``ReStart`` remains unsupported.
+be expensive for large sectors. v3 ``ReStart`` continues a saved TE clock
+across process counts and metadata layout 0/1 changes; it does
+not use import provenance as
+the new clock.
 The sector manifest records the actual time grid, Taylor order, and source
 checkpoint's method, state, step, time and Hamiltonian digest. For a FullDiag
 source it adds ``source_hamiltonian_kind=sector_matrix_v1``: that digest
@@ -664,11 +916,13 @@ Time-dependent sector Hamiltonians
 
 ``TEOneBody`` or ``TETwoBody`` may drive the sector Hamiltonian.
 ``Laser`` is available for the canonical models and all three Kondo spaces,
-subject to the Kondo geometry/gauge restrictions above; SpinGC rejects it.
+subject to the Kondo geometry/gauge restrictions above; SpinGC, HubbardGC and
+SpinlessFermionGC reject it.
 Use one driving family per calculation. One-body and two-body entries are
 added to the static Hamiltonian; Peierls driving changes the phases of its
 parsed transfer coefficients. Diagonal and off-diagonal terms are supported
-for Spin, SpinlessFermion, Hubbard, tJ and all three Kondo spaces, including spinless fermions. The raw
+for Spin, SpinlessFermion, Hubbard, tJ, HubbardGC, SpinlessFermionGC and all three
+Kondo spaces, including spinless fermions. The raw
 spinless solver's diagonal-TE restriction is unchanged.
 
 Before loading the initial vector or writing time-series data, HPhi checks
@@ -705,10 +959,17 @@ Sector FullDiag writes every eigenstate in the same format.
 The files are ``output/<CDataFileHead>_eigenvec_<state>_rank_<rank>.dat``
 with zero-based state and rank indices. All ranks write a file, including
 empty owners. Reading requires the same model, fixed quantum numbers,
-group/character, sector, MPI rank count, basis layout, local ownership,
-global-index-to-representative mapping, and basis phase convention.
-Legacy raw-basis vector files are rejected. ``InputEigenVec=2`` and
-``ReStart`` remain unsupported. A CG input run evaluates the supplied states;
+group/character, sector, global-index-to-representative mapping, and basis
+phase convention. The MPI rank count, basis layout and local ownership may
+change.
+Legacy raw-basis vector files are rejected. ``InputEigenVec=2`` remains
+unsupported for this import format. Solver continuation uses the separate v3
+manifest/vector files described in :ref:`Subsec:restart_v3`. Those v3 files
+also support state import across rank counts and metadata layout 0/1 changes.
+For old v1/v2 files, HPhi validates the DATA checksum with the saved partition
+before redistribution; the source files must agree on a valid layout, but the
+current layout may differ.
+A CG input run evaluates the supplied states;
 it does not solve for new eigenstates or resume iterations.
 
 The source Hamiltonian digest is recorded separately and may differ from the
@@ -835,8 +1096,10 @@ then goes through the same check and canonicalization as a generated one, and
 the ``matrix_digest`` of the values read is recorded. The manifest has
 ``matrix_source=input`` and ``output_scope=requested`` even when only
 eigenvalues are requested. The matrix file can be read with another rank
-count or solver, whereas eigenstate checkpoints need the same rank count and
-layout. States saved by such a run are evaluated with the Hamiltonian of the
+count or solver. Eigenstate checkpoints can likewise be imported by CG or TE
+with another rank count or metadata layout; their v1/v2 DATA checksum is
+verified using the saved partition before redistribution. States saved by
+such a run are evaluated with the Hamiltonian of the
 consumer's definition files when TE or CG uses them.
 
 ``CalcTimer.dat`` then shows ``Sector matrix input`` [5800], ``Sector matrix
@@ -873,6 +1136,9 @@ Three versioned fingerprints are included:
   Renumbering operations does not change it. Character components are rounded
   to integer multiples of :math:`10^{-10}`; this quantization is not a general
   equivalence test for floating-point inputs near a rounding boundary.
+  With ``SpinFlipParity``, ``hphi-group-spinflip-fnv1a64-v1`` also hashes the
+  :math:`P_x` flag of each operation (sorted after the permutation) and
+  :math:`p`.
 * ``sector_digest``: ``hphi-sector-multiset-v1:count:xor:sum`` hashes each
   representative state, orbit size, and stabilizer size with FNV-1a 64 and
   combines the hashes without dependence on entry order or MPI ownership.

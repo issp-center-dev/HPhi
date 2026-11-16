@@ -6,9 +6,10 @@ Norm_rand.dat
 -------------
 
 | (For the TPQ method) This file is outputted to show the calculation
-  process information for the TPQ method. In the restart calculation,
-  the values are added to the previous file. An example of the file
-  format is as follows.
+  process information for the TPQ method. Before continuation, rows at or
+  after the validated saved next step and a partial EOF row are removed;
+  resumed rows are then appended. Aggregate rows follow execution order.
+  An example of the file format is as follows.
 
 ::
 
@@ -34,6 +35,10 @@ written to ``Norm_tpq.dat`` instead. The aggregate file contains all
 runs, and each data row starts with ``set`` and ``step``:
 ``set step inv_temp global_norm global_1st_norm``. The split
 ``Norm_rand??.dat`` files are not created in this mode.
+
+The legacy ``tmpvec`` format stores only the vector and step. Therefore,
+after a legacy TPQ/cTPQ continuation, ``global_1st_norm`` is written as
+zero for the continued rows; it cannot be reconstructed from that file.
 
 .. _file_format_30:
 

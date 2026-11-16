@@ -19,7 +19,7 @@ nelec = 4
 2Sz = 0
 EOF
 
-"${hphi}" -sdry stan.in > generate.log 2>&1 || {
+${MPIRUNFC:-} "${hphi}" -sdry stan.in > generate.log 2>&1 || {
   cat generate.log
   exit 1
 }
@@ -34,7 +34,7 @@ awk '
 mv modpara.def.tmp modpara.def
 
 set +e
-"${hphi}" -e namelist.def > malformed.log 2>&1
+${MPIRUNFC:-} "${hphi}" -e namelist.def > malformed.log 2>&1
 rc=$?
 set -e
 

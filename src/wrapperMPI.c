@@ -261,16 +261,11 @@ FILE* fopenMPI(
 
   return fp;
 }/*FILE* fopenMPI*/
-/**
-@brief MPI file I/O (get a line, fgets) wrapper.
-Only the root node (::myrank = 0) reads and broadcast string.
-@return The same as that of fgets
-@author Mitsuaki Kawamura (The University of Tokyo)
-*/
-char* fgetsMPI(
+static char* fgetsMPIImpl(
   char* InputString,//!<[out] read line.
   int maxcount,//!<[in] Length of string
-  FILE* fp//!<[in] file pointer
+  FILE* fp,//!<[in] file pointer
+  int skip_comments//!<[in] Skip blank and comment lines when nonzero.
 ){
   int inull;
   char *ctmp;
@@ -289,7 +284,8 @@ char* fgetsMPI(
       inull = 1;
     }
     
-    while(*InputString == '\n' || strncmp(InputString, "#", 1)==0){
+    while(skip_comments &&
+          (*InputString == '\n' || strncmp(InputString, "#", 1)==0)){
       ctmp = fgets(InputString, maxcount, fp);
       if (ctmp == NULL){
         inull=1;
@@ -306,7 +302,32 @@ char* fgetsMPI(
   }
 
   return ctmp;
+}/*char* fgetsMPIImpl*/
+/**
+@brief MPI file I/O (get a non-comment line, fgets) wrapper.
+Only the root node (::myrank = 0) reads and broadcasts the string.
+@return The same as that of fgets
+@author Mitsuaki Kawamura (The University of Tokyo)
+*/
+char* fgetsMPI(
+  char* InputString,//!<[out] read line.
+  int maxcount,//!<[in] Length of string
+  FILE* fp//!<[in] file pointer
+){
+  return fgetsMPIImpl(InputString, maxcount, fp, 1);
 }/*char* fgetsMPI*/
+/**
+@brief MPI file I/O wrapper that preserves blank and comment lines.
+Only the root node (::myrank = 0) reads and broadcasts the string.
+@return The same as that of fgets
+*/
+char* fgetsMPIAllowComments(
+  char* InputString,//!<[out] read line.
+  int maxcount,//!<[in] Length of string
+  FILE* fp//!<[in] file pointer
+){
+  return fgetsMPIImpl(InputString, maxcount, fp, 0);
+}/*char* fgetsMPIAllowComments*/
 /**
 @brief MPI barrier wrapper.
 @author Mitsuaki Kawamura (The University of Tokyo)
@@ -438,8 +459,8 @@ int SumMPI_i(
   int idim//!<[in] Value to be summed
 ) {
   /* ExpecLocal mode: no-communication pass-through (see SumMPI_dc above).
-     Not currently called from the expec_* layer, but kept on the frozen
-     ExpecLocal allow-list as harmless headroom. */
+     Observable output agreement uses this locally; the FullDiag driver
+     aggregates failures only after leaving the uneven owned-state loop. */
   if (iExpecLocal) return idim;
 #ifdef MPI
   int ierr;
@@ -550,3 +571,16 @@ double complex VecProdMPI(
 
   return(prod);
 }/*double complex VecProdMPI*/
+
+unsigned long int ExscanMPI_li(unsigned long int value)
+{
+#ifdef MPI
+  unsigned long int result = 0;
+  int ierr = MPI_Exscan(&value, &result, 1, MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
+  if (ierr != 0) exitMPI(-1);
+  return myrank == 0 ? 0 : result;
+#else
+  (void)value;
+  return 0;
+#endif
+}

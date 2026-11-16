@@ -6,9 +6,10 @@ SS_rand.dat
 -----------
 
 | (For the TPQ method) This file is outputted to show the calculation
-  results for the TPQ method. In the restart calculation, the values are
-  added to the previous file. An example of the file format is as
-  follows.
+  results for the TPQ method. Before continuation, rows at or after the
+  validated saved next step and a partial EOF row are removed; resumed rows
+  are then appended. Aggregate rows follow execution order, which can differ
+  from an uninterrupted multi-set run. An example follows.
 
 ::
 

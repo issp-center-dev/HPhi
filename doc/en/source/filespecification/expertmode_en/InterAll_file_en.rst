@@ -15,6 +15,31 @@ integrals :math:`I_{ijkl\sigma_1\sigma_2\sigma_3\sigma_4}`,
 
 For the off-diagonal component, be sure to provide a pair of i1 sigma1 i2 sigma2 i3 sigma3 i4 sigma4 and i4 sigma4 i3 sigma3 i2 sigma2 i1 sigma1.
 For spin, the conditions :math:`i=j` and :math:`k=l` must be satisfied.
+
+Fermionic terms are interpreted in the operator order written above. For
+:math:`\sigma\ne\tau`, reordering a spin-exchange product includes its
+one-body contraction:
+
+.. math::
+
+   c^\dagger_{i\sigma}c_{j\tau}c^\dagger_{k\tau}c_{l\sigma}
+   = \delta_{jk}c^\dagger_{i\sigma}c_{l\sigma}
+     - c^\dagger_{i\sigma}c_{l\sigma}c^\dagger_{k\tau}c_{j\tau}.
+
+When :math:`j=k` and :math:`i\ne l`, HPhi adds the one-body term to
+``Transfer`` internally, with input coefficient :math:`-I` because the
+Transfer Hamiltonian carries an overall minus sign. Do not also add this
+contraction manually while retaining the original InterAll term.
+The same rule applies to each ``TETwoBody`` time slice.
+
+.. note::
+
+   Earlier versions omitted this off-site contraction in the Hubbard, Kondo,
+   and tJ families. Affected calculations need to be recomputed; continuing
+   an old solver checkpoint does not repair the earlier calculation.
+   Inputs already rewritten as spin-preserving bilinears plus the explicit
+   one-body contraction remain valid.
+
 An example of the file format is as follows.
 
 ::

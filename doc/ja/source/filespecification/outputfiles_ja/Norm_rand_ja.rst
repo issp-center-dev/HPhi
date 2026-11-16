@@ -6,7 +6,8 @@ Norm\_rand.dat
 ~~~~~~~~~~~~~~
 
 | (TPQ法でのみ出力) TPQ法での有限温度計算時のログを出力します。
-  再計算の場合は値が追記されます。 以下にファイル例を示します。
+  継続前に、検証済みの次step以後の行とEOFの未完行を削除してから再開行を追記します。
+  集約行は実行順です。以下にファイル例を示します。
 
 ::
 
@@ -29,6 +30,9 @@ TPQ/cTPQで ``OutputGreenFormat=1`` を指定した場合、この物理量は
 ``Norm_tpq.dat`` に出力されます。この集約ファイルには全runが含まれ、
 各データ行は ``set step inv_temp global_norm global_1st_norm`` の順に
 なります。このモードでは ``Norm_rand??.dat`` は作成されません。
+
+legacy ``tmpvec`` 形式はベクトルとstepだけを保存します。このためlegacy
+TPQ/cTPQ継続後の行では、復元できない ``global_1st_norm`` を0として出力します。
 
 ファイル形式
 ^^^^^^^^^^^^

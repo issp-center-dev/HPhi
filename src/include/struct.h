@@ -38,6 +38,7 @@ struct ParamList {
     int OutputInterval;
     int ExpandCoef;
     int ExpecInterval;
+    int CheckpointInterval;   /**< v3 continuation checkpoint period for CG/TPQ/cTPQ (0: end only) */
 };
 /**
 @brief Definision of system (Hamiltonian) etc.
@@ -111,6 +112,7 @@ struct DefineList {
 
     //[s] Transfer
   unsigned int NTransfer;/**<@brief Number of transfer integrals obtained by a def file.*/
+  unsigned int NTransferCapacity;/**<@brief Storage including one-body contractions from InterAll.*/
   unsigned int EDNTransfer;/**<@brief Number of transfer integrals for calculation. */
   int **GeneralTransfer;/**<@brief Index of transfer integrals obtained by a def file. 
                         malloc in setmem_def().\n
@@ -215,11 +217,16 @@ struct DefineList {
   int **AnomalousG;/**<@brief [DefineList::NAnomalousG][5]: type, site1, spin1, site2, spin2*/
 
   int iFlgSymmetryBasis;
-  unsigned int NSymTrans;
+  unsigned int NSymTrans;          /**< group order in use; 2*NSymTransInput after the Px extension */
+  unsigned int NSymTransInput;     /**< operations read from the TransSym file */
+  unsigned int NSymTransCapacity;  /**< rows allocated for SymTrans/SymTransAnti/SymTransChar/SymTransFlip */
   int **SymTrans;                  /**< [NSymTrans][Nsite], site permutation */
   int **SymTransAnti;              /**< [NSymTrans][Nsite], v1 accepts only 1 */
   double complex *SymTransChar;    /**< [NSymTrans], scalar 1D character */
+  int *SymTransFlip;               /**< [NSymTrans], 1 when the op applies Px after the site permutation */
   int iSymMomentumIndex;           /**< "# MomentumIndex m" metadata of the TransSym file, -1 if absent */
+  int iParticleParity;             /**< TransSym HubbardGC/SpinlessFermionGC: 0 all N, 1 even N, -1 odd N */
+  int iSpinFlipParity;             /**< TransSym Spin-1/2 Spin(Sz=0)/SpinGC: 0 off, +1/-1 eigenvalue of Px = prod_i sigma^x_i */
 
   int **CisAjt;/**<@brief [DefineList::NCisAjt][4] Indices of one-body correlation function. malloc in setmem_def().*/
   unsigned int NCisAjt;/**<@brief Number of indices of two-body correlation function.*/
@@ -269,6 +276,8 @@ struct DefineList {
   int iInitialVecType;/**<@brief Switch for type of inital vectors. 
                       0:complex type, 1: real type. default value is set as 0 in readdef.c*/
   int iFlgFiniteTemperature;/**<@brief ???*/
+  int iCalcModelInput; /**< Model before sz() changes NConserved models. */
+  int iRestartFixedFlags; /**< bit0: fixed Ne; bit1: fixed Sz. */
   int iCalcModel;/**<@brief Switch for model. 0:Hubbard, 1:Spin, 2:Kondo, 
                  3:HubbardGC, 4:SpinGC, 5:KondoGC, 6:HubbardNConserved*/
   int iOutputMode;/**<@brief Switch for output mode. 0: OneBodyG and TwoBodyG. 
@@ -323,6 +332,7 @@ struct DefineList {
      - 0: not restart
      - 1:restart (output restart vector),
      - 2: restart (input and output restart vector) */
+  int RestartSourceRanks;   /**< MPI rank count of the files to read (0: same as this run) */
   int iFlgMPI;/**<@brief MPI mode
     - 0: butterfly
     - 1: Parallel Interaction [to be supported]
@@ -374,6 +384,7 @@ struct DefineList {
 
     //Information of Transfer integrals
     unsigned int NTETransferMax;
+    unsigned int NTETransferCapacity;/**<@brief Includes TETwoBody contractions; not an input-mode flag. */
     unsigned int *NTETransfer;        /**< Number of time-dependent transfer integrals for Time Evolution.\n
                Data Format [NTE]*/
     unsigned int *NTETransferDiagonal;        /**< Number of time-dependent transfer integrals for Time Evolution.\n

@@ -157,7 +157,7 @@ def corruption_checks(root, source, hphi, launcher, env):
             (6, 'nup', 'nup'), (7, 'ndown', 'ndown'), (8, 'ne', 'particle number'),
             (9, 'full_dim', 'raw dimension'), (10, 'dimension', 'sector dimension'),
             (11, 'rank_count', 'MPI rank count'), (12, 'rank', 'MPI rank'),
-            (13, 'layout', 'basis layout'), (14, 'offset', 'local offset'),
+            (14, 'offset', 'local offset'),
             (15, 'local_dim', 'local dimension'), (16, 'group', 'group/character digest'),
             (17, 'sector_count', 'sector count'), (18, 'sector_xor', 'sector XOR'),
             (19, 'sector_sum', 'sector sum'), (20, 'order', 'basis order'),
@@ -166,6 +166,22 @@ def corruption_checks(root, source, hphi, launcher, env):
             parts[-1][0][word] = 99 if word in (1, 4) else int(parts[-1][0][word]) ^ 1
             store_parts(files, parts)
         reject(name, mutate, identity, detail)
+    def invalid_layout(files, parts):
+        for header, _ in parts:
+            header[13] = 5
+        store_parts(files, parts)
+    reject('invalid_layout', invalid_layout, identity)
+    if mpi_size(launcher) > 1:
+        def mixed_layout(files, parts):
+            parts[-1][0][13] ^= 1
+            store_parts(files, parts)
+        reject('mixed_layout', mixed_layout, 'cross-rank metadata consistency')
+    other = import_copy(root, 'other_layout', source)
+    other_layout = ('replicated' if env['HPHI_SYMMETRY_BASIS_LAYOUT'] == 'distributed'
+                    else 'distributed')
+    run_case(other, hphi, 'other_layout', launcher,
+             dict(env, HPHI_SYMMETRY_BASIS_LAYOUT=other_layout))
+    assert (other/'output/zvo_energy.dat').exists()
     for name, change, stage in [
             ('truncated_prefix', lambda b: b[:8], identity),
             ('truncated_header', lambda b: b[:29*8], identity),

@@ -139,12 +139,13 @@ def check_data(path: Path, aggregate: bool, expected: list[dict]) -> None:
 
 
 def check_correlation_block(data: np.ndarray, rows: list[list[int]],
-                            expected: np.ndarray, prefix: int, label: str) -> None:
+                            expected: np.ndarray, prefix: int, label: str, *,
+                            atol: float = ATOL_CORRELATION) -> None:
     assert data.shape == (len(rows), prefix + len(rows[0]) + 2), (label, data.shape)
     np.testing.assert_array_equal(data[:, prefix:-2], rows)
     actual = data[:, -2] + 1j * data[:, -1]
     assert np.isfinite(actual).all() and np.isfinite(expected).all()
-    np.testing.assert_allclose(actual, expected, atol=ATOL_CORRELATION, rtol=0,
+    np.testing.assert_allclose(actual, expected, atol=atol, rtol=0,
                                err_msg=label)
 
 

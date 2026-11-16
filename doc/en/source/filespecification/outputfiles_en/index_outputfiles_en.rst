@@ -143,6 +143,8 @@ Quick Reference
      - Recalculated vector
    * - :doc:`zvo_excited*.dat <excitedvec_en>`
      - Excited state vector
+   * - :doc:`v3 restart manifest and vectors <restart_en>`
+     - Atomic solver-continuation checkpoints
 
 **Dynamical Green's Functions**
 
@@ -259,6 +261,7 @@ Files containing wave function and vector data.
    tmpvec_en
    recalcvec_en
    excitedvec_en
+   restart_en
 
 Dynamical Green's Functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

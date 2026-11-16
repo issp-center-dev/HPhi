@@ -1455,14 +1455,15 @@ int omp_sz_Kondo_hacker(
   ja           = 1;
   tmp_num_up   = num_up;
   tmp_num_down = num_down;
-  if(icheck_loc ==1){
-    //for(ia=0;ia<X->Check.sdim;ia++){
-    ia = X->Def.Tpow[X->Def.Nup+X->Def.Ndown-tmp_num_up-tmp_num_down]-1;
-    //ia = 1;
-    //if(ia < X->Check.sdim && ia!=0){
-    //ia = snoob(ia);
-    while(ia < X->Check.sdim && ia!=0){
-    // for(ia=0;ia<X->Check.sdim;ia++){
+  // Reject impossible upper halves before subtracting unsigned occupations.
+  if(icheck_loc == 1 && tmp_num_up <= X->Def.Nup &&
+     tmp_num_down <= X->Def.Ndown){
+    const long unsigned int remaining =
+      (X->Def.Nup - tmp_num_up) + (X->Def.Ndown - tmp_num_down);
+    // Each half contains Nsite bits, including a split site for odd Nsite.
+    if(remaining > (long unsigned int)X->Def.Nsite) return 0;
+    ia = X->Def.Tpow[remaining]-1;
+    while(ia < X->Check.sdim){
         //[s] proceed ja
         i        = ia;
         num_up   =  tmp_num_up;
@@ -1504,10 +1505,10 @@ int omp_sz_Kondo_hacker(
           list_2_2_[ib]=jb+1;
           ja+=1;
         }
+        // The vacuum is a candidate once; snoob(0) would divide by zero.
+        if(ia == 0) break;
         ia = snoob(ia);
         //[e] proceed ja
-        //ia+=1;
-      //}
     }
   }
 //[e] get ja
@@ -2362,7 +2363,9 @@ void calculate_jb_KondoNConserved(struct BindStruct *X, long unsigned int *list_
     int all_up, all_down, all_loc,tmp_res,num_loc,num_loc_up,num_loc_down;
     long unsigned int tmp_1,tmp_2,tmp_3;
     int all_cond,all_cond_up,all_cond_down,num_cond;
+    long int **comb;
 
+    comb = li_2d_allocate(X->Def.Nsite+1,X->Def.Nsite+1);
     Ne   = X->Def.Ne;
             
     jb      = 0;
@@ -2415,11 +2418,15 @@ void calculate_jb_KondoNConserved(struct BindStruct *X, long unsigned int *list_
                 all_down = (X->Def.Nsite)/2-all_loc;
             }
             //printf("all_loc %d all_up %d  all_down %d Ne %d Nsite %d\n",all_loc,all_up,all_down,X->Def.Ne,X->Def.Nsite);
-            if (num_up+num_down==X->Def.Ne-all_loc){
-               jb       += X->Def.Tpow[all_loc];
-            }
+            // The lower half holds all_loc local spins (2^all_loc states) and
+            // all_up+all_down itinerant spin-orbitals, which have to take
+            // the electrons that are left over from the upper half.
+            num_cond = X->Def.Ne-all_loc-(num_up+num_down);
+            tmp_1    = Binomial(all_up+all_down, num_cond, comb, X->Def.Nsite);
+            jb      += X->Def.Tpow[all_loc]*tmp_1;
         }
     }
+    free_li_2d_allocate(comb);
 /*           
         list_jb[ib] = jb;
         i           = ib*ihfbit; // ihfbit=pow(2,((Nsite+1)/2))

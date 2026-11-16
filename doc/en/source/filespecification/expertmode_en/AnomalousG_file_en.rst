@@ -6,7 +6,8 @@ AnomalousG file
 ---------------
 
 This file determines the target components of anomalous pair Green's
-functions for HubbardGC calculations. A line with type ``0`` represents
+functions for HubbardGC calculations and for HubbardGC and SpinlessFermionGC
+symmetry sectors (:ref:`Subsec:TransSym`). A line with type ``0`` represents
 :math:`\langle c_{i\sigma_1}c_{j\sigma_2}\rangle`, and a line with type
 ``1`` represents
 :math:`\langle c_{i\sigma_1}^{\dagger}c_{j\sigma_2}^{\dagger}\rangle`. An
@@ -78,11 +79,15 @@ Use rules
 
 *  Headers cannot be omitted.
 
-*  This file is currently supported only for HubbardGC calculations.
+*  Without ``TransSym``, this file is supported only for HubbardGC
+   calculations. MPI execution is supported for Lanczos, CG, TPQ, cTPQ, and
+   time evolution calculations; MPI execution with the FullDiag method is not
+   supported for ``AnomalousG``.
 
-*  MPI execution is supported for Lanczos, CG, TPQ, cTPQ, and time evolution
-   calculations. MPI execution with the FullDiag method is not supported for
-   ``AnomalousG``.
+*  With ``TransSym``, HubbardGC and SpinlessFermionGC sectors evaluate
+   ``AnomalousG`` for every method, including each FullDiag eigenstate, also
+   without pair terms in the Hamiltonian (:ref:`Subsec:TransSym`). For
+   SpinlessFermionGC, the spin index must be 0.
 
 *  ``AnomalousG`` is not supported for ``CalcSpec`` calculations.
 

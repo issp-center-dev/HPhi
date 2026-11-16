@@ -733,7 +733,15 @@ static int state_matches_sector(int model,
     return (unsigned int)count_hubbard_spin(state, nsite, 0U) == nup &&
            (unsigned int)count_hubbard_spin(state, nsite, 1U) == ndown;
   }
+  /* NConserved: nup is the total particle number over 2*nsite orbitals. */
+  if (model == tJNConserved && (state & (state >> 1U) & (ULONG_MAX / 3UL))) return 0;
   return (unsigned int)popcount_ulong(state) == nup;
+}
+
+static int is_spinful_enumerator_model(int model)
+{
+  return model == Hubbard || model == tJ ||
+         model == HubbardNConserved || model == tJNConserved;
 }
 
 static void assert_state_enumerator_sequence(int model,
@@ -745,16 +753,17 @@ static void assert_state_enumerator_sequence(int model,
 {
   struct DefineList def;
   struct SymmetryStateEnumerator enumerator;
-  unsigned long int limit = 1UL << ((model == Hubbard || model == tJ) ? 2U * nsite : nsite);
+  unsigned long int limit = 1UL << (is_spinful_enumerator_model(model) ? 2U * nsite : nsite);
   unsigned long int state, raw, dim = 0UL;
   unsigned long int *states;
   int failed = 0;
+  int nconserved = model == HubbardNConserved || model == tJNConserved;
   memset(&def, 0, sizeof(def));
   def.iCalcModel = model;
   def.Nsite = nsite;
-  def.Nup = nup;
-  def.Ndown = ndown;
-  def.Ne = model == SpinlessFermion ? nup : nup + ndown;
+  def.Nup = nconserved ? 0U : nup;
+  def.Ndown = nconserved ? 0U : ndown;
+  def.Ne = model == SpinlessFermion || nconserved ? nup : nup + ndown;
   if (model == Spin) def.iFlgSzConserved = TRUE;
   for (state = 0UL; state < limit; state++) {
     if (state_matches_sector(model, state, nsite, nup, ndown)) dim++;
@@ -788,6 +797,194 @@ static void assert_state_enumerator_sequence(int model,
   }
   assert_ulong_eq(raw, dim, label);
   free(states);
+}
+
+static void assert_nconserved_enumerator_limits(void)
+{
+  const unsigned int half = (unsigned int)(CHAR_BIT * sizeof(unsigned long int)) / 2U;
+  struct DefineList def;
+  struct SymmetryStateEnumerator enumerator;
+  unsigned long int dimension, state = 123UL;
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = HubbardNConserved;
+  def.Nsite = 4U;
+  def.Ne = 3U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "HubbardNConserved dimension");
+  assert_ulong_eq(dimension, 56UL, "HubbardNConserved dimension is C(2L,N)");
+  def.iCalcModel = tJNConserved;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "tJNConserved dimension");
+  assert_ulong_eq(dimension, 32UL, "tJNConserved dimension is C(L,N)*2^N");
+  def.Ne = 0U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "tJNConserved rejects the vacuum");
+  def.iCalcModel = HubbardNConserved;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "HubbardNConserved rejects the vacuum");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), -1,
+                "HubbardNConserved enumerator rejects the vacuum");
+  def.Ne = 9U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "HubbardNConserved rejects N > 2L");
+  def.iCalcModel = tJNConserved;
+  def.Ne = 5U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "tJNConserved rejects N > L");
+  def.Ne = 3U;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 31UL, &enumerator), -1,
+                "tJNConserved dimension mismatch rejects");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 32UL, &enumerator), 0,
+                "tJNConserved enumerator initializes");
+  enumerator.ndown = 1U;
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), -1,
+                "inconsistent NConserved metadata rejects");
+  assert_ulong_eq(state, 123UL, "invalid NConserved enumerator preserves output");
+
+  /* Word-width extremes: C(64,32) and 2^32 still fit the LONG_MAX bound. */
+  def.iCalcModel = HubbardNConserved;
+  def.Nsite = half;
+  def.Ne = half;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "HubbardNConserved half filling at word width");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0,
+                "HubbardNConserved word-width enumerator initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "HubbardNConserved first word-width state");
+  assert_ulong_eq(state, ULONG_MAX >> half, "HubbardNConserved lowest word-width state");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension, &state), 0,
+                "HubbardNConserved last word-width state");
+  assert_ulong_eq(state, ULONG_MAX << half, "HubbardNConserved highest word-width state");
+  def.Ne = 2U * half;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "HubbardNConserved full filling at word width");
+  assert_ulong_eq(dimension, 1UL, "HubbardNConserved full filling is one state");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 1UL, &enumerator), 0,
+                "HubbardNConserved full filling initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "HubbardNConserved full filling enumerates");
+  assert_ulong_eq(state, ULONG_MAX, "HubbardNConserved full word-width state");
+  def.iCalcModel = tJNConserved;
+  def.Ne = half;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), 0,
+                "tJNConserved full filling at word width");
+  assert_ulong_eq(dimension, 1UL << half, "tJNConserved full filling is 2^L");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0,
+                "tJNConserved word-width enumerator initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "tJNConserved first word-width state");
+  assert_ulong_eq(state, ULONG_MAX / 3UL, "tJNConserved all-up word-width state");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension, &state), 0,
+                "tJNConserved last word-width state");
+  assert_ulong_eq(state, (ULONG_MAX / 3UL) << 1U, "tJNConserved all-down word-width state");
+  def.Nsite = half + 1U;
+  def.Ne = 1U;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "tJNConserved state wider than unsigned long rejects");
+  def.iCalcModel = HubbardNConserved;
+  assert_int_eq(ComputeSymmetryNConservedDimension(&def, &dimension), -1,
+                "HubbardNConserved state wider than unsigned long rejects");
+}
+
+/* GC fermions: all states of the 2L (HubbardGC) or L orbitals, or those of
+ * one popcount parity, in increasing integer order. */
+static void assert_fermion_gc_enumerator_sequence(int model, unsigned int nsite,
+                                                  int parity, const char *label)
+{
+  struct DefineList def;
+  struct SymmetryStateEnumerator enumerator;
+  unsigned int bits = model == HubbardGC ? 2U * nsite : nsite;
+  unsigned long int state, got, raw = 0UL, dimension = 0UL;
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = model;
+  def.Nsite = nsite;
+  def.iParticleParity = parity;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0, label);
+  assert_ulong_eq(dimension, (1UL << bits) >> (parity != 0 ? 1U : 0U), label);
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0, label);
+  for (state = 0UL; state < (1UL << bits); state++) {
+    if (parity != 0 && (popcount_ulong(state) % 2U == 0U) != (parity > 0)) continue;
+    raw++;
+    assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, raw, &got), 0, label);
+    assert_ulong_eq(got, state, label);
+  }
+  assert_ulong_eq(raw, dimension, label);
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension + 1UL, &got), -1, label);
+}
+
+static void assert_fermion_gc_enumerator_limits(void)
+{
+  const unsigned int word_bits = (unsigned int)(CHAR_BIT * sizeof(unsigned long int));
+  struct DefineList def;
+  struct SymmetryStateEnumerator enumerator;
+  unsigned long int dimension, state = 123UL;
+  memset(&def, 0, sizeof(def));
+  def.iCalcModel = HubbardGC;
+  def.Nsite = 3U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0, "HubbardGC dimension");
+  assert_ulong_eq(dimension, 64UL, "HubbardGC dimension is 4^L");
+  def.iParticleParity = -1;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0, "odd HubbardGC dimension");
+  assert_ulong_eq(dimension, 32UL, "one parity halves the GC dimension");
+  def.iParticleParity = 2;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "ParticleParity outside -1..1 rejects");
+  def.iParticleParity = 1;
+  def.iCalcModel = Hubbard;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "GC dimension rejects a canonical model");
+  def.iCalcModel = SpinlessFermionGC;
+  def.Nsite = 0U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "GC dimension rejects Nsite=0");
+  def.Nsite = 4U;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 16UL, &enumerator), -1,
+                "even SpinlessFermionGC dimension mismatch rejects");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, 8UL, &enumerator), 0,
+                "even SpinlessFermionGC enumerator initializes");
+  enumerator.particle_parity = 0;
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), -1,
+                "inconsistent GC parity metadata rejects");
+  assert_ulong_eq(state, 123UL, "invalid GC enumerator preserves output");
+
+  /* Word-width extremes: the full space needs 2^M <= LONG_MAX. */
+  def.iParticleParity = 0;
+  def.Nsite = word_bits - 2U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0,
+                "SpinlessFermionGC full space at the LONG_MAX bound");
+  assert_ulong_eq(dimension, 1UL << (word_bits - 2U), "full spinless GC bound dimension");
+  def.Nsite = word_bits - 1U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "SpinlessFermionGC full space above LONG_MAX rejects");
+  def.iParticleParity = 1;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0,
+                "SpinlessFermionGC parity space at the word width");
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0,
+                "word-width even GC enumerator initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension, &state), 0,
+                "last word-width even GC state");
+  assert_ulong_eq(state, (ULONG_MAX >> 1U) - 1UL, "highest even state below the top bit");
+  def.iParticleParity = -1;
+  assert_int_eq(InitSymmetryStateEnumerator(&def, dimension, &enumerator), 0,
+                "word-width odd GC enumerator initializes");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, 1UL, &state), 0,
+                "first word-width odd GC state");
+  assert_ulong_eq(state, 1UL, "lowest odd state");
+  assert_int_eq(SymmetryStateEnumeratorStateAt(&enumerator, dimension, &state), 0,
+                "last word-width odd GC state");
+  assert_ulong_eq(state, ULONG_MAX >> 1U, "highest odd state below the top bit");
+  def.Nsite = word_bits;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "SpinlessFermionGC state wider than unsigned long rejects");
+  def.iCalcModel = HubbardGC;
+  def.iParticleParity = 0;
+  def.Nsite = word_bits / 2U - 1U;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), 0,
+                "HubbardGC full space at the LONG_MAX bound");
+  def.Nsite = word_bits / 2U;
+  def.iParticleParity = 1;
+  assert_int_eq(ComputeSymmetryFermionGCDimension(&def, &dimension), -1,
+                "HubbardGC state as wide as unsigned long rejects");
 }
 
 static void assert_state_enumerator_exact(void)
@@ -826,8 +1023,31 @@ static void assert_state_enumerator_exact(void)
                 "tJ enumerator matches exhaustive no-double-occupancy states");
         }
       }
+      for (nup = 1U; nup <= 2U * nsite; nup++) {
+        assert_state_enumerator_sequence(
+            HubbardNConserved, nsite, nup, 0U, thread_count,
+            "HubbardNConserved enumerator matches exhaustive fixed-N states");
+        if (nup <= nsite)
+          assert_state_enumerator_sequence(
+              tJNConserved, nsite, nup, 0U, thread_count,
+              "tJNConserved enumerator matches exhaustive fixed-N states");
+      }
     }
   }
+  assert_nconserved_enumerator_limits();
+  for (nsite = 1U; nsite <= 8U; nsite++) {
+    int parity;
+    for (parity = -1; parity <= 1; parity++) {
+      assert_fermion_gc_enumerator_sequence(
+          SpinlessFermionGC, nsite, parity,
+          "SpinlessFermionGC enumerator matches exhaustive parity states");
+      if (nsite <= 5U)
+        assert_fermion_gc_enumerator_sequence(
+            HubbardGC, nsite, parity,
+            "HubbardGC enumerator matches exhaustive parity states");
+    }
+  }
+  assert_fermion_gc_enumerator_limits();
 
   for (nsite = 1U; nsite <= 8U; nsite++) {
     unsigned long int raw_dim = 1UL << nsite;
@@ -1880,6 +2100,143 @@ static void assert_spin_plan(unsigned int nsite,
   }
   assert_plan_matches_canonicalized_matrix(&X, 1, label);
   FreeSymmetryBasis(X.Sym);
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = NULL;
+  list_Diagonal = NULL;
+}
+
+static int flip_storage[8];
+
+/* SpinFlipParity on the cyclic group of setup_cyclic_def: rows nsite..2nsite-1. */
+static int extend_cyclic_def_with_spin_flip(struct DefineList *def, int parity,
+                                            unsigned int capacity)
+{
+  unsigned int g;
+  for (g = def->NSymTrans; g < 2U * def->NSymTrans && g < 8U; g++) {
+    perm_rows[g] = perm_storage[g];
+    anti_rows[g] = anti_storage[g];
+  }
+  memset(flip_storage, 0, sizeof(flip_storage));
+  def->SymTransFlip = flip_storage;
+  def->NSymTransInput = def->NSymTrans;
+  def->NSymTransCapacity = capacity;
+  def->iSpinFlipParity = parity;
+  return ExtendSymmetryGroupWithSpinFlip(def);
+}
+
+static void assert_spin_flip_group(const char *label)
+{
+  struct BindStruct X;
+  struct DefineList def;
+  struct SymmetryTransformResult moved;
+  unsigned long int raw;
+  unsigned int site, flipped = 0U;
+  int perm64[64], anti64[64], flips64[2] = {0, 1};
+  int *rows64[2] = {perm64, perm64}, *antis64[2] = {anti64, anti64};
+  double complex chars64[2] = {1.0, -1.0};
+  double complex saved;
+
+  /* (g,f) applies the site permutation, then Px on the L state bits. */
+  setup_cyclic_def(&def, 4, 1);
+  assert_int_eq(extend_cyclic_def_with_spin_flip(&def, -1, 8U), 0, label);
+  assert_int_eq((int)def.NSymTrans, 8, label);
+  assert_int_eq(ValidateSymmetryGroupInput(&def), 0, label);
+  assert_int_eq(SymmetryApplyToState(&def, 0x3UL, 4U, &moved), 0, label);
+  assert_ulong_eq(moved.state, 0xcUL, label);
+  assert_complex_bitwise(moved.amplitude, 1.0, label);
+  assert_int_eq(SymmetryApplyToState(&def, 0x3UL, 5U, &moved), 0, label);
+  assert_ulong_eq(moved.state, 0x9UL, label);
+  assert_complex_bitwise(def.SymTransChar[5], -def.SymTransChar[1], label);
+  /* The group is extended once; a second call fails. */
+  assert_int_eq(ExtendSymmetryGroupWithSpinFlip(&def), -1, label);
+  /* (T,0) and (T,1) differ; one permutation with equal flags is a duplicate. */
+  flip_storage[5] = 0;
+  assert_int_eq(ValidateSymmetryGroupInput(&def), -1, label);
+  flip_storage[5] = 1;
+  /* chi(g,1) must carry p: (e,1)(T,1) = (T,0) is not multiplicative otherwise. */
+  saved = def.SymTransChar[4];
+  def.SymTransChar[4] = 1.0;
+  assert_int_eq(ValidateSymmetryGroupInput(&def), -1, label);
+  def.SymTransChar[4] = saved;
+  assert_int_eq(ValidateSymmetryGroupInput(&def), 0, label);
+  /* Fermion models never apply a flip. */
+  def.iCalcModel = SpinlessFermion;
+  assert_int_eq(SymmetryApplyToState(&def, 0x3UL, 4U, &moved), -1, label);
+  /* Too small a capacity leaves the group unextended. */
+  setup_cyclic_def(&def, 4, 0);
+  assert_int_eq(extend_cyclic_def_with_spin_flip(&def, 1, 7U), -1, label);
+  assert_int_eq((int)def.NSymTrans, 4, label);
+
+  /* A word-sized L flips every bit and nothing beyond it. */
+  memset(&def, 0, sizeof(def));
+  for (site = 0U; site < 64U; site++) {
+    perm64[site] = (int)site;
+    anti64[site] = 1;
+  }
+  def.iFlgSymmetryBasis = TRUE;
+  def.iCalcModel = Spin;
+  def.Nsite = 64U;
+  def.NSymTrans = 2U;
+  def.SymTrans = rows64;
+  def.SymTransAnti = antis64;
+  def.SymTransChar = chars64;
+  def.SymTransFlip = flips64;
+  assert_int_eq(SymmetryApplyToState(&def, 0x0123456789abcdefUL, 1U, &moved), 0, label);
+  assert_ulong_eq(moved.state, ~0x0123456789abcdefUL, label);
+  def.Nsite = 5U;
+  assert_int_eq(SymmetryApplyToState(&def, 0x5UL, 1U, &moved), 0, label);
+  assert_ulong_eq(moved.state, 0x1aUL, label);
+
+  /* Every SpinGC state is reached from its representative by the recorded
+   * operation. States of the other Sz sign need a flip, so the inverse of
+   * (g,1) must be (g^-1,1), never a pure translation. */
+  setup_bind(&X, 4, 2, 0);
+  X.Def.iCalcModel = SpinGC;
+  X.Def.iFlgSzConserved = FALSE;
+  X.Def.Nup = X.Def.Ndown = X.Def.Ne = 0U;
+  free(list_1);
+  free(list_Diagonal);
+  list_1 = (unsigned long int *)calloc(17U, sizeof(*list_1));
+  list_Diagonal = (double *)calloc(17U, sizeof(*list_Diagonal));
+  if (list_1 == NULL || list_Diagonal == NULL) {
+    fprintf(stderr, "%s: allocation failed\n", label);
+    exit(1);
+  }
+  for (raw = 1UL; raw <= 16UL; raw++) list_1[raw] = raw - 1UL;
+  X.Check.idim_max = test_raw_dim = 16UL;
+  assert_int_eq(extend_cyclic_def_with_spin_flip(&X.Def, 1, 8U), 0, label);
+  if (BuildSymmetryBasis(&X) != 0) {
+    fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+    exit(1);
+  }
+  for (raw = 1UL; raw <= X.Check.idim_max; raw++) {
+    struct SymmetryRepresentativeResult representative;
+    assert_int_eq(SymmetryFindRepresentative(&X, list_1[raw], &representative), 0, label);
+    assert_int_eq(SymmetryApplyToState(&X.Def, representative.rep_state,
+                                       representative.op_rep_to_state, &moved), 0, label);
+    assert_ulong_eq(moved.state, list_1[raw], label);
+    assert_complex_bitwise(representative.phase,
+                           X.Def.SymTransChar[representative.op_rep_to_state] * moved.amplitude,
+                           label);
+    if (representative.op_rep_to_state >= 4U) flipped++;
+  }
+  assert_int_eq(flipped > 0U, 1, label);
+  FreeSymmetryBasis(X.Sym);
+
+  /* The plan of a Spin Sz=0 Px sector, including the Neel orbit fixed by
+   * T Px, is the canonicalized projected exchange matrix. */
+  for (raw = 0UL; raw < 2UL; raw++) {
+    setup_bind(&X, 4, 2, raw == 0UL ? 0U : 2U);
+    assert_int_eq(extend_cyclic_def_with_spin_flip(&X.Def, raw == 0UL ? 1 : -1, 8U), 0, label);
+    if (BuildSymmetryBasis(&X) != 0) {
+      fprintf(stderr, "%s: BuildSymmetryBasis failed\n", label);
+      exit(1);
+    }
+    /* The one-state Neel sector has no repeated plan entry to merge. */
+    assert_plan_matches_canonicalized_matrix(&X, raw == 0UL, label);
+    FreeSymmetryBasis(X.Sym);
+  }
   free(list_1);
   free(list_Diagonal);
   list_1 = NULL;
@@ -5792,6 +6149,7 @@ int main(int argc, char **argv)
                    "C6 k=0 Spin local-row plan matches canonicalized matrix");
   assert_spin_plan(6, 3, 1, 1.0,
                    "C6 k=pi/3 Spin local-row plan matches canonicalized matrix");
+  assert_spin_flip_group("G x Z2 action, inverse, duplicates and characters with Px");
   assert_spin_diagonal_only_plan(
       "C6 k=pi/3 diagonal-only local-row plan matches canonicalized matrix");
   assert_spinless_plan(6, 3, 0, 0.25,

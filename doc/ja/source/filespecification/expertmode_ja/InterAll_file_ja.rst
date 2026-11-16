@@ -15,6 +15,27 @@ InterAll指定ファイル
 
 なお、スピンに関して計算する場合には、\ :math:`i=j, k=l`\ となるよう設定してください。
 また、オフダイアゴナル成分については、i1 sigma1 i2 sigma2 i3 sigma3 i4 sigma4 とi4 sigma4 i3 sigma3 i2 sigma2 i1 sigma1 のペアを必ず用意するようにしてください。
+
+フェルミオンの項は、上式に書かれた演算子の順序で解釈します。
+:math:`\sigma\ne\tau` のスピン交換型の積を並べ替える際には、縮約による一体項も含まれます。
+
+.. math::
+
+   c^\dagger_{i\sigma}c_{j\tau}c^\dagger_{k\tau}c_{l\sigma}
+   = \delta_{jk}c^\dagger_{i\sigma}c_{l\sigma}
+     - c^\dagger_{i\sigma}c_{l\sigma}c^\dagger_{k\tau}c_{j\tau}.
+
+:math:`j=k` かつ :math:`i\ne l` の場合、この一体項を内部で ``Transfer`` に加算します。
+Transferのハミルトニアンには全体にマイナス符号が付くため、入力係数としては :math:`-I` に相当します。
+元のInterAll項を残したまま、この縮約一体項を手動で重ねて追加しないでください。
+``TETwoBody`` の各時刻にも同じ規則を適用します。
+
+.. note::
+
+   以前のバージョンでは、Hubbard・Kondo・tJ系でこのサイト間の縮約一体項が欠落していました。
+   該当する計算は再計算が必要です。古いsolver checkpointから継続しても、過去の計算結果は補正されません。
+   スピン保存のbilinearの積と縮約一体項へ既に書き換えた入力は、そのまま使用できます。
+
 以下にファイル例を記載します。
 
 ::

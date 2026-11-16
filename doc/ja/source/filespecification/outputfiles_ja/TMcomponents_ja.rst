@@ -3,52 +3,35 @@
 TMcomponents.dat
 ~~~~~~~~~~~~~~~~
 
-Lanczos法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素と励起状態のノルムが出力されます。
-ファイル名およびファイル形式は以下の通りです。
+Lanczos法のリスタートおよび再計算に用いる三重対角行列の要素と初期ノルムを
+保存するテキストファイルです。
 
 ファイル名
 ^^^^^^^^^^
 
--  ##\_TMcomponents.dat
+-  ``##_TMComponents.dat``
 
-##はModParaファイル内の[string02]で指定されるヘッダを表します。
+``##`` はModParaファイルの ``CDataFileHead`` です。
 
 ファイル形式
 ^^^^^^^^^^^^
 
--  1行目：\ :math:`[`\ int01\ :math:`]`
+-  1行目: ``step``
+-  2行目: ``dnorm``
+-  続く ``step`` 行: ``alpha beta``
+-  基底状態リスタートの場合のみ、最終行:
+   ``# nproc P nthreads T``
 
--  2行目：\ :math:`[`\ double01\ :math:`]`
+``alpha`` と ``beta`` はLanczos三重対角行列の要素
+:math:`\alpha_i` と :math:`\beta_i` です。末尾のコメントには、対応する
+``recalcvec`` の保存に使用したMPIプロセス数とOpenMPスレッド数を記録します。
+基底状態リスタートでは、プロセス数またはスレッド数が異なる場合は拒否します。
+この行を持たない旧形式ファイルは警告付きで読み込むため、保存時と同じ実行環境を
+使用してください。
 
--  3行目 - :math:`[`\ int02\ :math:`]`\ +3行:
-   :math:`[`\ double02\ :math:`]`  :math:`[`\ double03\ :math:`]`
-
-パラメータ
-^^^^^^^^^^
-
--  :math:`[`\ int01\ :math:`]`
-
-   **形式 :** int型
-
-   **説明 :**
-   動的グリーン関数の計算に要したステップ数\ :math:`N_d`\ を表します。
-
--  :math:`[`\ double01\ :math:`]`
-
-   **形式 :** double型
-
-   **説明 :** 励起状態のノルムを表します。
-
--  :math:`[`\ double02\ :math:`]`, :math:`[`\ double03\ :math:`]`
-
-   **形式 :** double型
-
-   | **説明 :**
-     Lanczos法を用いた動的グリーン関数の再計算に必要な三重対角行列の要素\ :math:`\alpha_i,~\beta_i~(i =1,\cdots N_d)`\ の値を表します。一番最初の成分に計算に使用しない値が入っています。
-     :math:`[`\ double02\ :math:`]`\ が\ :math:`\alpha_i`\ 、\ :math:`[`\ double03\ :math:`]`\ が\ :math:`\beta_i`\ に対応します。
-
+スペクトル計算の ``CalcSpec`` ファイルは従来のテキスト形式を維持し、
+実行環境のコメント行を含みません。
 
 .. raw:: latex
 
    \newpage
-

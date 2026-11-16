@@ -3,72 +3,46 @@
 recalcvec.dat
 -------------
 
-This file is the outputted file for two vectors to recalculate the
-dynamical Green’s function by the Lanczos method. The file format is of
-the binary type. An example of the file format is as follows.
-
-.. _file_name_21:
+This per-rank binary file stores the vectors required to continue a
+ground-state Lanczos calculation or a shifted-BiCG spectrum calculation.
 
 File name
 ~~~~~~~~~
 
-*  ##_recalcvec_rank_$$.dat
+*  ``##_recalcvec_rank_$$.dat``
 
-## indicates [string02] in a ModPara file and $$ is the number of rank.
-
-.. _file_format_45:
+``##`` is ``CDataFileHead`` in the ModPara file, and ``$$`` is the MPI
+rank.
 
 File format
 ~~~~~~~~~~~
 
-*  Line 1: [int01]
+Ground-state Lanczos writes:
 
-*  Line 2: [int02]
+::
 
-*  Lines 3 - 3+ [int02]:
-   [double01]  [double02]
+    unsigned long step;
+    unsigned long local_size;
+    complex double v0[local_size + 1];
+    complex double v1[local_size + 1];
 
-*  Lines 4+ [int02] -
-   4+2 :math:`\times` [int02]:
-   [double03]  [double04].
+The two header fields are written separately, followed by the two
+Lanczos vectors. Index zero of each vector is unused.
 
-.. _parameters_43:
+Shifted BiCG writes a different legacy payload:
 
-Parameters
-~~~~~~~~~~
+::
 
-*  [int01]
+    int step_or_status;
+    unsigned long local_size;
+    complex double residual[local_size + 1];
+    complex double old_residual[local_size + 1];
+    complex double shadow_residual[local_size + 1];
+    complex double old_shadow_residual[local_size + 1];
 
-   **Type :** Int
-
-   **Description :** The step for calculating dynamical Green’s
-   functions by the Lanczos method :math:`N_d`.
-
-*  [int02]
-
-   **Type :** Long Int
-
-   **Description :** The total number of targets of the Hilbert spaces.
-
-*  [double01], [double02]
-
-   **Type :** Double
-
-   | **Description :** The value of the vector :math:`\boldsymbol{v}_{k+1}` for
-     recalculating dynamical Green’s functions by the Lanczos method.
-   | [double01] and [double02]
-     are a real part and an imaginary part of :math:`\boldsymbol{v}_{k+1}`,
-     respectively. The fist component is not used for calculation.
-
-*  [double03], [double04]
-
-   **Type :** Double
-
-   | **Description :** The value of the vector :math:`\boldsymbol{v}_{k}` for
-     recalculating dynamical Green’s functions by the Lanczos method.
-   | [double03] and [double04]
-     are a real part and an imaginary part of :math:`\boldsymbol{v}_{k}`,
-     respectively. The fist component is not used for calculation.
+The binary representation is platform-dependent. A restart must use
+the same MPI process count and local dimensions as the run that wrote
+the files.
 
 .. raw:: latex
 

@@ -21,6 +21,7 @@
 #endif
 
 struct CorrelationOrbit {
+  enum SymmetryTermKind kind;
   unsigned int factors;
   size_t member_count;
   size_t offdiag_count;
@@ -113,7 +114,16 @@ static int validate_operator(const struct DefineList *def,
                              const struct SymmetryCorrelationOperator *op)
 {
   unsigned int f, nint;
-  int spin_max = def->iCalcModel == SpinlessFermion ? 0 : 1;
+  int spin_max = IsSymmetrySpinlessFermionModel(def->iCalcModel) ? 0 : 1;
+  if (op->kind == SYMMETRY_TERM_ANNIHILATE_PAIR || op->kind == SYMMETRY_TERM_CREATE_PAIR) {
+    if (op->factors != 1U || op->index == NULL || !IsSymmetryFermionGCModel(def->iCalcModel))
+      return -1;
+    for (f = 0; f < 4U; f += 2U)
+      if (op->index[f] < 0 || (unsigned int)op->index[f] >= def->Nsite ||
+          op->index[f+1] < 0 || op->index[f+1] > spin_max) return -1;
+    return op->index[0] == op->index[2] && op->index[1] == op->index[3] ? -1 : 0;
+  }
+  if (op->kind != SYMMETRY_TERM_BILINEARS) return -1;
   if (op->factors < 1U || op->factors > UINT_MAX / 4U || op->index == NULL) return -1;
   nint = 4U * op->factors;
   for (f = 0; f < nint; f += 2U)
@@ -133,15 +143,18 @@ static int validate_operator(const struct DefineList *def,
   return 0;
 }
 
+/* U_g E U_g^dagger of a factor tuple. With Px, a Spin local unit E_st
+ * becomes E_(1-s)(1-t); only Spin/SpinGC operations carry a flip. */
 static void permute_tuple(const struct DefineList *def, unsigned int g,
                           unsigned int factors, const int *in, int *out)
 {
   unsigned int f;
+  const int flip = SymmetryOperationFlipsSpins(def, g);
   for (f = 0; f < factors; ++f) {
     out[4*f]   = def->SymTrans[g][in[4*f]];
-    out[4*f+1] = in[4*f+1];
+    out[4*f+1] = flip ? 1 - in[4*f+1] : in[4*f+1];
     out[4*f+2] = def->SymTrans[g][in[4*f+2]];
-    out[4*f+3] = in[4*f+3];
+    out[4*f+3] = flip ? 1 - in[4*f+3] : in[4*f+3];
   }
 }
 
@@ -167,6 +180,9 @@ static int build_orbit_table(const struct DefineList *def,
   int status = -1;
   memset(table, 0, sizeof(*table));
   if (def == NULL || ops == NULL || def->NSymTrans == 0U || def->SymTrans == NULL) return -1;
+  for (t = 0; t < def->NSymTrans; t++)
+    if (SymmetryOperationFlipsSpins(def, (unsigned int)t) &&
+        def->iCalcModel != Spin && def->iCalcModel != SpinGC) return -1;
   table->orbits = (struct CorrelationOrbit *)calloc(count, sizeof(*table->orbits));
   table->op_to_orbit = (size_t *)calloc(count, sizeof(*table->op_to_orbit));
   if (table->orbits == NULL || table->op_to_orbit == NULL) goto done;
@@ -201,11 +217,12 @@ static int build_orbit_table(const struct DefineList *def,
       n++;
     }
     for (k = 0; k < table->orbit_count; k++)
-      if (table->orbits[k].factors == factors &&
+      if (table->orbits[k].kind == ops[t].kind && table->orbits[k].factors == factors &&
           compare_tuple(table->orbits[k].members, sorted, len) == 0) break;
     if (k == table->orbit_count) {
       struct CorrelationOrbit *orbit = &table->orbits[k];
       size_t m;
+      orbit->kind = ops[t].kind;
       orbit->factors = factors;
       orbit->member_count = n;
       orbit->members = (int *)malloc(n * len * sizeof(int));
@@ -215,7 +232,10 @@ static int build_orbit_table(const struct DefineList *def,
       table->bytes += (uint64_t)n * len * sizeof(int) + (uint64_t)n;
       memcpy(orbit->members, sorted, n * len * sizeof(int));
       for (m = 0; m < n; m++) {
-        orbit->offdiag[m] = term_is_diagonal(factors, orbit->members + m * len) ? 0U : 1U;
+        /* A pair always changes N; tuples keep the operator order, so no
+         * reordering sign is lost between members. */
+        orbit->offdiag[m] = orbit->kind != SYMMETRY_TERM_BILINEARS ||
+                            !term_is_diagonal(factors, orbit->members + m * len) ? 1U : 0U;
         orbit->offdiag_count += orbit->offdiag[m];
       }
       table->offdiag_total += orbit->offdiag_count;
@@ -403,7 +423,10 @@ static int collect_block(const struct CorrelationContext *ctx,
         for (m = 0; m < orbit->member_count; m++) {
           unsigned long int out = 0UL;
           double sign = 0.0;
-          int status = ApplySymmetryFactors(def, orbit->factors, orbit->members + m * len, entry->rep_state, &out, &sign);
+          int status = orbit->kind == SYMMETRY_TERM_BILINEARS
+              ? ApplySymmetryFactors(def, orbit->factors, orbit->members + m * len, entry->rep_state, &out, &sign)
+              : ApplySymmetryPair(def, orbit->kind == SYMMETRY_TERM_CREATE_PAIR,
+                                  orbit->members + m * len, entry->rep_state, &out, &sign);
           if (status < 0) { thread_error = 1; break; }
           if (status == 0) continue;
           if (out == entry->rep_state) { partial[k] += sign * conj(a) * a; continue; }
