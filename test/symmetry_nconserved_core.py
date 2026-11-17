@@ -13,6 +13,8 @@ from symmetry_kondo_observables import (add_correlation_requests, arbitrary_vect
                                         parse_energy, parse_moments)
 from symmetry_spingc_common import mpi_size, run_case
 from symmetry_nconserved_common import expert_case
+from symmetry_fulldiag_common import (solver_backends, require_available_backends,
+                                      require_backends)
 from symmetry_nconserved_reference import (Case, DEFAULT, MODELS, make_reference,
                                            operator_matrix, sector_matrix)
 
@@ -171,15 +173,9 @@ def fulldiag_spectrum(path):
     return data[:, 1]
 
 
-def check_fulldiag(root, hphi, launcher):
-    ranks = mpi_size(launcher)
-    backends = [(0, 'LAPACK', [])]
-    for solver, flag, label in [(1, 'HPHI_HAS_SCALAPACK', 'ScaLAPACK'), (3, 'HPHI_HAS_ELPA', 'ELPA')]:
-        if os.environ.get(flag) == '1' and ranks > 1:
-            backends.append((solver, label, launcher))
-        else:
-            print(f'{label} not exercised: backend unavailable or launcher has one rank', flush=True)
+def check_fulldiag(root, hphi, backends):
     env = dict(os.environ, HPHI_SYMMETRY_BASIS_LAYOUT='replicated')
+    exercised = {}
     for solver, label, backend_launcher in backends:
         for model in MODELS:
             case = Case(model, 4, 3, 1)
@@ -192,7 +188,9 @@ def check_fulldiag(root, hphi, launcher):
             error = np.max(abs(fulldiag_spectrum(path)-expected))
             assert error <= reference_tolerance(expected), (model, label, error)
             assert read_manifest(path)['model'] == model
+            exercised.setdefault(label, []).append((model, len(expected), mpi_size(backend_launcher)))
             print(f'{model} FullDiag {label} error={error:.3e} passed', flush=True)
+    require_backends(exercised)
 
 
 def check_sz_conserving_limit(root, hphi):
@@ -240,7 +238,10 @@ def check_rejections(root, hphi, launcher):
 def main():
     hphi, probe = (Path(p).resolve() for p in sys.argv[1:3])
     launcher = shlex.split(os.environ.get('MPIRUN', ''))
-    assert mpi_size(launcher) is not None
+    ranks = mpi_size(launcher)
+    assert ranks is not None and ranks >= 1
+    backends = solver_backends(launcher, ranks)
+    require_available_backends(backends)
     root = Path('symmetry_nconserved_core')
     # Captured vectors of a run with another rank count must not be reread.
     if root.exists():
@@ -253,7 +254,7 @@ def main():
         check_moments(root, probe)
         check_solvers(root, probe, launcher)
         check_correlations(root, probe, launcher)
-    check_fulldiag(root, hphi, launcher)
+    check_fulldiag(root, hphi, backends)
     if scope == 'all':
         check_sz_conserving_limit(root, hphi)
         check_raw(root, hphi)

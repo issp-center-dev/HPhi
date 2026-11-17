@@ -458,12 +458,29 @@ def grid_max(ranks: int) -> int:
     return ranks // max(divisors)
 
 
+def required_backends() -> set[str]:
+    required = set(filter(None, os.environ.get('HPHI_FD_REQUIRE_BACKENDS', '').split(',')))
+    assert required <= {'LAPACK', 'ScaLAPACK', 'ELPA'}, ('unknown required backends', sorted(required))
+    return required
+
+
+def require_available_backends(backends) -> None:
+    """Reject an impossible explicit requirement before generating/running cases.
+
+    This is only a preflight check. Call require_backends after numerical
+    validation too: availability alone is not evidence of execution.
+    """
+    required = required_backends()
+    available = {label for _, label, _ in backends}
+    assert required <= available, ('required backends unavailable',
+                                   sorted(required - available), sorted(available))
+
+
 def require_backends(exercised) -> None:
     """HPHI_FD_REQUIRE_BACKENDS lists backends that must have run a case
     to a normal exit with independent numerical checks passed. Rejections
     (for example ELPA's process-grid check) never count."""
-    required = set(filter(None, os.environ.get('HPHI_FD_REQUIRE_BACKENDS', '').split(',')))
-    assert required <= {'LAPACK', 'ScaLAPACK', 'ELPA'}, required
+    required = required_backends()
     assert required <= set(exercised), ('required backends not exercised',
                                         sorted(required), sorted(exercised))
     if selected_cases() == 'boundary' and 'ELPA' in required:

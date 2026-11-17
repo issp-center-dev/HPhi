@@ -486,6 +486,21 @@ add_hphi_test(interall_large_input)
 set_tests_properties(interall_large_input PROPERTIES
     LABELS "interall;validation" TIMEOUT 120 ENVIRONMENT "OMP_NUM_THREADS=1")
 add_hphi_test(fulldiag_spinless)
+add_hphi_test(fulldiag_spinless_backends)
+set_tests_properties(fulldiag_spinless_backends PROPERTIES
+    LABELS "fulldiag;spinless" TIMEOUT 300)
+if(USE_SCALAPACK)
+    set_property(TEST fulldiag_spinless_backends APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_SCALAPACK=1")
+endif()
+if(ELPA_FOUND)
+    set_property(TEST fulldiag_spinless_backends APPEND PROPERTY
+        ENVIRONMENT "HPHI_HAS_ELPA=1")
+endif()
+# Validation launches Python directly: missing backends must fail before MPI.
+add_hphi_test(fulldiag_backend_requirements)
+set_tests_properties(fulldiag_backend_requirements PROPERTIES
+    LABELS "fulldiag;validation" TIMEOUT 60)
 add_hphi_test_with_srcdir(lanczos_spinless_calchs0)
 add_hphi_test_with_srcdir(spinless_onebody_sigma_validation)
 add_hphi_test_with_srcdir(spinless_onebody_offdiag_compare)
