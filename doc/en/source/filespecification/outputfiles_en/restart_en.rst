@@ -174,6 +174,13 @@ zero is omitted.
 Comparison and digests
 ----------------------
 
+``HAMILTONIAN`` (word 21) is provenance, not a continuation guard. v3 does
+not verify H or the executed propagation history. In particular, a raw zero
+digest is unknown, not evidence of equality. The diagnostic is also
+``hamiltonian_changed=unknown`` for time-dependent sector TE input, where
+the saved step's H and the current base H are different comparison points.
+The saved TE boundary clock is checked separately; the full schedule is not.
+
 Across ranks of one set/component, only ``RANK``, ``OFFSET`` and
 ``LOCAL_DIM`` differ. CG state and direction components may additionally
 differ in ``COMPONENT`` and data digests. CG states may differ in ``STATE``,
@@ -263,11 +270,25 @@ Recovery and legacy selection
 
 For every required set, HPhi first uses a manifest row. A missing or corrupt
 referenced v3 file is fatal and never falls back to legacy data. Without a
-row, complete legacy files are validated and used. ``ReStart=2`` starts a new
-set only if neither source exists; ``ReStart=3`` reports an error. v1/v2
-sector files are import-only. Legacy CG restarts additional iterations with
+row, complete legacy files are validated and used. For CG and TPQ/cTPQ,
+``ReStart=2`` starts a new set only if neither source exists;
+``ReStart=3`` reports an error. TE instead requires an explicit input vector
+when no continuation checkpoint is selected. A v3 or sector v1/v2
+``SpectrumVec`` then starts at step zero even with ``ReStart=2/3`` and replaces
+existing observable time-series files, after a warning. ``ReStart=3`` protects
+checkpoint files, not all output. Legacy raw TE input uses its saved next
+step with ``ReStart=2/3`` without a saved-clock check, or starts at zero with
+``ReStart=0/1``. v1/v2 sector files are import-only.
+Legacy CG restores only states, zeros search directions, recomputes Ritz
+values with the current H, and restarts additional iterations with
 labels starting at one and do not recover the old CG history prefix. A legacy
 rank change requires ``RestartSourceRanks`` as described above.
+
+Legacy raw is still the output layout for raw CG/TE ``OutputEigenVec`` and
+cTPQ ``InvTemp`` eigenvectors: a native ``int`` step, native ``unsigned long``
+local dimension, and ``local_dimension+1`` native complex doubles including
+index zero. These are not v3 solver checkpoints. Normal raw CG-to-TE import
+continues to use this layout; model/basis identity and checksums are absent.
 
 History recovery preserves rows before ``STEP``, removes later rows and an
 incomplete EOF fragment, and rejects corrupt interior text. Terminal CG keeps

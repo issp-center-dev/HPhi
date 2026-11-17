@@ -1879,6 +1879,11 @@ set_tests_properties(restart_legacy_compat PROPERTIES
 add_hphi_test(restart_te_contract)
 set_tests_properties(restart_te_contract PROPERTIES LABELS "restart;te;validation" TIMEOUT 900)
 
+add_test(NAME restart_contract_diagnostics
+    COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/restart_contract_diagnostics.sh)
+set_tests_properties(restart_contract_diagnostics PROPERTIES
+    LABELS "restart;te;validation" TIMEOUT 300)
+
 add_hphi_test(restart_import)
 set_tests_properties(restart_import PROPERTIES LABELS "restart;te;validation" TIMEOUT 900)
 

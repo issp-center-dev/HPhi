@@ -2,10 +2,16 @@ Restart and state import
 ========================
 
 HPhi has three independent mechanisms. ``ReStart`` continues a solver from
-its saved algorithmic state. ``InputEigenVec=1`` imports a state for CG
-evaluation or as the first state of a new TimeEvolution clock. ``CalcSpec``
+its saved algorithmic state, subject to the legacy exceptions below.
+``InputEigenVec=1`` imports a state for CG evaluation or as the first state
+of a new TimeEvolution clock. ``CalcSpec``
 4/5 resumes the Lanczos spectrum sequence through ``TMComponents`` and
-``recalcvec``. Files from one mechanism must not be substituted for another.
+``recalcvec``. Their contracts differ even where vector layouts coincide.
+
+The v3 solver checkpoint and sector v1/v2 state formats were introduced after
+the code used for releases through v3.7.2. Those releases use legacy raw
+vectors for the CG/TPQ/TimeEvolution paths described here. Format version 3
+is independent of the HPhi release version.
 
 Solver continuation
 -------------------
@@ -19,6 +25,11 @@ saved contiguous global intervals and redistributes their intersections to
 the current ownership. Sector v3 continuation also permits metadata layout
 changes between ``replicated`` (0) and ``distributed`` (1). The global vector
 order remains unchanged even though rank ownership changes.
+
+``ReStart=3`` does not make observable output read-only. Continuation recovers
+and appends time-series files. If no TE continuation checkpoint is selected,
+an explicit ``InputEigenVec=1``/``SpectrumVec`` can instead start an import,
+as described below; this can replace existing time-series files.
 
 ``Lanczos_max`` is an absolute final bound for v3 continuation. CG resumes at
 the saved iteration label; TPQ/cTPQ and TimeEvolution resume at the saved next
@@ -35,10 +46,38 @@ means end-only. TimeEvolution uses ``OutputInterval`` for continuation
 checkpoints, and its time table must contain the saved next step. See
 :doc:`the restart file specification <../filespecification/outputfiles_en/restart_en>`.
 
+Validation limits
+-----------------
+
+v3 validates the saved state, basis and solver unit, but does not require the
+same Hamiltonian. Its Hamiltonian word is informational: raw checkpoints
+store zero; sector checkpoints contain a parsed-H digest. A
+``hamiltonian_changed=no`` message does not verify the propagation history.
+For time-dependent sector TE input the message is ``unknown``, since the
+saved step's H and the current base H are not comparable as schedules.
+Use the same H and propagation settings for continuation; use state import
+for a new H or protocol.
+
+Additional checks and limits are:
+
+* CG restores states, search directions, Ritz values and iteration labels.
+  Hx and Hp are recomputed, but H identity is not checked.
+* mTPQ does not check H or ``LargeValue``. cTPQ checks its saved imaginary-time
+  increment against the current ``1/LargeValue``, but not H or ``ExpandCoef``.
+  cTPQ with ``InvTemp`` rejects ``ReStart=2/3``.
+* TE checks the saved boundary time and whether the table covers the saved
+  next step. It does not compare earlier or later H/time rows or the Taylor
+  order. Table/sector TE saves ``time[next_step-1]``; raw Laser TE saves
+  ``Tinit + next_step*TimeSlice``. A matching boundary alone is not a matching
+  protocol.
+* TPQ sample identity comes from the saved state and set label. Initial RNG
+  settings and parallel counts describe how a fresh state was generated;
+  changing the rank count for continuation does not regenerate that state.
+
 State import
 ------------
 
-State import validates the model, basis identity, sector and phase, payload
+v3 and sector v1/v2 state import validates the model, basis identity, sector and phase, payload
 length, norm and digest. Source method, state, step, time and solver scalars
 are provenance; they do not resume the source solver. CG evaluates an imported
 state. TimeEvolution starts at step zero on its current time grid. v3 imports
@@ -49,6 +88,23 @@ partition before redistribution and uses the partition-independent sector
 digest to validate the basis set. The basis builder's canonical
 representative-state sort fixes its global order, so an equal set has the
 same order. The output-file reference gives the required copy procedure.
+
+``InputEigenVec=1`` in CG evaluates the imported state; it does not run CG
+iterations from that state. Import does not require the source H to match the
+current H. The current H must still be valid in the selected sector.
+
+Raw CG and raw TE ``OutputEigenVec`` and cTPQ ``InvTemp`` eigenvector output
+still use legacy raw layout. Thus ordinary raw CG-to-TE import uses legacy
+raw files, not the v3 solver manifest. This import remains supported, but its
+model/basis identity and payload checksum cannot be verified from that format.
+
+Without a selected TE continuation checkpoint, a v3 or sector v1/v2
+``SpectrumVec`` starts at step zero even with ``ReStart=2/3``. HPhi warns
+before replacing the SS, Norm, Flct and aggregate Green time series. To start
+an intentional new protocol, use a separate output directory and
+``ReStart=0/1``. A legacy raw ``SpectrumVec`` behaves differently:
+``ReStart=2/3`` uses its stored next step, whereas ``ReStart=0/1`` imports it
+at step zero. Legacy raw TE has no saved clock to compare.
 
 Changing the MPI process count
 ------------------------------
@@ -82,11 +138,20 @@ rank-changing reads require ``RestartSourceRanks``. Keep every saved rank
 file, including an empty trailing rank; HPhi checks all native headers, file
 lengths, steps and the global dimension before redistribution, but cannot
 validate model or sector identity from the files.
-Legacy CG keeps its historical additional-iteration meaning: iteration labels
-restart at one and the old ``Lanczos_Step`` prefix is not recovered. Legacy
+Legacy CG keeps its historical additional-iteration meaning: only the states
+are restored, search directions are zeroed, and Ritz values are recomputed
+with the current H. Iteration labels restart at one and the old
+``Lanczos_Step`` prefix is not recovered. The input states are assumed to
+already be normalized and orthogonal; the legacy reader does not reestablish
+these properties. This is warm-start-like behavior, not v3 X/P continuation
+or a general warm-start interface. Legacy
 TPQ/cTPQ and raw TimeEvolution recover output rows below their validated next
 step when possible. Old sector v1/v2 files are state-import formats, not solver
 continuation checkpoints.
+
+Legacy mTPQ cannot restore the initial norm and reports zero for it. Legacy
+cTPQ reconstructs beta as ``(step-1)/LargeValue``, which assumes that
+``LargeValue`` has not changed. Neither path verifies H identity.
 
 Ground-state Lanczos and ``CalcSpec`` 4/5 retain their existing
 ``TMComponents``/``recalcvec`` behavior and iteration meaning. They do not use

@@ -474,9 +474,16 @@ static int read_set_files(struct BindStruct *X, const struct RestartManifestRow 
   info->time = RestartWordDouble(reference[RW_TIME]); info->nset = reference[RW_NSET]; info->flags = reference[RW_FLAGS];
   info->scalar_a = RestartWordDouble(reference[RW_SCALAR_A]); info->scalar_b = RestartWordDouble(reference[RW_SCALAR_B]);
   info->scalar_c = RestartWordDouble(reference[RW_SCALAR_C]);
+  /* A TE checkpoint records the H of its saved step, while preflight restores
+   * the current base H. Comparing those two digests does not compare schedules. */
+  int dynamic_te = X->Def.iCalcType == TimeEvolution &&
+                   (X->Def.NLaser || X->Def.NTETransferMax || X->Def.NTEInterAllMax);
   fprintf(stdoutMPI, "Restart checkpoint loaded: set=%" PRIu64 " comp=%d step=%" PRIu64 " flags=%" PRIu64 " time=%.17g hamiltonian_changed=%s\n",
           info->set, comp, info->step, info->flags, info->time,
-          reference[RW_BASIS_KIND] == RESTART_BASIS_RAW ? "unknown" : (reference[RW_HAMILTONIAN] == expected[RW_HAMILTONIAN] ? "no" : "yes"));
+          reference[RW_BASIS_KIND] == RESTART_BASIS_RAW || dynamic_te ? "unknown" :
+          (reference[RW_HAMILTONIAN] == expected[RW_HAMILTONIAN] ? "no" : "yes"));
+  if (purpose == RESTART_READ_CONTINUATION && comp == RESTART_COMP_STATE)
+    fprintf(stdoutMPI, "Warning: v3 continuation does not verify the Hamiltonian or propagation history.\n");
   if (purpose == RESTART_READ_IMPORT &&
       record_import(X, info, reference[RW_HAMILTONIAN], info->method == FullDiag) != 0) goto fail;
   free(offsets); free(dims); return 0;
