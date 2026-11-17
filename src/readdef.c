@@ -34,6 +34,7 @@
 
 #include "Common.h"
 #include "readdef.h"
+#include "version.h"
 #include "nbody_interall.h"
 #include "nbody_correlation.h"
 #include "anomalous_pair.h"
@@ -641,8 +642,10 @@ int GetFileName(
 {
   FILE *fplist;
   int itmpKWidx=-1;
-  char ctmpFileName[D_FileNameMaxReadDef];
-  char ctmpKW[D_CharTmpReadDef], ctmp2[256];
+  const char *whitespace = " \t\r\n\v\f";
+  char *ctmpKW, *ctmpFileName;
+  /* Room for 255 bytes of content, CRLF, and the terminating NUL. */
+  char ctmp2[258] = {0};
   int i;
   for(i=0; i< D_iKWNumDef; i++){
     strcpy(cFileNameList[i],"");
@@ -651,16 +654,35 @@ int GetFileName(
   fplist = fopenMPI(cFileListNameFile, "r");
   if(fplist==NULL) return ReadDefFileError(cFileListNameFile);
 
-  while(fgetsMPI(ctmp2, 256, fplist) != NULL){
-    memset(ctmpKW, '\0', strlen(ctmpKW));
-    memset(ctmpFileName, '\0', strlen(ctmpFileName));
-    sscanf(ctmp2,"%s %s\n", ctmpKW, ctmpFileName);
-
-    if(strncmp(ctmpKW, "#", 1)==0 || *ctmp2=='\n' || (strcmp(ctmpKW, "")&&strcmp(ctmpFileName,""))==0){
+  while(fgetsMPIAllowComments(ctmp2, sizeof(ctmp2), fplist) != NULL){
+    size_t line_len = strlen(ctmp2);
+    if(line_len > 0 && ctmp2[line_len - 1] == '\n') line_len--;
+    if(line_len > 0 && ctmp2[line_len - 1] == '\r') line_len--;
+    /* Never interpret a truncated line as a complete keyword/file pair. */
+    if(line_len > 255){
+      fprintf(stdoutMPI, "Error: namelist line exceeds 255 bytes in %s.\n",
+              cFileListNameFile);
+      fclose(fplist);
+      return(-1);
+    }
+    ctmpKW = ctmp2 + strspn(ctmp2, whitespace);
+    if(*ctmpKW == '#' || *ctmpKW == '\0'){
       continue;
     }
-    else if(strcmp(ctmpKW, "")*strcmp(ctmpFileName, "")==0){
+    /* Split the first two whitespace-delimited words in the initialized line.
+       As before, trailing words (including inline comments) are ignored. */
+    ctmpFileName = ctmpKW + strcspn(ctmpKW, whitespace);
+    if(*ctmpFileName != '\0') *ctmpFileName++ = '\0';
+    ctmpFileName += strspn(ctmpFileName, whitespace);
+    if(*ctmpFileName == '\0'){
       fprintf(stdoutMPI, cErrKW_InCorPair, cFileListNameFile);
+      fclose(fplist);
+      return(-1);
+    }
+    ctmpFileName[strcspn(ctmpFileName, whitespace)] = '\0';
+    if(strlen(ctmpFileName) >= sizeof(cFileNameList[0])){
+      fprintf(stdoutMPI, "Error: namelist filename exceeds %zu bytes in %s.\n",
+              sizeof(cFileNameList[0]) - 1, cFileListNameFile);
       fclose(fplist);
       return(-1);
     }
@@ -4040,16 +4062,6 @@ int JudgeDefType
  int *mode
  )
 {
-   int ver_maj =
-#include "version_major.h"
-;
-   int ver_min =
-#include "version_minor.h"
-;
-   int ver_pat =
-#include "version_patch.h"
-;
-
   if(argc == 3 && 
      (CheckWords(argv[1], "-e") == 0 ||
       CheckWords(argv[1], "--Expert") == 0)){
@@ -4070,8 +4082,13 @@ int JudgeDefType
            (CheckWords(argv[1], "-v") == 0
             || CheckWords(argv[1], "--version") == 0)
            ) {
-    fprintf(stdoutMPI, "\nHPhi version %d.%d.%d \n\n", ver_maj, ver_min, ver_pat);
-    exit(-1);
+    fprintf(stdoutMPI, "\nHPhi version %d.%d.%d",
+            HPHI_VERSION_MAJOR, HPHI_VERSION_MINOR, HPHI_VERSION_PATCH);
+    if(strlen(GetGitHash()) > 0){
+      fprintf(stdoutMPI, " (%s)", GetGitHash());
+    }
+    fprintf(stdoutMPI, "\n\n");
+    exit(0);
   }
   else{
     /*fprintf(stdoutMPI, cErrArgv, argv[1]);*/

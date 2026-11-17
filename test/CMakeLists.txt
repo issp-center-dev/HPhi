@@ -397,11 +397,20 @@ add_hphi_test(lanczos_hubbard_square_ncond_calchs2)
 add_hphi_test(modpara_parse_validation)
 set_tests_properties(modpara_parse_validation
     PROPERTIES LABELS "validation;input")
+add_hphi_test(namelist_parse_validation)
+set_tests_properties(namelist_parse_validation
+    PROPERTIES LABELS "validation;input" TIMEOUT 120)
 add_hphi_test(lanczos_hubbard_chain_polarized_calchs2)
 add_hphi_mpi_test(tj_sz_output pow:4)
 set_tests_properties(tj_sz_output PROPERTIES LABELS "tj;lanczos;validation" TIMEOUT 300)
 add_hphi_mpi_test(spinless_number_output pow:2)
 set_tests_properties(spinless_number_output PROPERTIES LABELS "spinless;lobcg;validation" TIMEOUT 300)
+add_hphi_test_with_srcdir(version_option)
+add_hphi_test_with_srcdir(dist_archive_failure)
+add_test(
+    NAME version_git_hash
+    COMMAND ${CMAKE_SOURCE_DIR}/test/version_git_hash.sh ${CMAKE_SOURCE_DIR} ${CMAKE_COMMAND}
+)
 add_hphi_test(calchs2_unsupported_reject)
 add_hphi_test(threebody_calcmodel_validation)
 add_hphi_test(lanczos_small_dimension_regression)
@@ -510,6 +519,9 @@ set_tests_properties(
 set_tests_properties(
     lanczos_hubbardgc_anomalous_pair
     PROPERTIES LABELS "lanczos;fulldiag;te;hubbard;anomalous")
+set_tests_properties(
+    version_option version_git_hash dist_archive_failure
+    PROPERTIES LABELS "validation;input")
 set_tests_properties(
     calchs2_unsupported_reject
     PROPERTIES LABELS "lanczos;hubbard;validation")
@@ -945,6 +957,7 @@ add_executable(expec_trace_ham_check unit/expec_trace_ham_check.c
     ${CMAKE_SOURCE_DIR}/src/diagonalcalc.c
     ${CMAKE_SOURCE_DIR}/src/readdef.c
     ${CMAKE_SOURCE_DIR}/src/symmetry_kondo.c
+    ${CMAKE_SOURCE_DIR}/src/version.c
     ${CMAKE_SOURCE_DIR}/src/sz.c
     ${CMAKE_SOURCE_DIR}/src/xsetmem.c
     ${CMAKE_SOURCE_DIR}/src/input.c
@@ -1078,6 +1091,8 @@ add_hphi_test(symmetry_checkpoint)
 set_tests_properties(symmetry_checkpoint PROPERTIES LABELS "symmetry;checkpoint")
 add_hphi_test(te_contract)
 set_tests_properties(te_contract PROPERTIES LABELS "te;validation")
+add_hphi_test(te_current_h)
+set_tests_properties(te_current_h PROPERTIES LABELS "te;validation" TIMEOUT 300)
 add_hphi_test(symmetry_tpq)
 set_tests_properties(symmetry_tpq PROPERTIES LABELS "symmetry;tpq")
 add_hphi_test(symmetry_fulldiag)

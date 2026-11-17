@@ -193,19 +193,23 @@ int main(int argc, char **argv)
   x.Def.Param.TimeSlice = .1;
   x.Def.Param.ExpandCoef = 0;
   require(MultiplyForTEM(&x) == -1, "missing TE Taylor order");
-  x.Def.Param.ExpandCoef = 4;
+  x.Def.Param.ExpandCoef = 1;
   require(MakeIniVec(0, &x) == 0, "reset TE input");
-  mltply(&x, v0, v1);
   matvec_failure = 1;
-  require(MultiplyForTEM(&x) == -1, "one-rank TE matvec failure");
+  require(MultiplyForTEM(&x) == -1, "one-rank TE first-power matvec failure");
+  x.Def.Param.TimeSlice = 0;
+  for (unsigned long i = 1; i <= x.Check.idim_max; ++i) v0[i] = NAN;
+  require(MultiplyForTEM(&x) == 0, "zero TE step needs no cached H psi or matvec");
   matvec_failure = 0;
+  x.Def.Param.TimeSlice = .1;
+  x.Def.Param.ExpandCoef = 4;
   require(MakeIniVec(0, &x) == 0, "reset TE before normal step");
-  mltply(&x, v0, v1);
+  for (unsigned long i = 1; i <= x.Check.idim_max; ++i) v0[i] = NAN;
   require(MultiplyForTEM(&x) == 0, "normal TE step with empty ranks");
   require(fabs(norm(&x, v0)-1) < 1e-12, "TE normalization");
   require(fabs(global_norm-cabs(1-.2*I-.04/2+.008*I/6+.0016/24)) < 1e-12,
           "TE scalar Taylor polynomial norm");
-  if (!myrank) v0[1] = NAN;
+  if (!myrank) v1[1] = NAN;
   require(MultiplyForTEM(&x) == -1, "nonfinite TE norm reaches all ranks");
   for (unsigned long i = 1; i <= x.Check.idim_max; ++i) v0[i] = v1[i] = 0;
   require(MultiplyForTEM(&x) == -1, "zero TE norm reaches all ranks");

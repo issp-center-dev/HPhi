@@ -293,25 +293,17 @@ def time_checks():
                 shutil.copytree(path, continuation)
             run(path, "evolve", sector)
             static_h = matrix(words, static_trans, static_inter)
-            previous_h = static_h
             energies = []
             for step, time in enumerate(times):
                 h = static_h + matrix(words,
                                       lists[step] if family == "TEOneBody" else [],
                                       lists[step] if family == "TETwoBody" else [])
                 dt = time-times[step-1] if step else 0
-                # The sector driver uses the current H for every Taylor
-                # power. The existing raw driver caches H(previous)*psi for
-                # the first power, then uses the current H. Keep that
-                # integration convention separate from the parser oracle.
-                first_h = h if sector else previous_h
-                term = -1j*dt * (first_h @ psi)
-                evolved = psi + term
-                for order in range(2, 9):
-                    term = (-1j*dt/order) * (h @ term)
-                    evolved += term
+                # Independent exponential of the literal-string Hamiltonian.
+                # The small slices make order-8 truncation negligible here.
+                values, vectors = np.linalg.eigh(h)
+                evolved = vectors @ (np.exp(-1j*dt*values) * (vectors.conj().T @ psi))
                 psi = evolved / np.linalg.norm(evolved)
-                previous_h = h
                 energies.append(np.vdot(psi, h @ psi).real)
                 # The raw driver overwrites label 0 with its final vector.
                 # Step 0 is still checked through its reported energy below.
@@ -327,8 +319,8 @@ def time_checks():
             np.testing.assert_allclose(series[:, 1], energies, atol=2e-10, rtol=0)
             print(f"{label}: step vectors and energies match literal-string evolution", flush=True)
             if continuation is not None:
-                # Stop after an active slice; resuming must restore BOTH its
-                # four-body term and the one-body contraction before H*psi.
+                # Stop after an active slice; the next slice must use BOTH
+                # its four-body term and the one-body contraction in H*psi.
                 (continuation / "calc.def").write_text(
                     calc + "CalcType 4\nInputEigenVec 1\nOutputEigenVec 1\nReStart 1\n")
                 (continuation / "mod.def").write_text(
