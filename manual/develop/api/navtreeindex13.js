@@ -1,5 +1,6 @@
 var NAVTREEINDEX13 =
 {
+"structDefineList.html#af88b66d8b0ce99c9a7fc55c612d0ff79":[9,0,10,137],
 "structDefineList.html#afb0fb56d5d02820791901e094e6202b3":[9,0,10,20],
 "structDefineList.html#afb8a2f22e15c09891db3e83e6f16deb9":[9,0,10,72],
 "structDefineList.html#afef310367a7f3e42dc885d267ff4eb2c":[9,0,10,53],
@@ -248,6 +249,5 @@ var NAVTREEINDEX13 =
 "structSectorShift.html#a8dfaa39a50d2a06f6831a9b6512dd2cd":[9,0,47,0],
 "structSectorShift.html#a971f102f37a62c84b8a8491ac7dd50e8":[9,0,47,1],
 "structSectorShift.html#aa865583c0e1978af2d166f4de8828729":[9,0,47,3],
-"structSectorShift.html#abd127373d1588ea2f6ba21fa00a4faa1":[9,0,47,5],
-"structSectorShift.html#ac6245c3550d3d0e3b188aefafcc106f3":[9,0,47,4]
+"structSectorShift.html#abd127373d1588ea2f6ba21fa00a4faa1":[9,0,47,5]
 };

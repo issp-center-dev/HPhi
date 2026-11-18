@@ -39,19 +39,19 @@
 <p>Using <span class="math notranslate nohighlight">\({\mathcal H}\Phi\)</span>, we can calculate a dynamical Green’s
 function</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-dynamicalgreen-en-0">
-<span class="eqno">(5.16)<a class="headerlink" href="#equation-algorithm-dynamicalgreen-en-0" title="Link to this equation">¶</a></span>\[I(z) = \langle \Phi ' | \frac{1}{ {\mathcal H}- z\hat{I} } | \Phi '\rangle,\]</div>
+<span class="eqno">(5.15)<a class="headerlink" href="#equation-algorithm-dynamicalgreen-en-0" title="Link to this equation">¶</a></span>\[I(z) = \langle \Phi ' | \frac{1}{ {\mathcal H}- z\hat{I} } | \Phi '\rangle,\]</div>
 <p>where <span class="math notranslate nohighlight">\(|\Phi ' \rangle  = \hat{O} | \Phi _0 \rangle\)</span> is an
 excited state and <span class="math notranslate nohighlight">\(\hat{O}\)</span> is an excitation operator defined as a
 single excitation operator</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-dynamicalgreen-en-1">
-<span class="eqno">(5.17)<a class="headerlink" href="#equation-algorithm-dynamicalgreen-en-1" title="Link to this equation">¶</a></span>\[\sum_{i, \sigma_1} A_{i \sigma_1} c_{i \sigma_1} (c_{i\sigma_1}^{\dagger})\]</div>
+<span class="eqno">(5.16)<a class="headerlink" href="#equation-algorithm-dynamicalgreen-en-1" title="Link to this equation">¶</a></span>\[\sum_{i, \sigma_1} A_{i \sigma_1} c_{i \sigma_1} (c_{i\sigma_1}^{\dagger})\]</div>
 <p>or a pair excitation operator</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-dynamicalgreen-en-2">
-<span class="eqno">(5.18)<a class="headerlink" href="#equation-algorithm-dynamicalgreen-en-2" title="Link to this equation">¶</a></span>\[\sum_{i, j, \sigma_1, \sigma_2} A_{i \sigma_1 j \sigma_2} c_{i \sigma_1}c_{j \sigma_2}^{\dagger} (c_{i\sigma_1}^{\dagger}c_{j\sigma_2}).\]</div>
+<span class="eqno">(5.17)<a class="headerlink" href="#equation-algorithm-dynamicalgreen-en-2" title="Link to this equation">¶</a></span>\[\sum_{i, j, \sigma_1, \sigma_2} A_{i \sigma_1 j \sigma_2} c_{i \sigma_1}c_{j \sigma_2}^{\dagger} (c_{i\sigma_1}^{\dagger}c_{j\sigma_2}).\]</div>
 <p>For example, the dynamical spin susceptibilities can be calculated by
 defining <span class="math notranslate nohighlight">\(\hat{O}\)</span> as</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-dynamicalgreen-en-3">
-<span class="eqno">(5.19)<a class="headerlink" href="#equation-algorithm-dynamicalgreen-en-3" title="Link to this equation">¶</a></span>\[\hat{O} = \hat{S}({\bf k}) = \sum_{j}\hat{S}_j^z e^{i  {\bf k} \cdot \bf {r}_j} = \sum_{j}\frac{1}{2} (c_{j\uparrow}^{\dagger}c_{j\uparrow}-c_{j\downarrow}^{\dagger}c_{j\downarrow})e^{i  {\bf k} \cdot \bf {r}_j}.\]</div>
+<span class="eqno">(5.18)<a class="headerlink" href="#equation-algorithm-dynamicalgreen-en-3" title="Link to this equation">¶</a></span>\[\hat{O} = \hat{S}({\bf k}) = \sum_{j}\hat{S}_j^z e^{i  {\bf k} \cdot \bf {r}_j} = \sum_{j}\frac{1}{2} (c_{j\uparrow}^{\dagger}c_{j\uparrow}-c_{j\downarrow}^{\dagger}c_{j\downarrow})e^{i  {\bf k} \cdot \bf {r}_j}.\]</div>
 <p>There are two modes implemented in <span class="math notranslate nohighlight">\({\cal H}\Phi\)</span>. One is the
 continued fraction expansion method by using Lanczos method
  <a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and the other is the shifted Krylov

@@ -1,5 +1,6 @@
 var NAVTREEINDEX17 =
 {
+"symmetry__directory_8c.html#ab374c640c4d48b22cf92a9f647949d34":[10,0,94,4],
 "symmetry__directory_8c.html#ab65b4266aae9e72898d5a2c7a3630973":[10,0,94,6],
 "symmetry__directory_8c.html#abb12d51119ad332ec41874730cddfd23":[10,0,94,11],
 "symmetry__directory_8c.html#ace7c9c1a968126835737c90fdd1745bd":[10,0,94,32],
@@ -248,6 +249,5 @@ var NAVTREEINDEX17 =
 "symmetry__matvec__plan_8h.html#a81e862e329583c1e247ba44490c9ef23":[10,0,1,106,9],
 "symmetry__matvec__plan_8h.html#a81fd8b8bfbc524c5e996aac83d74fa2c":[10,0,1,106,20],
 "symmetry__matvec__plan_8h.html#a8331c430c7115be8a32ecfe51e747468":[10,0,1,106,15],
-"symmetry__matvec__plan_8h.html#a87a0fc2196bed941578ad1478f35f58b":[10,0,1,106,14],
-"symmetry__matvec__plan_8h.html#a8bff573bcd104eb486e68b4d88ef5db2":[10,0,1,106,26]
+"symmetry__matvec__plan_8h.html#a87a0fc2196bed941578ad1478f35f58b":[10,0,1,106,14]
 };

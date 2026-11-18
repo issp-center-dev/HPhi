@@ -244,6 +244,11 @@ binary64実部・虚部の組です。vector添字0は保存しません。</p>
 </section>
 <section id="digest">
 <h2>比較単位とdigest<a class="headerlink" href="#digest" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">HAMILTONIAN</span></code> (word 21)は来歴情報であり、継続のguardではありません。v3はHや
+実行済み伝播履歴を検証しません。rawの0 digestは不明を意味し、一致の証拠ではありません。
+時間依存sector TE入力でも、保存stepのHと現在のbase Hは比較時点が異なるため、
+<code class="docutils literal notranslate"><span class="pre">hamiltonian_changed=unknown</span></code> と表示します。保存境界時計は別に照合しますが、
+schedule全体は照合しません。</p>
 <p>同じset/componentのrank間では <code class="docutils literal notranslate"><span class="pre">RANK</span></code>、<code class="docutils literal notranslate"><span class="pre">OFFSET</span></code>、<code class="docutils literal notranslate"><span class="pre">LOCAL_DIM</span></code> だけが
 異なります。CGの状態・探索方向間では <code class="docutils literal notranslate"><span class="pre">COMPONENT</span></code> とdata digestも異なって
 構いません。CGの状態間では <code class="docutils literal notranslate"><span class="pre">STATE</span></code>、data digest、<code class="docutils literal notranslate"><span class="pre">SCALAR_A</span></code> が異なり、
@@ -334,9 +339,19 @@ TimeEvolution継続とTE状態importには、rank変更専用の数値回帰試�
 <h2>復旧とlegacy選択<a class="headerlink" href="#legacy" title="Link to this heading">¶</a></h2>
 <p>必要な各setについて、最初にmanifest行を使います。参照されたv3 fileの欠損・破損は
 致命的で、legacyへfallbackしません。行が無い場合だけ完全なlegacy fileを検証して
-使います。両方無ければ <code class="docutils literal notranslate"><span class="pre">ReStart=2</span></code> は新規setを開始し、<code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> はエラーです。
-sector v1/v2はimport専用です。legacy CGは追加反復をlabel 1から始め、以前のCG履歴prefixを
+使います。CGとTPQ/cTPQでは、両方無ければ <code class="docutils literal notranslate"><span class="pre">ReStart=2</span></code> は新規setを開始し、
+<code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> はエラーです。TEでは継続checkpointが選択されなければ明示的な入力vectorを
+要求します。<code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code> がv3またはsector v1/v2の場合、<code class="docutils literal notranslate"><span class="pre">ReStart=2/3</span></code> でもstep 0から
+開始し、警告の後に既存の物理量時系列fileを作り直します。<code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> が保護するのは
+checkpoint fileであり全出力ではありません。legacy raw TE入力は <code class="docutils literal notranslate"><span class="pre">ReStart=2/3</span></code> では
+保存next stepを使いますが、保存時計は照合できません。<code class="docutils literal notranslate"><span class="pre">ReStart=0/1</span></code> ではstep 0から
+importします。sector v1/v2はimport専用です。legacy CGはstateだけを復元し、探索方向を0にし、
+現在HでRitz値を再計算します。追加反復をlabel 1から始め、以前のCG履歴prefixを
 復旧しません。legacyのrank数変更には上記の <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code> が必要です。</p>
+<p>raw CG/TEの <code class="docutils literal notranslate"><span class="pre">OutputEigenVec</span></code> とcTPQの <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> 固有vector出力は現在もlegacy raw
+layoutです。native <code class="docutils literal notranslate"><span class="pre">int</span></code> のstep、native <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">long</span></code> のlocal次元、index 0を含む
+<code class="docutils literal notranslate"><span class="pre">local次元+1</span></code> 個のnative complex doubleを書きます。v3 solver checkpointとは異なります。
+通常のraw CG→TE importもこの形式を使い、模型・基底identityやchecksumは保存されません。</p>
 <p>履歴復旧は <code class="docutils literal notranslate"><span class="pre">STEP</span></code> より前の行を保持し、それ以後とEOFの未完断片を削除し、途中の破損を
 拒否します。終端CG行は現在の収束判定も満たす場合だけ保持します。TPQ aggregate行は
 実行順に追記されるので、複数setの継続は <code class="docutils literal notranslate"><span class="pre">(set,</span> <span class="pre">step,</span> <span class="pre">observable)</span></code> でsortして比較します。</p>

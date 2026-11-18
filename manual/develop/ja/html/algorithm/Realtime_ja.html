@@ -39,12 +39,12 @@
 <h1><span class="section-number">5.5. </span>実時間発展<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
 <p><span class="math notranslate nohighlight">\({\cal H}\Phi\)</span>では初期波動関数を<span class="math notranslate nohighlight">\(|\Phi(t_0)\rangle\)</span>として、</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-ja-0">
-<span class="eqno">(5.20)<a class="headerlink" href="#equation-algorithm-realtime-ja-0" title="Link to this equation">¶</a></span>\[|\Phi (t_n)\rangle = e^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle\]</div>
+<span class="eqno">(5.19)<a class="headerlink" href="#equation-algorithm-realtime-ja-0" title="Link to this equation">¶</a></span>\[|\Phi (t_n)\rangle = e^{-i {\cal H}  \Delta t_n}|\Phi (t_{n-1})\rangle\]</div>
 <p>の関係を用いて逐次時間発展の計算をしています。
 ここで時刻 <span class="math notranslate nohighlight">\(t_n = \sum_{j=1}^n  \Delta t_j\)</span> です。
 実際の計算では<span class="math notranslate nohighlight">\(e^{-i {\cal H}  \Delta t_n}\)</span>を</p>
 <div class="math notranslate nohighlight" id="equation-algorithm-realtime-ja-1">
-<span class="eqno">(5.21)<a class="headerlink" href="#equation-algorithm-realtime-ja-1" title="Link to this equation">¶</a></span>\[e^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l\]</div>
+<span class="eqno">(5.20)<a class="headerlink" href="#equation-algorithm-realtime-ja-1" title="Link to this equation">¶</a></span>\[e^{-i {\cal H}  \Delta t_n} =\sum_{l=0}^m \frac{1}{l!}(-i {\cal H}  \Delta t_n)^l\]</div>
 <p>と近似しています。展開次数の上限<span class="math notranslate nohighlight">\(m\)</span>は<code class="docutils literal notranslate"><span class="pre">ModPara</span></code>ファイルの<code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>で指定することができます。
 各ステップの状態は正規化され、<code class="docutils literal notranslate"><span class="pre">Norm.dat</span></code> には正規化前のノルムが出力されます。
 この値と <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code> を増やした際の収束を確認して、Taylor打切り誤差を評価してください。

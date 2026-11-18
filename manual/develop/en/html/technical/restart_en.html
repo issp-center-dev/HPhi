@@ -36,10 +36,15 @@
   <section id="restart-and-state-import">
 <h1><span class="section-number">6.6. </span>Restart and state import<a class="headerlink" href="#restart-and-state-import" title="Link to this heading">¶</a></h1>
 <p>HPhi has three independent mechanisms. <code class="docutils literal notranslate"><span class="pre">ReStart</span></code> continues a solver from
-its saved algorithmic state. <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code> imports a state for CG
-evaluation or as the first state of a new TimeEvolution clock. <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>
+its saved algorithmic state, subject to the legacy exceptions below.
+<code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code> imports a state for CG evaluation or as the first state
+of a new TimeEvolution clock. <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code>
 4/5 resumes the Lanczos spectrum sequence through <code class="docutils literal notranslate"><span class="pre">TMComponents</span></code> and
-<code class="docutils literal notranslate"><span class="pre">recalcvec</span></code>. Files from one mechanism must not be substituted for another.</p>
+<code class="docutils literal notranslate"><span class="pre">recalcvec</span></code>. Their contracts differ even where vector layouts coincide.</p>
+<p>The v3 solver checkpoint and sector v1/v2 state formats were introduced after
+the code used for releases through v3.7.2. Those releases use legacy raw
+vectors for the CG/TPQ/TimeEvolution paths described here. Format version 3
+is independent of the HPhi release version.</p>
 <section id="solver-continuation">
 <h2><span class="section-number">6.6.1. </span>Solver continuation<a class="headerlink" href="#solver-continuation" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">ReStart</span></code> has the following values in <code class="docutils literal notranslate"><span class="pre">CalcMod</span></code>: 0 disables continuation,
@@ -51,6 +56,10 @@ saved contiguous global intervals and redistributes their intersections to
 the current ownership. Sector v3 continuation also permits metadata layout
 changes between <code class="docutils literal notranslate"><span class="pre">replicated</span></code> (0) and <code class="docutils literal notranslate"><span class="pre">distributed</span></code> (1). The global vector
 order remains unchanged even though rank ownership changes.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> does not make observable output read-only. Continuation recovers
+and appends time-series files. If no TE continuation checkpoint is selected,
+an explicit <code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code>/<code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code> can instead start an import,
+as described below; this can replace existing time-series files.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Lanczos_max</span></code> is an absolute final bound for v3 continuation. CG resumes at
 the saved iteration label; TPQ/cTPQ and TimeEvolution resume at the saved next
 step. If the bound is below the saved CG iteration label, or at or below
@@ -65,9 +74,36 @@ means end-only. TimeEvolution uses <code class="docutils literal notranslate"><s
 checkpoints, and its time table must contain the saved next step. See
 <a class="reference internal" href="../filespecification/outputfiles_en/restart_en.html"><span class="doc">the restart file specification</span></a>.</p>
 </section>
+<section id="validation-limits">
+<h2><span class="section-number">6.6.2. </span>Validation limits<a class="headerlink" href="#validation-limits" title="Link to this heading">¶</a></h2>
+<p>v3 validates the saved state, basis and solver unit, but does not require the
+same Hamiltonian. Its Hamiltonian word is informational: raw checkpoints
+store zero; sector checkpoints contain a parsed-H digest. A
+<code class="docutils literal notranslate"><span class="pre">hamiltonian_changed=no</span></code> message does not verify the propagation history.
+For time-dependent sector TE input the message is <code class="docutils literal notranslate"><span class="pre">unknown</span></code>, since the
+saved step’s H and the current base H are not comparable as schedules.
+Use the same H and propagation settings for continuation; use state import
+for a new H or protocol.</p>
+<p>Additional checks and limits are:</p>
+<ul class="simple">
+<li><p>CG restores states, search directions, Ritz values and iteration labels.
+Hx and Hp are recomputed, but H identity is not checked.</p></li>
+<li><p>mTPQ does not check H or <code class="docutils literal notranslate"><span class="pre">LargeValue</span></code>. cTPQ checks its saved imaginary-time
+increment against the current <code class="docutils literal notranslate"><span class="pre">1/LargeValue</span></code>, but not H or <code class="docutils literal notranslate"><span class="pre">ExpandCoef</span></code>.
+cTPQ with <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> rejects <code class="docutils literal notranslate"><span class="pre">ReStart=2/3</span></code>.</p></li>
+<li><p>TE checks the saved boundary time and whether the table covers the saved
+next step. It does not compare earlier or later H/time rows or the Taylor
+order. Table/sector TE saves <code class="docutils literal notranslate"><span class="pre">time[next_step-1]</span></code>; raw Laser TE saves
+<code class="docutils literal notranslate"><span class="pre">Tinit</span> <span class="pre">+</span> <span class="pre">next_step*TimeSlice</span></code>. A matching boundary alone is not a matching
+protocol.</p></li>
+<li><p>TPQ sample identity comes from the saved state and set label. Initial RNG
+settings and parallel counts describe how a fresh state was generated;
+changing the rank count for continuation does not regenerate that state.</p></li>
+</ul>
+</section>
 <section id="state-import">
-<h2><span class="section-number">6.6.2. </span>State import<a class="headerlink" href="#state-import" title="Link to this heading">¶</a></h2>
-<p>State import validates the model, basis identity, sector and phase, payload
+<h2><span class="section-number">6.6.3. </span>State import<a class="headerlink" href="#state-import" title="Link to this heading">¶</a></h2>
+<p>v3 and sector v1/v2 state import validates the model, basis identity, sector and phase, payload
 length, norm and digest. Source method, state, step, time and solver scalars
 are provenance; they do not resume the source solver. CG evaluates an imported
 state. TimeEvolution starts at step zero on its current time grid. v3 imports
@@ -78,9 +114,23 @@ partition before redistribution and uses the partition-independent sector
 digest to validate the basis set. The basis builder’s canonical
 representative-state sort fixes its global order, so an equal set has the
 same order. The output-file reference gives the required copy procedure.</p>
+<p><code class="docutils literal notranslate"><span class="pre">InputEigenVec=1</span></code> in CG evaluates the imported state; it does not run CG
+iterations from that state. Import does not require the source H to match the
+current H. The current H must still be valid in the selected sector.</p>
+<p>Raw CG and raw TE <code class="docutils literal notranslate"><span class="pre">OutputEigenVec</span></code> and cTPQ <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> eigenvector output
+still use legacy raw layout. Thus ordinary raw CG-to-TE import uses legacy
+raw files, not the v3 solver manifest. This import remains supported, but its
+model/basis identity and payload checksum cannot be verified from that format.</p>
+<p>Without a selected TE continuation checkpoint, a v3 or sector v1/v2
+<code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code> starts at step zero even with <code class="docutils literal notranslate"><span class="pre">ReStart=2/3</span></code>. HPhi warns
+before replacing the SS, Norm, Flct and aggregate Green time series. To start
+an intentional new protocol, use a separate output directory and
+<code class="docutils literal notranslate"><span class="pre">ReStart=0/1</span></code>. A legacy raw <code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code> behaves differently:
+<code class="docutils literal notranslate"><span class="pre">ReStart=2/3</span></code> uses its stored next step, whereas <code class="docutils literal notranslate"><span class="pre">ReStart=0/1</span></code> imports it
+at step zero. Legacy raw TE has no saved clock to compare.</p>
 </section>
 <section id="changing-the-mpi-process-count">
-<h2><span class="section-number">6.6.3. </span>Changing the MPI process count<a class="headerlink" href="#changing-the-mpi-process-count" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.6.4. </span>Changing the MPI process count<a class="headerlink" href="#changing-the-mpi-process-count" title="Link to this heading">¶</a></h2>
 <p>Keep every source-rank file, including a file for an empty owner. For v3
 continuation, copy the manifest and every vector file named by it, then run
 with the desired process count; no extra parameter is needed. v3 continuation
@@ -100,24 +150,32 @@ missing empty trailing rank would otherwise be indistinguishable from a
 smaller complete file set.</p>
 </section>
 <section id="legacy-and-spectrum-behavior">
-<h2><span class="section-number">6.6.4. </span>Legacy and spectrum behavior<a class="headerlink" href="#legacy-and-spectrum-behavior" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.6.5. </span>Legacy and spectrum behavior<a class="headerlink" href="#legacy-and-spectrum-behavior" title="Link to this heading">¶</a></h2>
 <p>Legacy raw <code class="docutils literal notranslate"><span class="pre">tmpvec_set*_rank_*.dat</span></code> remains readable by CG and TPQ/cTPQ.
 Because this format stores neither its source rank count nor identity words,
 rank-changing reads require <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code>. Keep every saved rank
 file, including an empty trailing rank; HPhi checks all native headers, file
 lengths, steps and the global dimension before redistribution, but cannot
 validate model or sector identity from the files.
-Legacy CG keeps its historical additional-iteration meaning: iteration labels
-restart at one and the old <code class="docutils literal notranslate"><span class="pre">Lanczos_Step</span></code> prefix is not recovered. Legacy
+Legacy CG keeps its historical additional-iteration meaning: only the states
+are restored, search directions are zeroed, and Ritz values are recomputed
+with the current H. Iteration labels restart at one and the old
+<code class="docutils literal notranslate"><span class="pre">Lanczos_Step</span></code> prefix is not recovered. The input states are assumed to
+already be normalized and orthogonal; the legacy reader does not reestablish
+these properties. This is warm-start-like behavior, not v3 X/P continuation
+or a general warm-start interface. Legacy
 TPQ/cTPQ and raw TimeEvolution recover output rows below their validated next
 step when possible. Old sector v1/v2 files are state-import formats, not solver
 continuation checkpoints.</p>
+<p>Legacy mTPQ cannot restore the initial norm and reports zero for it. Legacy
+cTPQ reconstructs beta as <code class="docutils literal notranslate"><span class="pre">(step-1)/LargeValue</span></code>, which assumes that
+<code class="docutils literal notranslate"><span class="pre">LargeValue</span></code> has not changed. Neither path verifies H identity.</p>
 <p>Ground-state Lanczos and <code class="docutils literal notranslate"><span class="pre">CalcSpec</span></code> 4/5 retain their existing
 <code class="docutils literal notranslate"><span class="pre">TMComponents</span></code>/<code class="docutils literal notranslate"><span class="pre">recalcvec</span></code> behavior and iteration meaning. They do not use
 the v3 solver manifest.</p>
 </section>
 <section id="output-recovery">
-<h2><span class="section-number">6.6.5. </span>Output recovery<a class="headerlink" href="#output-recovery" title="Link to this heading">¶</a></h2>
+<h2><span class="section-number">6.6.6. </span>Output recovery<a class="headerlink" href="#output-recovery" title="Link to this heading">¶</a></h2>
 <p>Before appending, HPhi validates every required checkpoint, removes complete
 rows at or after the recovery boundary, drops an incomplete final line, and
 rejects malformed interior rows. A missing history file is created and only
@@ -168,10 +226,11 @@ instrumentation totals, not a controlled storage benchmark.</p>
 <li class="toctree-l2"><a class="reference internal" href="precision_en.html">6.5. Numerical Precision</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">6.6. Restart and state import</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#solver-continuation">6.6.1. Solver continuation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#state-import">6.6.2. State import</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#changing-the-mpi-process-count">6.6.3. Changing the MPI process count</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#legacy-and-spectrum-behavior">6.6.4. Legacy and spectrum behavior</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#output-recovery">6.6.5. Output recovery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#validation-limits">6.6.2. Validation limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#state-import">6.6.3. State import</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changing-the-mpi-process-count">6.6.4. Changing the MPI process count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#legacy-and-spectrum-behavior">6.6.5. Legacy and spectrum behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-recovery">6.6.6. Output recovery</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="parallel_fulldiag_en.html">6.7. Parallel full diagonalization</a></li>

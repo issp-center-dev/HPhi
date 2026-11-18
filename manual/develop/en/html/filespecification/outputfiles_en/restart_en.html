@@ -249,6 +249,12 @@ zero is omitted.</p>
 </section>
 <section id="comparison-and-digests">
 <h2>Comparison and digests<a class="headerlink" href="#comparison-and-digests" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">HAMILTONIAN</span></code> (word 21) is provenance, not a continuation guard. v3 does
+not verify H or the executed propagation history. In particular, a raw zero
+digest is unknown, not evidence of equality. The diagnostic is also
+<code class="docutils literal notranslate"><span class="pre">hamiltonian_changed=unknown</span></code> for time-dependent sector TE input, where
+the saved step’s H and the current base H are different comparison points.
+The saved TE boundary clock is checked separately; the full schedule is not.</p>
 <p>Across ranks of one set/component, only <code class="docutils literal notranslate"><span class="pre">RANK</span></code>, <code class="docutils literal notranslate"><span class="pre">OFFSET</span></code> and
 <code class="docutils literal notranslate"><span class="pre">LOCAL_DIM</span></code> differ. CG state and direction components may additionally
 differ in <code class="docutils literal notranslate"><span class="pre">COMPONENT</span></code> and data digests. CG states may differ in <code class="docutils literal notranslate"><span class="pre">STATE</span></code>,
@@ -347,11 +353,24 @@ additional numerical validation.</p>
 <h2>Recovery and legacy selection<a class="headerlink" href="#recovery-and-legacy-selection" title="Link to this heading">¶</a></h2>
 <p>For every required set, HPhi first uses a manifest row. A missing or corrupt
 referenced v3 file is fatal and never falls back to legacy data. Without a
-row, complete legacy files are validated and used. <code class="docutils literal notranslate"><span class="pre">ReStart=2</span></code> starts a new
-set only if neither source exists; <code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> reports an error. v1/v2
-sector files are import-only. Legacy CG restarts additional iterations with
+row, complete legacy files are validated and used. For CG and TPQ/cTPQ,
+<code class="docutils literal notranslate"><span class="pre">ReStart=2</span></code> starts a new set only if neither source exists;
+<code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> reports an error. TE instead requires an explicit input vector
+when no continuation checkpoint is selected. A v3 or sector v1/v2
+<code class="docutils literal notranslate"><span class="pre">SpectrumVec</span></code> then starts at step zero even with <code class="docutils literal notranslate"><span class="pre">ReStart=2/3</span></code> and replaces
+existing observable time-series files, after a warning. <code class="docutils literal notranslate"><span class="pre">ReStart=3</span></code> protects
+checkpoint files, not all output. Legacy raw TE input uses its saved next
+step with <code class="docutils literal notranslate"><span class="pre">ReStart=2/3</span></code> without a saved-clock check, or starts at zero with
+<code class="docutils literal notranslate"><span class="pre">ReStart=0/1</span></code>. v1/v2 sector files are import-only.
+Legacy CG restores only states, zeros search directions, recomputes Ritz
+values with the current H, and restarts additional iterations with
 labels starting at one and do not recover the old CG history prefix. A legacy
 rank change requires <code class="docutils literal notranslate"><span class="pre">RestartSourceRanks</span></code> as described above.</p>
+<p>Legacy raw is still the output layout for raw CG/TE <code class="docutils literal notranslate"><span class="pre">OutputEigenVec</span></code> and
+cTPQ <code class="docutils literal notranslate"><span class="pre">InvTemp</span></code> eigenvectors: a native <code class="docutils literal notranslate"><span class="pre">int</span></code> step, native <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">long</span></code>
+local dimension, and <code class="docutils literal notranslate"><span class="pre">local_dimension+1</span></code> native complex doubles including
+index zero. These are not v3 solver checkpoints. Normal raw CG-to-TE import
+continues to use this layout; model/basis identity and checksums are absent.</p>
 <p>History recovery preserves rows before <code class="docutils literal notranslate"><span class="pre">STEP</span></code>, removes later rows and an
 incomplete EOF fragment, and rejects corrupt interior text. Terminal CG keeps
 its already emitted terminal row only when it still satisfies the current

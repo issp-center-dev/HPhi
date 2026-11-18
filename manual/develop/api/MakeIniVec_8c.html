@@ -127,11 +127,13 @@ $(function(){initNavTree('MakeIniVec_8c.html','',''); });
 <code>#include &quot;<a class="el" href="CalcTime_8h_source.html">CalcTime.h</a>&quot;</code><br />
 <code>#include &lt;limits.h&gt;</code><br />
 <code>#include &lt;math.h&gt;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
 </div>
 <p><a href="MakeIniVec_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a2ac5a7baa37a72da3253f8280679d250" id="r_a2ac5a7baa37a72da3253f8280679d250"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ac5a7baa37a72da3253f8280679d250">initialize_tpq_stream</a> (<a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *rng, long initial_iv, int sample, int rank, int thread)</td></tr>
 <tr class="memitem:ae49ca3eb43cf78de07f16c08356f812f" id="r_ae49ca3eb43cf78de07f16c08356f812f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae49ca3eb43cf78de07f16c08356f812f">MakeIniVec</a> (int rand_i, struct <a class="el" href="structBindStruct.html">BindStruct</a> *<a class="el" href="struct_8h.html#a2e5276e30c3a9c9155e407ab3e645567">X</a>)</td></tr>
 <tr class="memdesc:ae49ca3eb43cf78de07f16c08356f812f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generating the random initial vectors for TPQ mode ( \( v_1=v_0 \) is the random or inputted vector).  <br /></td></tr>
 </table>
@@ -142,6 +144,56 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition in file <a class="el" href="MakeIniVec_8c_source.html">MakeIniVec.c</a>.</p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a2ac5a7baa37a72da3253f8280679d250" name="a2ac5a7baa37a72da3253f8280679d250"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ac5a7baa37a72da3253f8280679d250">&#9670;&#160;</a></span>initialize_tpq_stream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void initialize_tpq_stream </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="dSFMT_8h.html#a7e8239b4bedf4e53d5168d21848ab7af">dsfmt_t</a> *</td>          <td class="paramname"><span class="paramname"><em>rng</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>initial_iv</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>sample</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>rank</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>thread</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="MakeIniVec_8c_source.html#l00029">29</a> of file <a class="el" href="MakeIniVec_8c_source.html">MakeIniVec.c</a>.</p>
+
+<p class="reference">References <a class="el" href="dSFMT_8h_source.html#l00458">dsfmt_init_by_array()</a>, and <a class="el" href="dSFMT_8h_source.html#l00120">UINT64_C</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="MakeIniVec_8c_source.html#l00058">MakeIniVec()</a>.</p>
+
+</div>
+</div>
 <a id="ae49ca3eb43cf78de07f16c08356f812f" name="ae49ca3eb43cf78de07f16c08356f812f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae49ca3eb43cf78de07f16c08356f812f">&#9670;&#160;</a></span>MakeIniVec()</h2>
 
@@ -179,9 +231,9 @@ Functions</h2></td></tr>
 <dl class="section version"><dt>Version</dt><dd>3.4 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Takahiro Misawa (BAQIS) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="MakeIniVec_8c_source.html#l00043">43</a> of file <a class="el" href="MakeIniVec_8c_source.html">MakeIniVec.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MakeIniVec_8c_source.html#l00058">58</a> of file <a class="el" href="MakeIniVec_8c_source.html">MakeIniVec.c</a>.</p>
 
-<p class="reference">References <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="LogMessage_8c_source.html#l00079">cTPQStep</a>, <a class="el" href="dSFMT_8h_source.html#l00295">dsfmt_genrand_close_open()</a>, <a class="el" href="dSFMT_8h_source.html#l00437">dsfmt_init_gen_rand()</a>, <a class="el" href="global_8c_source.html#l00163">global_1st_norm</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="global_8c_source.html#l00200">nthreads</a>, <a class="el" href="time_8c_source.html#l00696">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00161">step_i</a>, <a class="el" href="time_8c_source.html#l00708">StopTimer()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00395">SumMPI_dc()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="log_8c_source.html#l00117">TimeKeeperWithRandAndStep()</a>, <a class="el" href="global_8c_source.html#l00133">v0</a>, <a class="el" href="global_8c_source.html#l00134">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
+<p class="reference">References <a class="el" href="global_8c_source.html#l00023">cFileNameTimeKeep</a>, <a class="el" href="LogMessage_8c_source.html#l00079">cTPQStep</a>, <a class="el" href="dSFMT_8h_source.html#l00295">dsfmt_genrand_close_open()</a>, <a class="el" href="global_8c_source.html#l00163">global_1st_norm</a>, <a class="el" href="MakeIniVec_8c_source.html#l00029">initialize_tpq_stream()</a>, <a class="el" href="global_8c_source.html#l00199">myrank</a>, <a class="el" href="time_8c_source.html#l00696">StartTimer()</a>, <a class="el" href="global_8c_source.html#l00202">stdoutMPI</a>, <a class="el" href="global_8c_source.html#l00161">step_i</a>, <a class="el" href="time_8c_source.html#l00708">StopTimer()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00395">SumMPI_dc()</a>, <a class="el" href="wrapperMPI_8c_source.html#l00458">SumMPI_i()</a>, <a class="el" href="log_8c_source.html#l00117">TimeKeeperWithRandAndStep()</a>, <a class="el" href="global_8c_source.html#l00133">v0</a>, <a class="el" href="global_8c_source.html#l00134">v1</a>, and <a class="el" href="struct_8c_source.html#l00020">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="CalcByCanonicalTPQ_8c_source.html#l00120">CalcByCanonicalTPQ()</a>, and <a class="el" href="FirstMultiply_8c_source.html#l00042">FirstMultiply()</a>.</p>
 
