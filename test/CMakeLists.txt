@@ -401,6 +401,10 @@ add_hphi_test(namelist_parse_validation)
 set_tests_properties(namelist_parse_validation
     PROPERTIES LABELS "validation;input" TIMEOUT 120)
 add_hphi_test(lanczos_hubbard_chain_polarized_calchs2)
+add_hphi_mpi_test(tj_sz_output pow:4)
+set_tests_properties(tj_sz_output PROPERTIES LABELS "tj;lanczos;validation" TIMEOUT 300)
+add_hphi_mpi_test(spinless_number_output pow:2)
+set_tests_properties(spinless_number_output PROPERTIES LABELS "spinless;lobcg;validation" TIMEOUT 300)
 add_hphi_test_with_srcdir(version_option)
 add_hphi_test_with_srcdir(dist_archive_failure)
 add_test(

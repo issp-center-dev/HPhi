@@ -278,6 +278,10 @@ void phys(struct BindStruct *X, //!<[inout]
     
     if (X->Def.iCalcModel == Spin || X->Def.iCalcModel == SpinGC) {
       tmp_N = X->Def.NsiteMPI;
+    } else if (X->Def.iCalcModel == SpinlessFermion ||
+               X->Def.iCalcModel == SpinlessFermionGC) {
+      /* Spinless GC sectors do not populate the spin-resolved counters. */
+      tmp_N = X->Phys.num;
     } else {
       tmp_N = X->Phys.num_up + X->Phys.num_down;
     }

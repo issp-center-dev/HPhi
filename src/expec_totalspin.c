@@ -702,6 +702,7 @@ int expec_totalSz(
       totalSz_SpinGC(X, vec);
       break;
     case Hubbard:
+    case tJ:
     case Kondo:
     case KondoNConserved:
       X->Phys.Sz = X->Def.Total2SzMPI / 2.;
