@@ -1098,6 +1098,13 @@ if(TARGET OpenMP::OpenMP_C)
 endif()
 add_test(NAME unittest_tpq_failure COMMAND unittest_tpq_failure)
 set_tests_properties(unittest_tpq_failure PROPERTIES LABELS "unit;tpq")
+add_test(NAME tpq_random_streams
+    COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/tpq_random_streams.sh)
+set_tests_properties(tpq_random_streams PROPERTIES LABELS "unit;tpq;ctpq" TIMEOUT 300)
+if(MPI_FOUND)
+    add_hphi_mpi_test(tpq_random_streams_mpi min:2)
+    set_tests_properties(tpq_random_streams_mpi PROPERTIES LABELS "unit;tpq;ctpq;mpi" TIMEOUT 300)
+endif()
 add_hphi_test(tpq_zero_norm)
 set_tests_properties(tpq_zero_norm PROPERTIES LABELS "tpq;validation")
 add_hphi_test(symmetry_ctpq)
@@ -1882,6 +1889,11 @@ set_tests_properties(restart_legacy_compat PROPERTIES
 
 add_hphi_test(restart_te_contract)
 set_tests_properties(restart_te_contract PROPERTIES LABELS "restart;te;validation" TIMEOUT 900)
+
+add_test(NAME restart_contract_diagnostics
+    COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/test/restart_contract_diagnostics.sh)
+set_tests_properties(restart_contract_diagnostics PROPERTIES
+    LABELS "restart;te;validation" TIMEOUT 300)
 
 add_hphi_test(restart_import)
 set_tests_properties(restart_import PROPERTIES LABELS "restart;te;validation" TIMEOUT 900)

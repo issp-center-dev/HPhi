@@ -20,6 +20,21 @@
 #include "CalcTime.h"
 #include <limits.h>
 #include <math.h>
+#include <stdint.h>
+
+/* TPQ stream version 2. Keep sample/rank/thread in separate seed words:
+ * adding them to one 32-bit seed reused streams across adjacent samples.
+ * NumAve and the total worker count are deliberately not part of the key.
+ * Unsigned magnitude also handles LONG_MIN without signed-overflow UB. */
+static void initialize_tpq_stream(dsfmt_t *rng, long initial_iv,
+                                  int sample, int rank, int thread)
+{
+  uint64_t magnitude = initial_iv < 0 ? UINT64_C(0) - (uint64_t)initial_iv : (uint64_t)initial_iv;
+  uint32_t key[] = {UINT32_C(0x48505451), 2, (uint32_t)magnitude,
+                    (uint32_t)(magnitude >> 32), (uint32_t)sample,
+                    (uint32_t)rank, (uint32_t)thread};
+  dsfmt_init_by_array(rng, key, (int)(sizeof(key) / sizeof(key[0])));
+}
 
 /**
  * @file   MakeIniVec.c
@@ -44,7 +59,6 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
 
   long int i, i_max;
   double complex dnorm;
-  long unsigned int u_long_i;
   dsfmt_t dsfmt;
   int mythread;
   double rand_X,rand_Y;
@@ -52,16 +66,17 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
 
   /* idim_max is the active rank-local dimension, including zero-row ranks.
    * Only the globally reduced norm must be positive. */
-  int invalid = X == NULL || v0 == NULL || v1 == NULL;
+  int invalid = X == NULL || v0 == NULL || v1 == NULL || rand_i < 0;
   if (!invalid && X->Check.idim_max > LONG_MAX) invalid = 1;
   if (SumMPI_i(invalid) != 0) {
     fprintf(stdoutMPI, "Error: invalid TPQ initial-vector storage.\n");
     return -1;
   }
   i_max = X->Check.idim_max;
+  fprintf(stdoutMPI, "TPQ initial RNG: stream_version=2 sample=%d\n", rand_i);
 
-#pragma omp parallel default(none) private(i, mythread, u_long_i, dsfmt,rand_X,rand_Y,rand_Z1,rand_Z2) \
-        shared(v0, v1, nthreads, myrank, rand_i, X, stdoutMPI, cLogCheckInitComplex, cLogCheckInitReal) \
+#pragma omp parallel default(none) private(i, mythread, dsfmt,rand_X,rand_Y,rand_Z1,rand_Z2) \
+        shared(v0, v1, myrank, rand_i, X, stdoutMPI, cLogCheckInitComplex, cLogCheckInitReal) \
         firstprivate(i_max)
   {
 #pragma omp for
@@ -77,18 +92,17 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
 #else
     mythread = 0;
 #endif
-    u_long_i = 123432 + (rand_i+1)*labs(X->Def.initial_iv) + mythread + nthreads * myrank;
-    dsfmt_init_gen_rand(&dsfmt, u_long_i);
+    initialize_tpq_stream(&dsfmt, X->Def.initial_iv, rand_i, myrank, mythread);
 
     if (X->Def.iInitialVecType == 0) {
       StartTimer(3101);
-      #pragma omp for
+      #pragma omp for schedule(static)
       for (i = 1; i <= i_max; i++)
         v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5) + 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5)*I;
       /*if (X->Def.iInitialVecType == 0)*/
     }else if (X->Def.iInitialVecType == -1) {
       StartTimer(3101);
-      #pragma omp for 
+      #pragma omp for schedule(static)
       for (i = 1; i <= i_max; i++){
         rand_X   = dsfmt_genrand_close_open(&dsfmt);
         rand_Y   = dsfmt_genrand_close_open(&dsfmt);
@@ -98,7 +112,7 @@ int MakeIniVec(int rand_i, struct BindStruct *X) {
       } 
     /*if (X->Def.iInitialVecType == -1)*/
     }else {
-      #pragma omp for
+      #pragma omp for schedule(static)
       for (i = 1; i <= i_max; i++)
          v1[i] = 2.0*(dsfmt_genrand_close_open(&dsfmt) - 0.5);
     }

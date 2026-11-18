@@ -291,6 +291,8 @@ static int legacy_initialize_wave(struct BindStruct *X, double complex **wave,
     }
   }
   fprintf(stdoutMPI, "%s", cLogInputVecFinish);
+  fprintf(stdoutMPI, "Warning: legacy CG continuation loads only the states, resets search directions "
+          "and starts at iteration 1; the Hamiltonian is not verified.\n");
   return 0;
 }
 

@@ -1,6 +1,7 @@
 /* Exercise real TPQ initialization/normalization, with an injectable scalar
  * Hamiltonian. Only rank 0 owns vector elements; other ranks still reduce. */
 #include <math.h>
+#include <limits.h>
 #include "Common.h"
 #include "FirstMultiply.h"
 #include "MakeIniVec.h"
@@ -132,6 +133,11 @@ int main(int argc, char **argv)
   require(fabs(norm(&x, v0)-1) < 1e-12 && fabs(norm(&x, v1)-1) < 1e-12,
           "initial global norm is one");
   require(a[0] == 123 && b[0] == 456, "one-based sentinels remain untouched");
+  require(MakeIniVec(-1, &x) == -1, "negative sample labels reject");
+  x.Def.initial_iv = LONG_MIN;
+  require(MakeIniVec(INT_MAX, &x) == 0 && fabs(norm(&x, v1)-1) < 1e-12,
+          "minimum signed seed and maximum sample label initialize without overflow");
+  x.Def.initial_iv = 7;
   require(FirstMultiply(0, NULL) == -1 && energy_calls == 0,
           "invalid initialization propagates before energy evaluation");
   if (myrank == nproc-1) v0 = NULL;

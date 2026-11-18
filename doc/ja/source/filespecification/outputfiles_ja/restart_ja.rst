@@ -168,6 +168,12 @@ binary64実部・虚部の組です。vector添字0は保存しません。
 比較単位とdigest
 ----------------
 
+``HAMILTONIAN`` (word 21)は来歴情報であり、継続のguardではありません。v3はHや
+実行済み伝播履歴を検証しません。rawの0 digestは不明を意味し、一致の証拠ではありません。
+時間依存sector TE入力でも、保存stepのHと現在のbase Hは比較時点が異なるため、
+``hamiltonian_changed=unknown`` と表示します。保存境界時計は別に照合しますが、
+schedule全体は照合しません。
+
 同じset/componentのrank間では ``RANK``、``OFFSET``、``LOCAL_DIM`` だけが
 異なります。CGの状態・探索方向間では ``COMPONENT`` とdata digestも異なって
 構いません。CGの状態間では ``STATE``、data digest、``SCALAR_A`` が異なり、
@@ -249,9 +255,20 @@ TimeEvolution継続とTE状態importには、rank変更専用の数値回帰試�
 
 必要な各setについて、最初にmanifest行を使います。参照されたv3 fileの欠損・破損は
 致命的で、legacyへfallbackしません。行が無い場合だけ完全なlegacy fileを検証して
-使います。両方無ければ ``ReStart=2`` は新規setを開始し、``ReStart=3`` はエラーです。
-sector v1/v2はimport専用です。legacy CGは追加反復をlabel 1から始め、以前のCG履歴prefixを
+使います。CGとTPQ/cTPQでは、両方無ければ ``ReStart=2`` は新規setを開始し、
+``ReStart=3`` はエラーです。TEでは継続checkpointが選択されなければ明示的な入力vectorを
+要求します。``SpectrumVec`` がv3またはsector v1/v2の場合、``ReStart=2/3`` でもstep 0から
+開始し、警告の後に既存の物理量時系列fileを作り直します。``ReStart=3`` が保護するのは
+checkpoint fileであり全出力ではありません。legacy raw TE入力は ``ReStart=2/3`` では
+保存next stepを使いますが、保存時計は照合できません。``ReStart=0/1`` ではstep 0から
+importします。sector v1/v2はimport専用です。legacy CGはstateだけを復元し、探索方向を0にし、
+現在HでRitz値を再計算します。追加反復をlabel 1から始め、以前のCG履歴prefixを
 復旧しません。legacyのrank数変更には上記の ``RestartSourceRanks`` が必要です。
+
+raw CG/TEの ``OutputEigenVec`` とcTPQの ``InvTemp`` 固有vector出力は現在もlegacy raw
+layoutです。native ``int`` のstep、native ``unsigned long`` のlocal次元、index 0を含む
+``local次元+1`` 個のnative complex doubleを書きます。v3 solver checkpointとは異なります。
+通常のraw CG→TE importもこの形式を使い、模型・基底identityやchecksumは保存されません。
 
 履歴復旧は ``STEP`` より前の行を保持し、それ以後とEOFの未完断片を削除し、途中の破損を
 拒否します。終端CG行は現在の収束判定も満たす場合だけ保持します。TPQ aggregate行は

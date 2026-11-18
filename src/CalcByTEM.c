@@ -338,7 +338,11 @@ static int calc_by_tem(
         fprintf(stdoutMPI, "Error: TE restart step must be consistent across ranks and within [0, Lanczos_max).\n");
         return -1;
       }
-      if (continuing) legacy_step = step_initial;
+      if (continuing) {
+        legacy_step = step_initial;
+        fprintf(stdoutMPI, "Warning: legacy TE continuation restores only the step; "
+                "the saved time, Hamiltonian and propagation history are not verified.\n");
+      }
     } else {
       step_initial = 0;
       if (X->Bind.Def.iFlgSymmetryBasis) {
@@ -364,6 +368,10 @@ static int calc_by_tem(
   }
   int recover = is_v3 || (legacy_step > 0 &&
     (X->Bind.Def.iReStart == RESTART_INOUT || X->Bind.Def.iReStart == RESTART_IN));
+  if (!recover && (X->Bind.Def.iReStart == RESTART_INOUT || X->Bind.Def.iReStart == RESTART_IN))
+    fprintf(stdoutMPI, "Warning: no TE continuation checkpoint was selected; "
+            "SpectrumVec is imported at step 0 and existing TE time-series files are replaced. "
+            "ReStart=%d does not make observable output read-only.\n", X->Bind.Def.iReStart);
   const struct RestartSeriesRule rule = {0, is_v3 ? step_initial : legacy_step};
   const struct RestartSeriesSpec series = {"#", -1, -1, 1, &rule, 0};
 

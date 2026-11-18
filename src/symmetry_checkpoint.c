@@ -344,10 +344,14 @@ int ReadSymmetryCheckpoint(const struct BindStruct *X, const char *name,
             " source_hamiltonian_kind=sector_matrix_v1 hamiltonian_changed=unknown\n",
             info->state_index, info->step, info->time, info->hamiltonian_digest);
   } else {
+    /* Preflight leaves the base H selected, not the H at the saved source
+     * step. A comparison here cannot establish a time-dependent protocol. */
+    int dynamic_te = X->Def.iCalcType == TimeEvolution &&
+                     (X->Def.NLaser || X->Def.NTETransferMax || X->Def.NTEInterAllMax);
     fprintf(stdoutMPI, "Symmetry checkpoint loaded: state=%" PRIu64 " step=%" PRIu64
             " time=%.17g source_hamiltonian=%016" PRIx64 " hamiltonian_changed=%s\n",
             info->state_index, info->step, info->time, info->hamiltonian_digest,
-            header[HAMILTONIAN] != expected[HAMILTONIAN] ? "yes" : "no");
+            dynamic_te ? "unknown" : (header[HAMILTONIAN] != expected[HAMILTONIAN] ? "yes" : "no"));
   }
   free(temporary);
   return 0;

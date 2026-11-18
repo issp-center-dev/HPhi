@@ -80,22 +80,35 @@ mTPQと同じように物理量はcTPQ状態の期待値として計算できま
 
 熱的純粋量子状態による有限温度計算では、初期ベクトルは全ての成分に対してランダムな係数を与えます。
 初期ベクトルの係数の型はModParaで指定される入力ファイルの\ ``InitialVecType``\ を用い、
-実数もしくは複素数の指定をすることができます。乱数のシードは\ ``initial_iv``
-(:math:`\equiv r_s`)により
+実数もしくは複素数の指定をすることができます。mTPQとcTPQはともに
+SIMD-oriented Fast Mersenne Twister (dSFMT) [4]_ を使います。
+``initial_iv`` が基準seed、``NumAve`` がsample数、``InitialVecType`` が成分の分布を
+指定します。Standard modeの入力、またはExpert modeのModPara/CalcModで指定します。
 
-.. math::
+現在の乱数stream versionは2です。sample/rank/threadごとに、次の7個の32-bit語を
+配列としてdSFMTへ渡して初期化します::
 
-   \begin{aligned}
-   123432+(n_{\rm run}+1)\times  |r_s|+k_{\rm Thread}+N_{\rm Thread} \times k_{\rm Process}\end{aligned}
+   [0x48505451, 2, low32(abs(initial_iv)), high32(abs(initial_iv)),
+    sample_index, MPI_rank, OpenMP_thread]
 
+番号は0始まりです。先頭のtagとversionで方式を識別し、sample・rank・threadは単一seedへの
+加算値ではなく独立した語として渡します。``initial_iv`` の絶対値は符号なし整数として
+全bitを保持し、最小の負整数も扱います。絶対値が等しい正負seedは同じ意味です。
+0を指定した場合も全sampleで同じstreamを再利用しません。OpenMPはstatic scheduleで
+連続した成分区間を各threadへ割り当てます。
 
-で与えられます。ここで、\ :math:`n_{\rm run}`\ はrunの回数であり、runの最大回数はスタンダードモード用入力ファイル、
-もしくはModParaで指定される入力ファイルの\ ``NumAve``\ で指定します。
-``initial_iv``\ はスタンダードモード用の入力ファイル、もしくはエキスパートモードではModParaで指定される入力ファイルで指定します。乱数はSIMD-oriented
-Fast Mersenne Twister(dSFMT)を用い発生させています [4]_ 。
-また、\ :math:`k_{\rm Thread}, N_{\rm Thread}, k_{\rm Process}`\ 
-はそれぞれスレッド番号、スレッド数、プロセス番号を表します。
-したがって同じ\ ``initial_iv``\ を用いても、並列数が異なる場合には別の初期波動関数が生成されます。
+``NumAve`` はstream keyに含めないため、入力と並列構成を固定してsample数を増やしても
+既存sampleは変わりません。MPI/OpenMP数の変更は成分の所有・割当を変えるので、初期vectorが
+変わる場合があります。浮動小数点による正規化もplatform間で差があり得ます。
+新規初期化は実行logに ``TPQ initial RNG: stream_version=2 sample=...`` と記録します。
+
+旧方式は ``123432 + (sample+1)*abs(initial_iv) + thread + threads*rank`` という
+加算seedでした。既定の ``abs(initial_iv)=1`` では隣接sampleが別workerの乱数列を
+再利用し、0ではsample間で同じ列を再利用していました。version 2はこのseed重複を解消するため、
+同じ入力seedでも新規計算の結果は旧版と変わります。保存stateからの継続は乱数を生成し直さず、
+引き続き可能です。ただし旧checkpointの継続によって既存sampleの相関は解消されません。
+追加する新sampleはversion 2を使います。旧計算の熱平均・誤差棒への影響量は計算条件に依存し、
+乱数列重複の回帰試験だけからは確定しません。
 
 .. [1] \S. Sugiura, A. Shimizu, Phys. Rev. Lett. **108**, 240401 (2012).
 .. [2] \S. Sugiura and A. Shimizu, Phys. Rev. Lett. **111**, 010401 (2013).
